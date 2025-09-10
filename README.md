@@ -22,8 +22,8 @@ Pasos de Setup (local)
    - `npm run dev` y abrir http://localhost:3000
 - Páginas:
   - Display: `/display/demo/demo-game` (QR + estado en vivo)
-  - Móvil: `/play/{tenantSlug}/{gameSlug}` (registro cliente + respuestas)
-  - Host: `/t/{tenantSlug}/host/{gameSlug}` (Start/End vía Realtime)
+- Móvil: `/play/{tenantSlug}/{gameSlug}` (registro cliente + respuestas)
+- Host: `/t/{tenantSlug}/host/{gameSlug}` (Start/End vía Realtime)
 
 4) Supabase (inicial)
    - Crear proyecto en Supabase y configurar Auth/Storage luego.
@@ -42,6 +42,15 @@ Realtime, estado y leaderboard
   - Si `HOST_ADMIN_SECRET` está definido, enviar header `x-admin-key: <secret>`.
 - Display/Play: hidratan estado desde DB al cargar, y luego siguen Realtime.
 - Leaderboard: `get_leaderboard(game_id, limit)` suma `submissions` y ordena por puntaje.
+
+Validaciones de respuestas
+-------------------------
+- El endpoint `POST /api/answer` valida:
+  - Juego publicado y tenant activo.
+  - Pregunta enviada coincide con `games.current_question_idx`.
+  - Ventana activa: `games.question_ends_at > now()`.
+  - Una respuesta por jugador/pregunta (constraint único).
+- Puntuación: `points_base + points_time_factor * segundos_restantes` para respuestas correctas.
 
 Siguientes pasos
 ----------------

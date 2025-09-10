@@ -23,17 +23,26 @@ export async function POST(req: Request) {
     // game
     const { data: game, error: gErr } = await admin
       .from('games')
-      .select('id, status, tenant_id')
+      .select('id, status, tenant_id, current_question_idx, question_ends_at')
       .eq('tenant_id', tenant.id)
       .eq('slug', gameSlug)
       .maybeSingle();
     if (gErr) throw gErr;
     if (!game || game.status !== 'published') return NextResponse.json({ error: 'Juego no publicado' }, { status: 403 });
 
+    // Validate active window and question idx
+    const now = new Date();
+    if (game.current_question_idx == null || game.current_question_idx !== questionIdx) {
+      return NextResponse.json({ error: 'Pregunta no activa' }, { status: 403 });
+    }
+    if (!game.question_ends_at || new Date(game.question_ends_at) < now) {
+      return NextResponse.json({ error: 'Ventana de respuesta cerrada' }, { status: 403 });
+    }
+
     // question by idx
     const { data: question, error: qErr } = await admin
       .from('questions')
-      .select('id, options, correct_index, points_base')
+      .select('id, options, correct_index, points_base, points_time_factor, time_limit_sec')
       .eq('game_id', game.id)
       .eq('idx', questionIdx)
       .maybeSingle();
@@ -65,7 +74,14 @@ export async function POST(req: Request) {
     }
 
     const isCorrect = selectedIndex === question.correct_index;
-    const score = isCorrect ? (question.points_base ?? 100) : 0;
+    let score = 0;
+    if (isCorrect) {
+      const endsAt = new Date(game.question_ends_at as any).getTime();
+      const remaining = Math.max(0, Math.ceil((endsAt - Date.now()) / 1000));
+      const base = question.points_base ?? 100;
+      const factor = question.points_time_factor ?? 0;
+      score = base + factor * remaining;
+    }
 
     const { error: insErr } = await admin
       .from('submissions')
@@ -88,4 +104,3 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: 'Error interno' }, { status: 500 });
   }
 }
-
