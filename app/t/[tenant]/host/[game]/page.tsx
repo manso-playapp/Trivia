@@ -13,6 +13,7 @@ export default function HostConsole({ params }: Props) {
   const [duration, setDuration] = useState<number>(20);
   const [channelJoined, setChannelJoined] = useState(false);
   const [playersOnline, setPlayersOnline] = useState<number>(0);
+  const [status, setStatus] = useState<string>("");
 
   // Resolve game id and load questions
   useEffect(() => {
@@ -83,6 +84,7 @@ export default function HostConsole({ params }: Props) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ tenantSlug: tenant, gameSlug: game, action: 'start', idx: selectedIdx, durationSec: duration }),
       });
+      setStatus(`Pregunta ${selectedIdx} iniciada (${duration}s)`);
     } catch {}
   };
 
@@ -99,6 +101,7 @@ export default function HostConsole({ params }: Props) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ tenantSlug: tenant, gameSlug: game, action: 'end' }),
       });
+      setStatus(`Pregunta ${selectedIdx} finalizada`);
     } catch {}
   };
 
@@ -110,10 +113,10 @@ export default function HostConsole({ params }: Props) {
       ) : (
         <>
           <p style={{ color: 'var(--muted)' }}>Canal: game-{gameId} · Online: {playersOnline}</p>
-          <div style={{ display: 'flex', gap: 16, alignItems: 'center', flexWrap: 'wrap' }}>
-            <label>
-              Pregunta
-              <select value={selectedIdx} onChange={(e) => setSelectedIdx(Number(e.target.value))} style={{ marginLeft: 8 }}>
+          <div className="row" style={{ flexWrap: 'wrap' }}>
+            <label className="row">
+              <span className="label">Pregunta</span>
+              <select value={selectedIdx} onChange={(e) => setSelectedIdx(Number(e.target.value))} className="input" style={{ width: 280 }}>
                 {questions.map((q) => (
                   <option key={q.id} value={q.idx}>
                     {q.idx} — {q.text.slice(0, 40)}
@@ -121,13 +124,14 @@ export default function HostConsole({ params }: Props) {
                 ))}
               </select>
             </label>
-            <label>
-              Duración (s)
-              <input type="number" min={5} max={120} value={duration} onChange={(e) => setDuration(Number(e.target.value))} style={{ width: 80, marginLeft: 8 }} />
+            <label className="row">
+              <span className="label">Duración (s)</span>
+              <input type="number" min={5} max={120} value={duration} onChange={(e) => setDuration(Number(e.target.value))} className="input" style={{ width: 120 }} />
             </label>
-            <button disabled={!channelJoined} onClick={startQuestion} style={{ padding: '10px 14px', borderRadius: 8, background: 'var(--accent)', color: '#fff' }}>Start</button>
-            <button disabled={!channelJoined} onClick={endQuestion} style={{ padding: '10px 14px', borderRadius: 8, background: '#ef4444', color: '#fff' }}>End</button>
+            <button disabled={!channelJoined} onClick={startQuestion} className="btn btn-primary">Start</button>
+            <button disabled={!channelJoined} onClick={endQuestion} className="btn btn-danger">End</button>
           </div>
+          {status && <p className="muted" aria-live="polite">{status}</p>}
         </>
       )}
     </main>

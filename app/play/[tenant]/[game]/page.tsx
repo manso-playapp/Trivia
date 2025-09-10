@@ -18,6 +18,8 @@ export default function PlaySlugPage({ params }: Props) {
   const [gameId, setGameId] = useState<string | null>(null);
   const [questions, setQuestions] = useState<any[]>([]);
   const supabase = useMemo(() => getSupabaseClient(), []);
+  const [endsAt, setEndsAt] = useState<number | null>(null);
+  const [remaining, setRemaining] = useState(0);
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -81,6 +83,7 @@ export default function PlaySlugPage({ params }: Props) {
           const q = (qs as any[]).find((x) => x.idx === g.current_question_idx);
           if (q) setQuestion({ id: q.id, idx: q.idx, text: q.text, options: q.options });
         }
+        if ((g as any).question_ends_at) setEndsAt(new Date((g as any).question_ends_at).getTime());
       } catch {}
     };
     loadQuestion();
@@ -94,10 +97,13 @@ export default function PlaySlugPage({ params }: Props) {
       const q = (questions as any[]).find((x) => x.idx === idx);
       if (q) setQuestion({ id: q.id, idx: q.idx, text: q.text, options: q.options });
       setResult(null);
+      if (endsAt) setEndsAt(new Date(endsAt).getTime());
+      setAnswering(false);
     });
     channel.on('broadcast', { event: 'end_question' }, () => {
       // lock answering on end
       setAnswering(false);
+      setEndsAt(null);
     });
     channel.subscribe();
     return () => {
@@ -105,11 +111,24 @@ export default function PlaySlugPage({ params }: Props) {
     };
   }, [gameId, supabase, questions]);
 
+  useEffect(() => {
+    const id = setInterval(() => {
+      if (!endsAt) { setRemaining(0); return; }
+      setRemaining(Math.max(0, Math.ceil((endsAt - Date.now()) / 1000)));
+    }, 250);
+    return () => clearInterval(id);
+  }, [endsAt]);
+
   const submitAnswer = async (selectedIndex: number) => {
     if (!email || !question) return;
     setAnswering(true);
     setResult(null);
     try {
+      if (endsAt && Date.now() > endsAt) {
+        setResult({ ok: false });
+        setAnswering(false);
+        return;
+      }
       const res = await fetch('/api/answer', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -129,45 +148,41 @@ export default function PlaySlugPage({ params }: Props) {
     <main className="container">
       <h1>Unite a: {tenant}/{game}</h1>
       {!registered ? (
-        <form onSubmit={onSubmit} style={{ display: 'grid', gap: 12, maxWidth: 360 }}>
-          <label>
-            Email
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              style={{ width: '100%', padding: 8, borderRadius: 8 }}
-            />
-          </label>
-          <label>
-            Apodo
-            <input
-              value={nickname}
-              onChange={(e) => setNickname(e.target.value)}
-              required
-              style={{ width: '100%', padding: 8, borderRadius: 8 }}
-            />
-          </label>
-          <button disabled={loading} type="submit" style={{ padding: '10px 14px', borderRadius: 8, background: 'var(--accent)', color: '#fff' }}>
-            {loading ? 'Registrando…' : 'Registrarme'}
-          </button>
-          {error && <small style={{ color: 'tomato' }}>{error}</small>}
+        <form onSubmit={onSubmit} className="card" style={{ maxWidth: 420 }}>
+          <div className="stack">
+            <div>
+              <span className="label">Email</span>
+              <input className="input" type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
+            </div>
+            <div>
+              <span className="label">Apodo</span>
+              <input className="input" value={nickname} onChange={(e) => setNickname(e.target.value)} required />
+            </div>
+            <button disabled={loading} type="submit" className="btn btn-primary">
+              {loading ? (<><span className="spinner" /> Registrando…</>) : 'Registrarme'}
+            </button>
+            {error && <small style={{ color: 'tomato' }}>{error}</small>}
+            <small className="muted">Tus datos se usan solo para el juego.</small>
+          </div>
         </form>
       ) : (
-        <section>
-          <p>¡Registrado! Elegí tu respuesta:</p>
+        <section className="stack">
+          <div className="row" aria-live="polite">
+            <span className="tag">Registrado</span>
+            {endsAt ? <span className="muted">Tiempo restante: {remaining}s</span> : <span className="muted">Esperando inicio…</span>}
+          </div>
+          <p>Elegí tu respuesta:</p>
           {question ? (
-            <div style={{ display: 'grid', gap: 8 }}>
-              <p style={{ color: 'var(--muted)' }}>Pregunta {question.idx}: {question.text}</p>
+            <div className="stack">
+              <p className="muted">Pregunta {question.idx}: {question.text}</p>
               {Array.isArray(question.options) && question.options.map((opt: any, i: number) => (
-                <button key={i} disabled={answering} onClick={() => submitAnswer(i)} style={{ padding: '10px 14px', borderRadius: 8, background: '#1f2937', color: '#fff', textAlign: 'left' }}>
+                <button key={i} disabled={answering || (endsAt ? Date.now() > endsAt : true)} onClick={() => submitAnswer(i)} className="btn opt">
                   {String.fromCharCode(65 + i)}. {typeof opt === 'string' ? opt : JSON.stringify(opt)}
                 </button>
               ))}
               {result && (
-                <p style={{ color: result.isCorrect ? 'limegreen' : 'tomato' }}>
-                  {result.isCorrect ? '¡Correcto!' : 'Incorrecto'} {typeof result.score === 'number' ? `(+${result.score} pts)` : ''}
+                <p aria-live="polite" style={{ color: result.isCorrect ? 'limegreen' : 'tomato' }}>
+                  {result.isCorrect ? '¡Correcto!' : 'Respuesta registrada'} {typeof result.score === 'number' ? `(+${result.score} pts)` : ''}
                 </p>
               )}
             </div>

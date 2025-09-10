@@ -10,6 +10,7 @@ export default function DisplayClient({ tenant, game }: { tenant: string; game: 
   const [remaining, setRemaining] = useState<number>(0);
   const [qs, setQs] = useState<any[]>([]);
   const [leaders, setLeaders] = useState<any[]>([]);
+  const [online, setOnline] = useState<number>(0);
 
   useEffect(() => {
     const init = async () => {
@@ -37,7 +38,7 @@ export default function DisplayClient({ tenant, game }: { tenant: string; game: 
 
   useEffect(() => {
     if (!gameId) return;
-    const channel = supabase.channel(`game-${gameId}`, { config: { broadcast: { self: true } } });
+    const channel = supabase.channel(`game-${gameId}`, { config: { broadcast: { self: true }, presence: { key: `display-${Math.random().toString(36).slice(2)}` } } });
     channel.on('broadcast', { event: 'start_question' }, (payload) => {
       const { idx, endsAt: ea } = (payload as any).payload || {};
       const q = (qs as any[]).find((x) => x.idx === idx);
@@ -47,7 +48,14 @@ export default function DisplayClient({ tenant, game }: { tenant: string; game: 
     channel.on('broadcast', { event: 'end_question' }, () => {
       setEndsAt(null);
     });
-    channel.subscribe();
+    channel.on('presence', { event: 'sync' }, () => {
+      const state = channel.presenceState();
+      const count = Object.values(state).reduce((acc: number, arr: any) => acc + (Array.isArray(arr) ? arr.length : 0), 0);
+      setOnline(count);
+    });
+    channel.subscribe((status) => {
+      if (status === 'SUBSCRIBED') channel.track({ role: 'display' });
+    });
     return () => {
       channel.unsubscribe();
     };
@@ -78,20 +86,28 @@ export default function DisplayClient({ tenant, game }: { tenant: string; game: 
     return () => { stop = true; clearInterval(id); };
   }, [gameId, supabase]);
 
-  if (!question) {
-    return <p style={{ color: 'var(--muted)' }}>Esperando inicio de pregunta…</p>;
-  }
   return (
     <section style={{ marginTop: 24 }}>
-      <h2>Pregunta {question.idx}</h2>
-      <p style={{ fontSize: 22 }}>{question.text}</p>
-      {endsAt && <p>Tiempo restante: {remaining}s</p>}
+      <div className="row">
+        <h2 className="tv-title">Trivia</h2>
+        <span className="tag">Online: {online}</span>
+      </div>
+      {question ? (
+        <>
+          <p className="tv-question">{question.idx}. {question.text}</p>
+          {endsAt && <p className="tv-subtitle">Tiempo restante: {remaining}s</p>}
+        </>
+      ) : (
+        <p className="tv-subtitle">Esperando inicio de pregunta…</p>
+      )}
       {leaders.length > 0 && (
         <div style={{ marginTop: 24, textAlign: 'left' }}>
           <h3>Top 5</h3>
-          {leaders.map((l: any) => (
-            <div key={l.player_id}>#{l.rank} · {l.nickname} — {l.total_score} pts</div>
-          ))}
+          <div className="list">
+            {leaders.map((l: any) => (
+              <div className="row" key={l.player_id}>#{l.rank} · {l.nickname} — {l.total_score} pts</div>
+            ))}
+          </div>
         </div>
       )}
     </section>
