@@ -22,8 +22,8 @@ Pasos de Setup (local)
    - `npm run dev` y abrir http://localhost:3000
 - Páginas:
   - Display: `/display/demo/demo-game` (QR + estado en vivo)
-- Móvil: `/play/{tenantSlug}/{gameSlug}` (registro cliente + respuestas)
-- Host: `/t/{tenantSlug}/host/{gameSlug}` (Start/End vía Realtime)
+  - Móvil: `/play/{tenantSlug}/{gameSlug}` (registro cliente + respuestas)
+  - Host: `/t/{tenantSlug}/host/{gameSlug}` (Start/End vía Realtime)
 
 4) Supabase (inicial)
    - Crear proyecto en Supabase y configurar Auth/Storage luego.
@@ -42,6 +42,26 @@ Realtime, estado y leaderboard
   - Si `HOST_ADMIN_SECRET` está definido, enviar header `x-admin-key: <secret>`.
 - Display/Play: hidratan estado desde DB al cargar, y luego siguen Realtime.
 - Leaderboard: `get_leaderboard(game_id, limit)` suma `submissions` y ordena por puntaje.
+
+Theming / Branding
+------------------
+- Tabla `themes` con `css_vars` (JSON) y assets (`logo_url`, `bg_url`).
+- `games.theme_id` selecciona el tema aplicado.
+- Display aplica tema server‑side; Play lo aplica client‑side.
+- Ejemplo de `css_vars` (JSON):
+  `{ "--accent": "#ff3e00", "--bg": "#000000", "--fg": "#ffffff" }`
+
+Seed de tema demo:
+```sql
+insert into public.themes (tenant_id, name, css_vars)
+select id, 'Demo Theme', '{"--accent":"#22c55e","--bg":"#0b1020","--fg":"#f8fafc"}'::jsonb
+from public.tenants where slug='demo';
+
+update public.games g
+set theme_id = t.id
+from public.themes t
+where g.slug='demo-game' and t.tenant_id = g.tenant_id;
+```
 
 Validaciones de respuestas
 -------------------------

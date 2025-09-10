@@ -3,6 +3,8 @@ import { Suspense } from 'react';
 import QRCode from 'qrcode';
 import { headers } from 'next/headers';
 import DisplayClient from './DisplayClient';
+import { getThemeForGame, cssVarsToStyleTag } from '@/lib/theme';
+import ThemeStyle from '@/components/ThemeStyle';
 
 type Props = { params: { tenant: string; game: string } };
 
@@ -14,9 +16,12 @@ export default async function DisplayPage({ params }: Props) {
   const playPath = `/play/${encodeURIComponent(tenant)}/${encodeURIComponent(game)}`;
   const playUrl = `${proto}${host}${playPath}`;
   const qrDataUrl = await QRCode.toDataURL(playUrl, { width: 1024, margin: 1, color: { dark: '#000000', light: '#FFFFFFFF' } });
+  const theme = await getThemeForGame(tenant, game);
+  const style = cssVarsToStyleTag(theme.css_vars || undefined);
 
   return (
     <main className="container" style={{ textAlign: 'center' }}>
+      <ThemeStyle css={style} />
       <h1>Trivia en {tenant}</h1>
       <p>Escaneá el QR para jugar desde tu celular.</p>
       <img src={qrDataUrl} alt={`QR para ${playUrl}`} width={280} height={280} style={{ borderRadius: 12 }} />

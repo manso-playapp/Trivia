@@ -20,6 +20,7 @@ export default function PlaySlugPage({ params }: Props) {
   const supabase = useMemo(() => getSupabaseClient(), []);
   const [endsAt, setEndsAt] = useState<number | null>(null);
   const [remaining, setRemaining] = useState(0);
+  const [appliedTheme, setAppliedTheme] = useState(false);
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -118,6 +119,35 @@ export default function PlaySlugPage({ params }: Props) {
     }, 250);
     return () => clearInterval(id);
   }, [endsAt]);
+
+  // Apply theme CSS variables client-side
+  useEffect(() => {
+    (async () => {
+      try {
+        const { data: t } = await supabase.from('tenants').select('id').eq('slug', tenant).maybeSingle();
+        if (!t) return;
+        const { data: g } = await supabase
+          .from('games')
+          .select('id, theme_id')
+          .eq('tenant_id', t.id)
+          .eq('slug', game)
+          .eq('status', 'published')
+          .maybeSingle();
+        if (!g || !g.theme_id) return;
+        const { data: theme } = await supabase
+          .from('themes')
+          .select('css_vars')
+          .eq('id', g.theme_id)
+          .maybeSingle();
+        const vars = (theme as any)?.css_vars || {};
+        const root = document.documentElement;
+        Object.entries(vars).forEach(([k, v]) => {
+          if (typeof v === 'string') root.style.setProperty(k, v);
+        });
+        setAppliedTheme(true);
+      } catch {}
+    })();
+  }, [tenant, game, supabase]);
 
   const submitAnswer = async (selectedIndex: number) => {
     if (!email || !question) return;

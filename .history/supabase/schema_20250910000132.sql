@@ -37,7 +37,7 @@ create table if not exists public.questions (
   points_time_factor int not null default 2,
   created_at timestamptz not null default now(),
   unique (game_id, idx)
-);
+);A
 
 -- Perfiles (admins/hosts). Futuro: enlazar a auth.users
 create table if not exists public.profiles (
@@ -165,45 +165,3 @@ as $$
 $$;
 
 grant execute on function public.get_leaderboard(uuid, int) to anon;
-
--- Themes: branding por tenant
-create table if not exists public.themes (
-  id uuid primary key default gen_random_uuid(),
-  tenant_id uuid not null references public.tenants(id) on delete cascade,
-  name text not null,
-  css_vars jsonb not null default '{}'::jsonb, -- ej: {"--accent":"#16a34a","--bg":"#000"}
-  logo_url text,
-  bg_url text,
-  created_at timestamptz not null default now()
-);
-
-alter table public.themes enable row level security;
-
--- Política de lectura pública de temas del tenant activo
-create policy if not exists "themes_select_public_by_active_tenant"
-on public.themes
-for select
-to anon
-using (
-  exists (
-    select 1 from public.tenants t
-    where t.id = themes.tenant_id and t.active = true
-  )
-);
-
--- Enlazar game -> theme (si no existe la columna)
-do $$
-begin
-  if not exists(
-    select 1 from information_schema.columns 
-    where table_schema='public' and table_name='games' and column_name='theme_id'
-  ) then
-    alter table public.games add column theme_id uuid;
-  end if;
-  -- Add FK constraint if not present
-  if not exists(
-    select 1 from pg_constraint where conname = 'games_theme_id_fkey'
-  ) then
-    alter table public.games add constraint games_theme_id_fkey foreign key (theme_id) references public.themes(id) on delete set null;
-  end if;
-end $$;
