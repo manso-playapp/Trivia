@@ -11,10 +11,15 @@ type Props = { params: { tenant: string; game: string } };
 export default async function DisplayPage({ params }: Props) {
   const { tenant, game } = params;
   const hdrs = headers();
+  const baseFromEnv = process.env.NEXT_PUBLIC_BASE_URL;
+  const normalizedEnv = baseFromEnv
+    ? (baseFromEnv.startsWith('http') ? baseFromEnv : `https://${baseFromEnv}`)
+    : null;
   const host = hdrs.get('x-forwarded-host') || hdrs.get('host') || 'localhost:3000';
   const proto = (hdrs.get('x-forwarded-proto') || 'http') + '://';
   const playPath = `/play/${encodeURIComponent(tenant)}/${encodeURIComponent(game)}`;
-  const playUrl = `${proto}${host}${playPath}`;
+  const inferred = `${proto}${host}${playPath}`;
+  const playUrl = `${(normalizedEnv || '').replace(/\/$/, '')}${playPath}` || inferred;
   const qrDataUrl = await QRCode.toDataURL(playUrl, { width: 1024, margin: 1, color: { dark: '#000000', light: '#FFFFFFFF' } });
   const theme = await getThemeForGame(tenant, game);
   const style = cssVarsToStyleTag(theme.css_vars || undefined);

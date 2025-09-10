@@ -12,6 +12,7 @@ Pasos de Setup (local)
      - `NEXT_PUBLIC_SUPABASE_ANON_KEY=`
      - `SUPABASE_SERVICE_ROLE_KEY=` (solo en servidor / Vercel, no exponer en cliente)
      - `HOST_ADMIN_SECRET=` (opcional; si se define, protege `/api/host/state`)
+     - `NEXT_PUBLIC_BASE_URL=` (opcional; fuerza el dominio del QR, ej: `https://tudominio.com`)
 
 2) Dependencias
    - Instalación (requiere red):
