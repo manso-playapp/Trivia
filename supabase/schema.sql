@@ -19,6 +19,8 @@ create table if not exists public.games (
   name text not null,
   status text not null default 'draft',
   config jsonb not null default '{}',
+  current_question_idx int,
+  question_ends_at timestamptz,
   created_at timestamptz not null default now(),
   unique (tenant_id, slug)
 );
@@ -131,3 +133,35 @@ as $$
 $$;
 
 grant execute on function public.get_public_questions(uuid) to anon;
+
+-- Leaderboard (sólo lectura, sin datos sensibles)
+create or replace function public.get_leaderboard(p_game_id uuid, p_limit int default 10)
+returns table (
+  player_id uuid,
+  nickname text,
+  total_score int,
+  rank int
+)
+language sql
+security definer
+set search_path = public
+as $$
+  with scores as (
+    select s.player_id, sum(coalesce(s.score_awarded,0)) as total_score
+    from public.submissions s
+    join public.players p on p.id = s.player_id
+    where p.game_id = p_game_id
+    group by s.player_id
+  ), ranked as (
+    select player_id, total_score,
+           rank() over (order by total_score desc, player_id asc) as r
+    from scores
+  )
+  select r.player_id, p.nickname, r.total_score, r.r
+  from ranked r
+  join public.players p on p.id = r.player_id
+  order by r.r asc
+  limit p_limit;
+$$;
+
+grant execute on function public.get_leaderboard(uuid, int) to anon;

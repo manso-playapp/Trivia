@@ -11,6 +11,7 @@ Pasos de Setup (local)
      - `NEXT_PUBLIC_SUPABASE_URL=`
      - `NEXT_PUBLIC_SUPABASE_ANON_KEY=`
      - `SUPABASE_SERVICE_ROLE_KEY=` (solo en servidor / Vercel, no exponer en cliente)
+     - `HOST_ADMIN_SECRET=` (opcional; si se define, protege `/api/host/state`)
 
 2) Dependencias
    - Instalación (requiere red):
@@ -20,8 +21,9 @@ Pasos de Setup (local)
 3) Ejecutar en desarrollo
    - `npm run dev` y abrir http://localhost:3000
 - Páginas:
-  - Display: `/display/demo/demo-game`
+  - Display: `/display/demo/demo-game` (QR + estado en vivo)
   - Móvil: `/play/{tenantSlug}/{gameSlug}` (registro cliente + respuestas)
+  - Host: `/t/{tenantSlug}/host/{gameSlug}` (Start/End vía Realtime)
 
 4) Supabase (inicial)
    - Crear proyecto en Supabase y configurar Auth/Storage luego.
@@ -33,9 +35,17 @@ Pasos de Setup (local)
      select id, 'demo-game', 'Demo Trivia', 'published' from public.tenants where slug='demo';
      ```
 
-Qué sigue
----------
-1. Realtime: canal `game-{id}` y eventos (start/end/tick) para sincronizar TV y móvil.
-2. UI de host con controles y estado actual.
+Realtime, estado y leaderboard
+------------------------------
+- Realtime canal: `game-{id}` con `start_question` / `end_question`.
+- Persistencia: `/api/host/state` guarda `games.current_question_idx` y `question_ends_at`.
+  - Si `HOST_ADMIN_SECRET` está definido, enviar header `x-admin-key: <secret>`.
+- Display/Play: hidratan estado desde DB al cargar, y luego siguen Realtime.
+- Leaderboard: `get_leaderboard(game_id, limit)` suma `submissions` y ordena por puntaje.
+
+Siguientes pasos
+----------------
+1. Persistir estado actual para reconexión tras refresh.
+2. Ranking en vivo desde `submissions`.
 3. Roles admin/host (profiles) y RLS por tenant/rol.
-4. Emails con Edge Functions.
+4. Emails de ganadores (Edge Function + logs).

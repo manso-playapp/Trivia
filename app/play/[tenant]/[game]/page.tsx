@@ -1,7 +1,7 @@
 "use client";
 import { useState } from 'react';
 import { getSupabaseClient } from '@/lib/supabaseClient';
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 
 type Props = { params: { tenant: string; game: string } };
 
@@ -15,13 +15,15 @@ export default function PlaySlugPage({ params }: Props) {
   const [question, setQuestion] = useState<{ id: string; idx: number; text: string; options: any[] } | null>(null);
   const [answering, setAnswering] = useState(false);
   const [result, setResult] = useState<{ ok: boolean; isCorrect?: boolean; score?: number } | null>(null);
+  const [gameId, setGameId] = useState<string | null>(null);
+  const [questions, setQuestions] = useState<any[]>([]);
+  const supabase = useMemo(() => getSupabaseClient(), []);
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
     setLoading(true);
     try {
-      const supabase = getSupabaseClient();
       // 1) obtener tenant id por slug
       const { data: t, error: tErr } = await supabase
         .from('tenants')
@@ -41,6 +43,7 @@ export default function PlaySlugPage({ params }: Props) {
         .maybeSingle();
       if (gErr) throw gErr;
       if (!g) throw new Error('Juego no publicado o inexistente');
+      setGameId(g.id);
 
       // 3) insertar player (RLS permite si game está published)
       const { error: pErr } = await supabase
@@ -56,34 +59,51 @@ export default function PlaySlugPage({ params }: Props) {
     }
   };
 
-  // Cargar una pregunta pública (demo: idx=1)
+  // Cargar preguntas públicas y suscribirse a Realtime
   useEffect(() => {
     const loadQuestion = async () => {
       try {
-        const supabase = getSupabaseClient();
-        // tenant id
+        // tenant id -> game id
         const { data: t } = await supabase.from('tenants').select('id').eq('slug', tenant).maybeSingle();
         if (!t) return;
         const { data: g } = await supabase
           .from('games')
-          .select('id')
-          .eq('tenant_id', t.id)
-          .eq('slug', game)
-          .eq('status', 'published')
-          .maybeSingle();
+        .select('id,current_question_idx,question_ends_at')
+        .eq('tenant_id', t.id)
+        .eq('slug', game)
+        .eq('status', 'published')
+        .maybeSingle();
         if (!g) return;
+        setGameId(g.id);
         const { data: qs } = await supabase.rpc('get_public_questions', { p_game_id: g.id });
-        if (qs && qs.length > 0) {
-          // demo: tomamos la primera (idx más bajo)
-          const q = [...qs].sort((a: any, b: any) => a.idx - b.idx)[0];
-          setQuestion({ id: q.id, idx: q.idx, text: q.text, options: q.options });
+        setQuestions(qs || []);
+        if (g.current_question_idx && qs && qs.length) {
+          const q = (qs as any[]).find((x) => x.idx === g.current_question_idx);
+          if (q) setQuestion({ id: q.id, idx: q.idx, text: q.text, options: q.options });
         }
-      } catch {
-        // noop
-      }
+      } catch {}
     };
     loadQuestion();
-  }, [tenant, game]);
+  }, [tenant, game, supabase]);
+
+  useEffect(() => {
+    if (!gameId) return;
+    const channel = supabase.channel(`game-${gameId}`, { config: { broadcast: { self: true } } });
+    channel.on('broadcast', { event: 'start_question' }, (payload) => {
+      const { idx, endsAt } = (payload as any).payload || {};
+      const q = (questions as any[]).find((x) => x.idx === idx);
+      if (q) setQuestion({ id: q.id, idx: q.idx, text: q.text, options: q.options });
+      setResult(null);
+    });
+    channel.on('broadcast', { event: 'end_question' }, () => {
+      // lock answering on end
+      setAnswering(false);
+    });
+    channel.subscribe();
+    return () => {
+      channel.unsubscribe();
+    };
+  }, [gameId, supabase, questions]);
 
   const submitAnswer = async (selectedIndex: number) => {
     if (!email || !question) return;

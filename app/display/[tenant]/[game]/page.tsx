@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { Suspense } from 'react';
 import QRCode from 'qrcode';
 import { headers } from 'next/headers';
+import DisplayClient from './DisplayClient';
 
 type Props = { params: { tenant: string; game: string } };
 
@@ -26,6 +27,7 @@ export default async function DisplayPage({ params }: Props) {
       <Suspense>
         <small style={{ color: 'var(--muted)' }}>Modo TV vertical recomendado (1080x1920).</small>
       </Suspense>
+      <DisplayClient tenant={tenant} game={game} />
     </main>
   );
 }
