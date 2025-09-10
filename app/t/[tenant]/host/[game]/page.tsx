@@ -7,6 +7,8 @@ type Props = { params: { tenant: string; game: string } };
 export default function HostConsole({ params }: Props) {
   const { tenant, game } = params;
   const supabase = useMemo(() => getSupabaseClient(), []);
+  const [sessionReady, setSessionReady] = useState(false);
+  const [signedIn, setSignedIn] = useState(false);
   const [gameId, setGameId] = useState<string | null>(null);
   const [questions, setQuestions] = useState<Array<{ id: string; idx: number; text: string }>>([]);
   const [selectedIdx, setSelectedIdx] = useState<number>(1);
@@ -15,8 +17,26 @@ export default function HostConsole({ params }: Props) {
   const [playersOnline, setPlayersOnline] = useState<number>(0);
   const [status, setStatus] = useState<string>("");
 
+  // Check auth session
+  useEffect(() => {
+    let mounted = true;
+    (async () => {
+      const { data } = await supabase.auth.getSession();
+      if (mounted) {
+        setSignedIn(!!data.session);
+        setSessionReady(true);
+      }
+      const { data: sub } = supabase.auth.onAuthStateChange((_ev, sess) => {
+        setSignedIn(!!sess);
+      });
+      return () => sub.subscription.unsubscribe();
+    })();
+    return () => { mounted = false; };
+  }, [supabase]);
+
   // Resolve game id and load questions
   useEffect(() => {
+    if (!signedIn) return;
     const init = async () => {
       // tenant id
       const { data: t } = await supabase.from('tenants').select('id').eq('slug', tenant).maybeSingle();
@@ -38,7 +58,7 @@ export default function HostConsole({ params }: Props) {
       }
     };
     init();
-  }, [tenant, game, supabase]);
+  }, [tenant, game, supabase, signedIn]);
 
   // Join realtime channel with presence
   useEffect(() => {
@@ -108,11 +128,20 @@ export default function HostConsole({ params }: Props) {
   return (
     <main className="container" style={{ maxWidth: 720 }}>
       <h1>Host: {tenant}/{game}</h1>
+      {!sessionReady ? (
+        <p className="muted">Verificando sesión…</p>
+      ) : !signedIn ? (
+        <p><a className="btn btn-primary" href="/login">Ingresar</a></p>
+      ) : null}
+      {signedIn && (
       {!gameId ? (
         <p style={{ color: 'var(--muted)' }}>Cargando juego…</p>
       ) : (
         <>
           <p style={{ color: 'var(--muted)' }}>Canal: game-{gameId} · Online: {playersOnline}</p>
+          <div className="row" style={{ justifyContent: 'space-between' }}>
+            <a className="btn btn-ghost" href="#" onClick={async (e) => { e.preventDefault(); await supabase.auth.signOut(); }}>Salir</a>
+          </div>
           <div className="row" style={{ flexWrap: 'wrap' }}>
             <label className="row">
               <span className="label">Pregunta</span>
@@ -133,6 +162,7 @@ export default function HostConsole({ params }: Props) {
           </div>
           {status && <p className="muted" aria-live="polite">{status}</p>}
         </>
+      )}
       )}
     </main>
   );

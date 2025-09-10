@@ -166,6 +166,41 @@ $$;
 
 grant execute on function public.get_leaderboard(uuid, int) to anon;
 
+-- Auth: crear perfil al alta de usuario (magic link / OTP)
+create or replace function public.handle_new_user()
+returns trigger
+language plpgsql
+security definer
+set search_path = public
+as $$
+begin
+  insert into public.profiles (id, role, tenant_id, display_name)
+  values (new.id, 'host', null, coalesce(new.raw_user_meta_data->>'name', ''))
+  on conflict (id) do nothing;
+  return new;
+end;
+$$;
+
+drop trigger if exists on_auth_user_created on auth.users;
+create trigger on_auth_user_created
+  after insert on auth.users
+  for each row execute function public.handle_new_user();
+
+-- RLS para profiles: cada usuario ve su perfil
+create policy if not exists "profiles_self_select"
+on public.profiles
+for select
+to authenticated
+using (id = auth.uid());
+
+-- (Opcional) permitir actualizar display_name propio
+create policy if not exists "profiles_self_update_display_name"
+on public.profiles
+for update
+to authenticated
+using (id = auth.uid())
+with check (id = auth.uid());
+
 -- Themes: branding por tenant
 create table if not exists public.themes (
   id uuid primary key default gen_random_uuid(),

@@ -85,3 +85,10 @@ Notas sobre QR
 - Por defecto, el QR usa el host/protocolo de la request.
 - Si definís `NEXT_PUBLIC_BASE_URL`, el QR usará ese dominio fijo.
 - Si no hay `BASE_URL` y el host es `localhost`, intentamos reemplazar por tu IP LAN automáticamente. También podés fijarla con `NEXT_PUBLIC_LAN_IP`.
+SMTP / Auth (admins/hosts)
+-------------------------
+- Configurá SMTP en Supabase (Authentication → SMTP) para magic links/OTP.
+- SITE URL: definí la URL de tu app (local o prod) para que el enlace redirija correctamente.
+- Perfil: al crear un usuario, el trigger `handle_new_user` inserta en `public.profiles` con `role='host'`.
+- Login: `/login` (ingresa email, llega magic link).
+- Host protegido: `/t/{tenant}/host/{game}` requiere sesión activa.
