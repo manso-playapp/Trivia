@@ -132,9 +132,7 @@ export default function HostConsole({ params }: Props) {
         <p className="muted">Verificando sesión…</p>
       ) : !signedIn ? (
         <p><a className="btn btn-primary" href="/login">Ingresar</a></p>
-      ) : null}
-      {signedIn && (
-      {!gameId ? (
+      ) : !gameId ? (
         <p style={{ color: 'var(--muted)' }}>Cargando juego…</p>
       ) : (
         <>
@@ -162,7 +160,6 @@ export default function HostConsole({ params }: Props) {
           </div>
           {status && <p className="muted" aria-live="polite">{status}</p>}
         </>
-      )}
       )}
     </main>
   );
