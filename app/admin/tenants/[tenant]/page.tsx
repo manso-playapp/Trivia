@@ -66,6 +66,7 @@ export default function TenantAdmin({ params }: { params: { tenant: string } }) 
                   <a className="btn" href={`/display/${tenant}/${g.slug}`}>Display</a>
                   <a className="btn" href={`/play/${tenant}/${g.slug}`}>Play</a>
                   <a className="btn" href={`/t/${tenant}/host/${g.slug}`}>Host</a>
+                  <a className="btn" href={`/admin/tenants/${tenant}/games/${g.slug}/questions`}>Preguntas</a>
                 </div>
               </div>
               <div className="row" style={{ gap: 12, marginTop: 8, flexWrap: 'wrap' }}>
@@ -92,4 +93,3 @@ export default function TenantAdmin({ params }: { params: { tenant: string } }) 
     </main>
   );
 }
-
