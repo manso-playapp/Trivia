@@ -21,6 +21,7 @@ export default function PlaySlugPage({ params }: Props) {
   const [endsAt, setEndsAt] = useState<number | null>(null);
   const [remaining, setRemaining] = useState(0);
   const [appliedTheme, setAppliedTheme] = useState(false);
+  const [logoUrl, setLogoUrl] = useState<string | null>(null);
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -136,7 +137,7 @@ export default function PlaySlugPage({ params }: Props) {
         if (!g || !g.theme_id) return;
         const { data: theme } = await supabase
           .from('themes')
-          .select('css_vars')
+          .select('css_vars, logo_url')
           .eq('id', g.theme_id)
           .maybeSingle();
         const vars = (theme as any)?.css_vars || {};
@@ -144,6 +145,7 @@ export default function PlaySlugPage({ params }: Props) {
         Object.entries(vars).forEach(([k, v]) => {
           if (typeof v === 'string') root.style.setProperty(k, v);
         });
+        setLogoUrl((theme as any)?.logo_url || '/logo.svg');
         setAppliedTheme(true);
       } catch {}
     })();
@@ -176,7 +178,10 @@ export default function PlaySlugPage({ params }: Props) {
 
   return (
     <main className="container">
-      <h1>Unite a: {tenant}/{game}</h1>
+      <div className="row" style={{ gap: 16, alignItems: 'center' }}>
+        <img src={logoUrl || '/logo.svg'} alt="Logo" height={36} style={{ objectFit: 'contain' }} />
+        <h1 style={{ margin: 0 }}>Unite a: {tenant}/{game}</h1>
+      </div>
       {!registered ? (
         <form onSubmit={onSubmit} className="card" style={{ maxWidth: 420 }}>
           <div className="stack">

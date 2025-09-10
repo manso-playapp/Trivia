@@ -18,11 +18,15 @@ export default async function DisplayPage({ params }: Props) {
   const qrDataUrl = await QRCode.toDataURL(playUrl, { width: 1024, margin: 1, color: { dark: '#000000', light: '#FFFFFFFF' } });
   const theme = await getThemeForGame(tenant, game);
   const style = cssVarsToStyleTag(theme.css_vars || undefined);
+  const logoSrc = theme.logo_url || '/logo.svg';
 
   return (
     <main className="container" style={{ textAlign: 'center' }}>
       <ThemeStyle css={style} />
-      <h1>Trivia en {tenant}</h1>
+      <div className="row" style={{ justifyContent: 'center', gap: 16 }}>
+        <img src={logoSrc} alt="Logo" height={42} style={{ objectFit: 'contain' }} />
+        <h1 style={{ margin: 0 }}>Trivia en {tenant}</h1>
+      </div>
       <p>Escaneá el QR para jugar desde tu celular.</p>
       <img src={qrDataUrl} alt={`QR para ${playUrl}`} width={280} height={280} style={{ borderRadius: 12 }} />
       <p>
