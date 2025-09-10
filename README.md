@@ -23,9 +23,10 @@ Pasos de Setup (local)
 3) Ejecutar en desarrollo
    - `npm run dev` y abrir http://localhost:3000
 - Páginas:
-- Display: `/display/demo/demo-game` (QR + estado en vivo)
+  - Display: `/display/demo/demo-game` (QR + estado en vivo)
   - Móvil: `/play/{tenantSlug}/{gameSlug}` (registro cliente + respuestas)
   - Host: `/t/{tenantSlug}/host/{gameSlug}` (Start/End vía Realtime)
+  - Super Admin: `/admin` (gestión tenants) y `/admin/tenants/{tenantSlug}` (juegos)
 
 4) Supabase (inicial)
    - Crear proyecto en Supabase y configurar Auth/Storage luego.
@@ -92,3 +93,11 @@ SMTP / Auth (admins/hosts)
 - Perfil: al crear un usuario, el trigger `handle_new_user` inserta en `public.profiles` con `role='host'`.
 - Login: `/login` (ingresa email, llega magic link).
 - Host protegido: `/t/{tenant}/host/{game}` requiere sesión activa.
+
+Promover usuario a super_admin (SQL)
+-----------------------------------
+Tras iniciar sesión por magic link, obtené tu `auth.uid()` y promovelo:
+```sql
+update public.profiles set role = 'super_admin' where id = auth.uid();
+```
+Luego recargá `/admin`.

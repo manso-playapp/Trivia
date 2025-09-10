@@ -166,6 +166,41 @@ $$;
 
 grant execute on function public.get_leaderboard(uuid, int) to anon;
 
+-- Helper: verificar si el usuario autenticado es super_admin
+create or replace function public.is_super_admin()
+returns boolean
+language sql
+stable
+security definer
+set search_path = public
+as $$
+  exists (
+    select 1 from public.profiles p
+    where p.id = auth.uid() and p.role = 'super_admin'
+  )
+$$;
+
+-- Políticas de super_admin (full access) para entidades core
+do $$
+begin
+  -- tenants
+  if not exists (select 1 from pg_policies where schemaname='public' and tablename='tenants' and policyname='tenants_super_admin_all') then
+    create policy "tenants_super_admin_all" on public.tenants for all to authenticated using (public.is_super_admin()) with check (public.is_super_admin());
+  end if;
+  -- games
+  if not exists (select 1 from pg_policies where schemaname='public' and tablename='games' and policyname='games_super_admin_all') then
+    create policy "games_super_admin_all" on public.games for all to authenticated using (public.is_super_admin()) with check (public.is_super_admin());
+  end if;
+  -- questions
+  if not exists (select 1 from pg_policies where schemaname='public' and tablename='questions' and policyname='questions_super_admin_all') then
+    create policy "questions_super_admin_all" on public.questions for all to authenticated using (public.is_super_admin()) with check (public.is_super_admin());
+  end if;
+  -- themes
+  if not exists (select 1 from pg_policies where schemaname='public' and tablename='themes' and policyname='themes_super_admin_all') then
+    create policy "themes_super_admin_all" on public.themes for all to authenticated using (public.is_super_admin()) with check (public.is_super_admin());
+  end if;
+end $$;
+
 -- Auth: crear perfil al alta de usuario (magic link / OTP)
 create or replace function public.handle_new_user()
 returns trigger
