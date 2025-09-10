@@ -13,6 +13,7 @@ Pasos de Setup (local)
      - `SUPABASE_SERVICE_ROLE_KEY=` (solo en servidor / Vercel, no exponer en cliente)
      - `HOST_ADMIN_SECRET=` (opcional; si se define, protege `/api/host/state`)
      - `NEXT_PUBLIC_BASE_URL=` (opcional; fuerza el dominio del QR, ej: `https://tudominio.com`)
+     - `NEXT_PUBLIC_LAN_IP=` (opcional; tu IP LAN, para que el QR reemplace `localhost` por tu IP en desarrollo)
 
 2) Dependencias
    - Instalación (requiere red):
@@ -22,7 +23,7 @@ Pasos de Setup (local)
 3) Ejecutar en desarrollo
    - `npm run dev` y abrir http://localhost:3000
 - Páginas:
-  - Display: `/display/demo/demo-game` (QR + estado en vivo)
+- Display: `/display/demo/demo-game` (QR + estado en vivo)
   - Móvil: `/play/{tenantSlug}/{gameSlug}` (registro cliente + respuestas)
   - Host: `/t/{tenantSlug}/host/{gameSlug}` (Start/End vía Realtime)
 
@@ -79,3 +80,8 @@ Siguientes pasos
 2. Ranking en vivo desde `submissions`.
 3. Roles admin/host (profiles) y RLS por tenant/rol.
 4. Emails de ganadores (Edge Function + logs).
+Notas sobre QR
+--------------
+- Por defecto, el QR usa el host/protocolo de la request.
+- Si definís `NEXT_PUBLIC_BASE_URL`, el QR usará ese dominio fijo.
+- Si no hay `BASE_URL` y el host es `localhost`, intentamos reemplazar por tu IP LAN automáticamente. También podés fijarla con `NEXT_PUBLIC_LAN_IP`.
