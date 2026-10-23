@@ -14,7 +14,7 @@ export function Attract({ onStart, onOperator, layout }: { onStart: () => void; 
 
   const logo = (
     <div className="attract__sign" onClick={(e) => e.stopPropagation()}>
-      <BrandBadge onLongPress={onOperator} size={70} light={variant === 'b'} />
+      <BrandBadge onLongPress={onOperator} size={variant === 'a' ? 130 : 90} light={variant === 'b'} />
     </div>
   );
   const cta = (
@@ -55,8 +55,11 @@ export function Attract({ onStart, onOperator, layout }: { onStart: () => void; 
         )}
         {logo}
       </div>
-      {titles}
-      {cta}
+      {/* Título y botón forman un solo bloque, abajo, en la zona del pulgar */}
+      <div className="attract__bottom">
+        {titles}
+        {cta}
+      </div>
     </div>
   );
 }

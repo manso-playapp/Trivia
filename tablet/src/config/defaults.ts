@@ -22,7 +22,7 @@ export const defaultConfig: GameConfig = {
     hero: '',
     heroAlt: '',
     attractLayout: 'a',
-    attractSubtitle: '5 preguntas · 15 segundos cada una',
+    attractSubtitle: '',
     brandName: 'Playapp',
     slogan: '',
   },
