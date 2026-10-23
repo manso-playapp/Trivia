@@ -1,6 +1,9 @@
 # Plan: Trivia Playapp con animaciones y APK Android
 
 Documento de diagnóstico y plan. **No se cambió código.** Fecha: 23/10/2026.
+Actualizado el mismo día con las primeras respuestas de Facundo (P1 y P2) y el pedido de animaciones de marca.
+
+> **Cliente:** Feller (vende pollitos ponedores; no vende huevos). En este documento solo figura el nombre. Logos, manual, preguntas y datos de jugadores **no se suben al repo**.
 
 ---
 
@@ -17,7 +20,8 @@ Documento de diagnóstico y plan. **No se cambió código.** Fecha: 23/10/2026.
 | **Recomendación animaciones** | Framer Motion (transiciones) + CSS (cuenta regresiva) + confeti liviano; Lottie solo para piezas de marca. |
 | **Recomendación APK** | Capacitor: la misma web empaquetada como app, funcionando **sin internet**. |
 | **Primera entrega propuesta** | Un link web con la trivia jugable y animada (preguntas y colores de prueba) para probar en el celular. |
-| **Qué necesito de Facundo** | Responder las 6 preguntas (sección 6), la planilla de preguntas y el manual de marca (sección 7). |
+| **Ya decidido** | Una tablet, una persona por vez (P1). Formulario con nombre, mail y teléfono, **todos opcionales**, con autocompletado del mail (P2). Pollito de Feller animado en: cuenta 3-2-1, acierto y final (gana / pierde). |
+| **Qué necesito de Facundo** | Responder lo que falta (P3 a P6 y fecha, sección 9), la trivia de referencia, el manual de Feller, el pollito ilustrado y las preguntas (sección 10). |
 
 ---
 
@@ -36,7 +40,7 @@ Documento de diagnóstico y plan. **No se cambió código.** Fecha: 23/10/2026.
 - Historial: 6 commits de Javier del 28/05/2026. Hay una prueba automática de ejemplo (`1+1=2`), nada que pruebe el juego.
 
 ### 1.2 Cómo funciona el juego hoy
-Es un juego **multijugador en vivo con presentador**: la TV muestra un QR, la gente se registra en su celular, el presentador lanza cada pregunta, todos responden a la vez y el ranking se actualiza en la TV. El puntaje es: puntos base + bonus por responder rápido. Esto **no es** lo mismo que "una tablet donde juega una persona por vez", que es lo que suele implicar un APK de evento (ver pregunta 1 de la sección 6).
+Es un juego **multijugador en vivo con presentador**: la TV muestra un QR, la gente se registra en su celular, el presentador lanza cada pregunta, todos responden a la vez y el ranking se actualiza en la TV. El puntaje es: puntos base + bonus por responder rápido. Esto **no es** lo mismo que "una tablet donde juega una persona por vez", que es lo que suele implicar un APK de evento (ya respondido: tablet, una persona por vez).
 
 ### 1.3 Dónde se publica, base de datos y panel
 - **Vercel** (cuenta del estudio): hay dos proyectos.
@@ -142,7 +146,7 @@ Hoy el repo tiene la mitad de esto (colores en un JSON, logo y fondo), pero sin 
 
 ## 4. Plan de trabajo por etapas
 
-Cada etapa termina con algo que Facundo puede **abrir y probar**. Los plazos son estimados para una persona y dependen de las respuestas de la sección 6.
+Cada etapa termina con algo que Facundo puede **abrir y probar**. Los plazos son estimados para una persona y dependen de las respuestas de la sección 9.
 
 | # | Entrega | Qué puede probar Facundo | Estimado |
 |---|---|---|---|
@@ -164,8 +168,13 @@ Cada etapa termina con algo que Facundo puede **abrir y probar**. Los plazos son
 - **Accesos**: no encontré el proyecto Supabase de esta trivia ni sé qué código corre en `trivia-evento`. Hay que pedirle a Javier.
 - **Descargas desde la nube**: el servidor de Maven rechazó pedidos una vez; si se repite, el APK se puede generar en otro momento o en la compu de Facundo.
 
+**Ajustes por lo que pidió Facundo:**
+- Etapa 1 se arma con un **pollito provisorio** (dibujo simple) para probar ritmo y momentos de las animaciones; en la etapa 2 se reemplaza por el pollito oficial de Feller.
+- Las animaciones de marca del pollito (sección 7) se suman a la etapa 2; si las produce el equipo audiovisual, conviene que arranquen en paralelo apenas haya ilustración.
+- El formulario opcional con autocompletado (sección 8) va en la etapa 4.
+
 ### Decisiones que necesita de Facundo
-Las 6 preguntas de la sección 6, más: fecha del evento (define si todo entra) y quién habla con Javier por los accesos (Vercel `trivia-evento`, Supabase).
+Lo que falta de la sección 9 (P3 a P6 y fecha del evento), y quién habla con Javier por los accesos (Vercel `trivia-evento`, Supabase).
 
 ---
 
@@ -177,28 +186,115 @@ Las 6 preguntas de la sección 6, más: fecha del evento (define si todo entra) 
 
 ---
 
-## 6. Preguntas imprescindibles para Facundo
+## 6. Pantallas y flujo (una persona por tablet)
 
-Cada una trae una respuesta sugerida: si está de acuerdo, alcanza con un "sí".
+Confirmado por Facundo: **una tablet, una persona por vez**. El recorrido de cada jugador:
 
-1. **¿Dónde y cómo se juega?**
-   *Sugerencia:* en 1-2 tablets propias en un stand (modo kiosco), **una persona por vez**. Más adelante, opcional, el mismo juego por QR en el celular de la gente.
-2. **¿Cómo funciona el ranking y qué datos se piden?**
-   *Sugerencia:* ranking **del día**, por puntaje (aciertos + rapidez). Al final se pide nombre (obligatorio) y email o teléfono (opcional, con casilla de consentimiento). Top 10 en pantalla; descarga en planilla desde el panel.
-3. **¿Cuántas preguntas y de qué tipo?**
-   *Sugerencia:* banco de **30 a 50 preguntas**; cada partida toma **10 al azar**. Opción múltiple de 4 opciones (y algunas verdadero/falso). Texto, con imagen opcional.
-4. **¿Tiempos?**
-   *Sugerencia:* **15 segundos por pregunta**, partida de 2-3 minutos, más puntos cuanto más rápido. Después de cada respuesta se muestra la correcta 2 segundos.
-5. **¿Tiene que funcionar sin internet?**
-   *Sugerencia:* **sí**, sin internet; los datos se suben solos cuando haya conexión. El ranking compartido entre tablets queda para una versión con internet.
-6. **¿Idioma y premios?**
-   *Sugerencia:* **solo español**. Premio al mejor puntaje del día (lo entrega el stand); el juego solo muestra el ranking, no maneja premios.
+| # | Pantalla | Qué pasa | Pollito |
+|---|---|---|---|
+| 0 | **Espera / atracción** | Logo de Feller, fondo en movimiento lento, "Tocá para jugar". Es lo que se ve cuando nadie juega. | Pollito quieto que respira, parpadea y mira a los costados. |
+| 1 | **Tus datos (opcional)** | Nombre, mail y teléfono, todos opcionales (sección 8). Dos botones: "Jugar" y "Jugar sin dejar datos". | Pollito chico en una esquina. |
+| 2 | **Cuenta regresiva 3-2-1** | Números grandes, uno por segundo, y "¡A jugar!". | El pollito acompaña cada número (salta o sostiene el cartel). |
+| 3 | **Pregunta** (se repite) | Número de pregunta, texto, 4 opciones (o Verdadero/Falso) y reloj que se vacía. | Pollito chico mirando el reloj (sin distraer). |
+| 4 | **Respuesta** (1,5-2 s) | Correcta: se pinta de verde + animación de marca. Incorrecta: se marca la correcta, tono amable. Sin respuesta a tiempo: "¡Se acabó el tiempo!". | Acierto: pollitos cruzando la pantalla o festejo. Error: pollito ladea la cabeza ("¡Casi!"). |
+| 5 | **Resultado final** | Puntaje y aciertos. Si "gana" (umbral configurable, ver P6): festejo. Si no: animación distinta, amable. | Gana: gran festejo. Pierde: saludo o abrazo "¡Buen intento!". |
+| 6 | **Ranking del día** | Top 10 con nombre (si lo dejó; si no, "Jugador/a"). Se resalta la partida recién jugada. | — |
+| 7 | **Vuelta al inicio** | Botón "Jugar de nuevo" y regreso automático a la pantalla 0 a los 15 s. | — |
+
+Reglas de seguridad para el stand:
+- Si nadie toca la tablet durante **30 segundos** en cualquier pantalla, vuelve sola al inicio (así nadie deja datos a la vista del siguiente).
+- **Menú del operador oculto**: mantener apretado el logo 5 segundos + PIN. Desde ahí: ver cantidad de partidas, forzar envío de datos, borrar el ranking del día, activar o silenciar sonido.
+- La tablet se deja "fijada" en la app (función de Android, sin programar nada).
 
 ---
 
-## 7. Qué necesito para empezar
+## 7. Animaciones del pollito (marca Feller)
 
-### 7.1 Preguntas: planilla propuesta
+### 7.1 Qué se anima en cada momento
+| Momento | Animación propuesta | Duración |
+|---|---|---|
+| Espera | Pollito "vivo": respira, parpadea, mira a los lados; cada tanto da un saltito. | En bucle |
+| **3-2-1** (pedido) | El pollito salta en cada número o da vuelta un cartel con el número; en "¡A jugar!" abre las alas. | 3-4 s |
+| **Acierto** (pedido) | Dos variantes que se alternan para que no aburra: (a) una fila de 3 a 5 pollitos cruza caminando por abajo de la pantalla; (b) el pollito salta y festeja con confeti en colores de Feller. | 1,5-2 s |
+| Error | Pollito ladea la cabeza, gesto de "¡casi!". Nunca burlón. | 1 s |
+| **Final gana** (pedido) | Gran festejo: pollito salta con alas arriba + confeti. *(Idea a validar con la marca: aparece un huevo dorado como "trofeo", porque el pollito de Feller es el que después pone huevos.)* | 3 s |
+| **Final pierde** (pedido) | Animación distinta y amable: pollito saluda o "abraza" la pantalla, texto "¡Buen intento! Probá otra vez". | 2-3 s |
+
+### 7.2 Cómo hacerlas livianas en Android
+| Técnica | Qué es | A favor | En contra | Uso recomendado |
+|---|---|---|---|---|
+| **SVG animado por partes** | El pollito dibujado en vector con las partes separadas (cuerpo, alas, patas, ojos) y animado desde el código. | El más liviano (decenas de KB), nítido en cualquier tamaño, los colores se pueden cambiar. | Movimientos simples (saltos, aleteo, parpadeo, caminata básica). | **Pollito base**: espera, 3-2-1, error, caminata de acierto. |
+| **Lottie** | Animación hecha en After Effects y exportada a un archivo que la app reproduce. | Calidad de animación profesional; la puede hacer el equipo de Experiencias Audiovisuales. | Hay que exportarla con cuidado (sin efectos pesados); algo más de peso. | **Piezas especiales**: festejo de acierto y finales gana / pierde. |
+| **Sprites** (secuencia de cuadros) | Varias imágenes PNG/WebP del pollito en distintas posiciones, pasadas rápido como dibujo animado. | Funciona aunque solo tengamos dibujos en PNG. | Pesa más y se ve pixelado si se agranda. | **Plan B** si no hay vector. |
+| Canvas / motor de juegos | Dibujar todo cuadro por cuadro con un motor de juegos. | Máxima libertad. | Excesivo para esto, más lento de hacer. | No se usa. |
+
+Reglas para que vaya fluido en una tablet de gama media:
+- Una sola animación "pesada" a la vez (por ejemplo, no confeti + caminata + Lottie juntos).
+- Cada archivo Lottie por debajo de ~300 KB; imágenes en WebP.
+- Todo se carga al abrir la app (y queda dentro del APK), así no hay esperas ni hace falta internet.
+- "Modo liviano" automático en equipos lentos: menos partículas, se mantiene el pollito.
+- **Prueba obligatoria en la tablet real del evento** antes de cerrar.
+
+### 7.3 Qué necesito del diseño
+- **Ilustración oficial del pollito**, si existe en el manual de Feller: en vector (AI, SVG o PDF editable), **con las partes en capas separadas**: cabeza, cuerpo, ala izquierda, ala derecha, patas, ojos abiertos y cerrados, pico.
+- **Poses** (si se dibujan aparte): parado, saltando, festejando con alas arriba, caminando (2 a 4 posiciones de patas), cabeza ladeada, saludando, sosteniendo un cartel.
+- **Si no hay pollito oficial**, opciones en orden de preferencia:
+  1. Lo dibuja **Mariano Bordon** siguiendo el manual de Feller, en capas, y **Feller lo aprueba** (crear una mascota es una decisión de marca).
+  2. El equipo audiovisual lo anima en After Effects a partir de ese dibujo (para los Lottie).
+  3. Último recurso: ilustración de banco de imágenes con licencia, adaptada a los colores de la marca, con aprobación del cliente.
+- Mientras tanto, el prototipo usa un pollito provisorio.
+
+---
+
+## 8. Formulario opcional y datos de los jugadores
+
+### 8.1 Cómo se ve y funciona
+- Tres campos, todos con la etiqueta "(opcional)": **Nombre**, **Mail**, **Teléfono**. Se puede jugar sin completar nada.
+- Campos y botones grandes, pensados para el dedo, y que el teclado de la tablet no los tape.
+- **Nombre**: hasta 30 letras. Es el que aparece en el ranking. Filtro básico de palabras ofensivas.
+- **Mail con autocompletado** (pedido por Facundo):
+  - Mientras se escribe la primera parte (por ejemplo, "juan"), aparecen botones con sugerencias completas: `juan@gmail.com`, `juan@hotmail.com`, `juan@outlook.com`, `juan@yahoo.com`. Un toque y queda escrito.
+  - Al escribir la "@", aparecen los 4 dominios; si sigue escribiendo ("@ho"), queda solo el que coincide (hotmail.com).
+  - Corrección de errores comunes: si escribe "gmial.com" o "hotmial.com", pregunta "¿Quisiste decir gmail.com?".
+  - Se abre el teclado especial de mail (con la "@" a mano).
+  - Si el mail quedó mal escrito, se avisa con suavidad y se puede corregir o dejar vacío; nunca impide jugar.
+- **Teléfono**: teclado numérico, con ejemplo "Ej.: 351 555 1234". Solo se revisa que tenga una cantidad razonable de números.
+
+### 8.2 Aviso y permiso (datos personales de terceros)
+- Si deja **mail o teléfono**, aparece una casilla **sin tildar**: "Acepto que Feller me contacte con novedades y promociones. Ver aviso de privacidad." Si no la tilda, juega igual pero **no se guardan** su mail ni su teléfono.
+- Debajo, un aviso de una línea: quién guarda los datos (Feller), para qué, cómo pedir que se borren; con un QR o link al texto completo.
+- El texto final lo tiene que **aprobar Feller** (o su asesor legal). Se piden datos personales en Argentina (Ley 25.326 de protección de datos), así que conviene que Feller confirme si ya tiene registrada su base de contactos y su política de privacidad. **Esto no es asesoramiento legal**, es lo que hay que revisar.
+
+### 8.3 Dónde se guardan y qué se hace con ellos
+1. **En la tablet**, dentro de la app, apenas termina la partida (funciona sin internet).
+2. Cuando hay conexión, **se envían solos** a la base de datos del estudio (Supabase), y se borran de la tablet una vez confirmados.
+3. Solo se ven desde el **panel de administración, con usuario y contraseña**. Desde ahí se descarga la planilla (Excel/CSV) para entregarle a Feller.
+4. En pantalla nunca se muestran mails ni teléfonos: el ranking muestra solo el nombre.
+5. Se guardan hasta el fin de la campaña (o el plazo que defina Feller) y luego se borran. Se puede borrar a una persona puntual si lo pide.
+6. **Nada de esto va al repo**: ni datos de jugadores, ni planillas exportadas.
+
+---
+
+## 9. Preguntas para Facundo
+
+**Ya respondidas:**
+1. ✅ **Dónde se juega:** en una tablet, una persona por vez.
+2. ✅ **Datos y ranking:** nombre, mail y teléfono, los tres opcionales; mail con autocompletado de dominios comunes.
+
+**Faltan (cada una con sugerencia para un "sí"):**
+3. **Preguntas:** banco de 30 a 50, salen 10 al azar por partida, con 4 opciones o verdadero/falso. ¿Sí?
+4. **Tiempos:** 15 segundos por pregunta, más puntos cuanto más rápido. ¿Sí?
+5. **Internet:** funciona sin internet y sube los datos solo cuando hay conexión. ¿Sí?
+6. **Idioma, ganar y premio:** solo español; "gana" quien acierta 7 de 10 o más (se cambia desde el panel); el premio lo entrega el stand. ¿Sí?
+7. **Fecha y equipo:** ¿qué día es el evento y en qué tablet (marca/modelo) se juega? Sugerencia: si todavía no hay tablet, usar una de gama media de 10 pulgadas, del año 2023 o más nueva.
+
+---
+
+## 10. Qué necesito para empezar
+
+**Orden de envío por Drive:** (1) la trivia de referencia que hizo Facundo, (2) el manual de marca de Feller con logos, colores y tipografías, (3) el pollito ilustrado (sección 7.3), (4) las preguntas en la planilla de abajo.
+
+### 10.1 Preguntas: planilla propuesta
 Google Sheets o Excel, una fila por pregunta. **Primera fila = estos títulos:**
 
 | id | pregunta | opcion_a | opcion_b | opcion_c | opcion_d | correcta | tipo | tiempo_seg | imagen | explicacion | activa |
@@ -214,15 +310,15 @@ Google Sheets o Excel, una fila por pregunta. **Primera fila = estos títulos:**
 - Imágenes: en una carpeta aparte con el mismo nombre de archivo que figura en la planilla.
 - *(Los ejemplos de arriba son inventados.)*
 
-### 7.2 Manual de marca
+### 10.2 Manual de marca
 - El **PDF del manual**.
 - **Logos** en SVG (o PNG con fondo transparente, mínimo 2000 px): versión color, blanca y negra.
 - **Colores** en código HEX (si el manual los tiene, alcanza).
 - **Tipografías**: los archivos (.ttf/.otf/.woff2) **y confirmar que la licencia permite usarlas en una app**. Si no, elegimos una gratuita parecida.
 - Opcional: fondos, íconos, mascota, video/animación de marca, sonido o jingle, bases y condiciones del concurso.
 
-### 7.3 Cómo enviarlo
+### 10.3 Cómo enviarlo
 Por una **carpeta de Drive** compartida (no al repo). En el repo solo quedan ejemplos inventados, salvo que Facundo autorice otra cosa.
 
-### 7.4 Accesos
+### 10.4 Accesos
 - Que Javier confirme dónde está el proyecto de **Supabase** de esta trivia (o creamos uno nuevo en la cuenta del estudio) y qué código corre en **`trivia-evento`** de Vercel.
