@@ -20,8 +20,8 @@ Actualizado el mismo día con las primeras respuestas de Facundo (P1 y P2) y el 
 | **Recomendación animaciones** | Framer Motion (transiciones) + CSS (cuenta regresiva) + confeti liviano; Lottie solo para piezas de marca. |
 | **Recomendación APK** | Capacitor: la misma web empaquetada como app, funcionando **sin internet**. |
 | **Primera entrega propuesta** | Un link web con la trivia jugable y animada (preguntas y colores de prueba) para probar en el celular. |
-| **Ya decidido** | Una tablet, una persona por vez (P1). Formulario con nombre, mail y teléfono, **todos opcionales**, con autocompletado del mail (P2). Pollito de Feller animado en: cuenta 3-2-1, acierto y final (gana / pierde). |
-| **Qué necesito de Facundo** | Responder lo que falta (P3 a P6 y fecha, sección 9), la trivia de referencia, el manual de Feller, el pollito ilustrado y las preguntas (sección 10). |
+| **Ya decidido** | Una tablet **Samsung Galaxy Tab A9**, una persona por vez. **5 preguntas** al azar por jugador, **3 opciones**, **15 segundos**. Formulario con nombre, mail y teléfono, **todos opcionales**, con autocompletado del mail. Animaciones con el **pollito y huevos**: cuenta 3-2-1, acierto (lluvia de huevos), error (huevo que se rompe), final gana / pierde. |
+| **Qué necesito de Facundo** | Responder lo que falta (P5, P6 y fecha, sección 9); pollito y huevos ilustrados, licencia de tipografías, logo en vector y preguntas validadas por Feller (sección 7.4). |
 
 ---
 
@@ -174,7 +174,7 @@ Cada etapa termina con algo que Facundo puede **abrir y probar**. Los plazos son
 - El formulario opcional con autocompletado (sección 8) va en la etapa 4.
 
 ### Decisiones que necesita de Facundo
-Lo que falta de la sección 9 (P3 a P6 y fecha del evento), y quién habla con Javier por los accesos (Vercel `trivia-evento`, Supabase).
+Lo que falta de la sección 9 (P5, P6 y fecha del evento), y quién habla con Javier por los accesos (Vercel `trivia-evento`, Supabase).
 
 ---
 
@@ -188,16 +188,16 @@ Lo que falta de la sección 9 (P3 a P6 y fecha del evento), y quién habla con J
 
 ## 6. Pantallas y flujo (una persona por tablet)
 
-Confirmado por Facundo: **una tablet, una persona por vez**. El recorrido de cada jugador:
+Confirmado por Facundo: **una tablet (Samsung Galaxy Tab A9), una persona por vez, 5 preguntas por jugador, 15 segundos por pregunta, 3 opciones** (algunas de Verdadero/Falso). Las 5 preguntas salen **al azar** de un banco más grande (la trivia de referencia trae 20), sin repetir dentro de la partida. El recorrido de cada jugador:
 
-| # | Pantalla | Qué pasa | Pollito |
+| # | Pantalla | Qué pasa | Pollito y huevos |
 |---|---|---|---|
 | 0 | **Espera / atracción** | Logo de Feller, fondo en movimiento lento, "Tocá para jugar". Es lo que se ve cuando nadie juega. | Pollito quieto que respira, parpadea y mira a los costados. |
 | 1 | **Tus datos (opcional)** | Nombre, mail y teléfono, todos opcionales (sección 8). Dos botones: "Jugar" y "Jugar sin dejar datos". | Pollito chico en una esquina. |
 | 2 | **Cuenta regresiva 3-2-1** | Números grandes, uno por segundo, y "¡A jugar!". | El pollito acompaña cada número (salta o sostiene el cartel). |
-| 3 | **Pregunta** (se repite) | Número de pregunta, texto, 4 opciones (o Verdadero/Falso) y reloj que se vacía. | Pollito chico mirando el reloj (sin distraer). |
-| 4 | **Respuesta** (1,5-2 s) | Correcta: se pinta de verde + animación de marca. Incorrecta: se marca la correcta, tono amable. Sin respuesta a tiempo: "¡Se acabó el tiempo!". | Acierto: pollitos cruzando la pantalla o festejo. Error: pollito ladea la cabeza ("¡Casi!"). |
-| 5 | **Resultado final** | Puntaje y aciertos. Si "gana" (umbral configurable, ver P6): festejo. Si no: animación distinta, amable. | Gana: gran festejo. Pierde: saludo o abrazo "¡Buen intento!". |
+| 3 | **Pregunta** (×5) | "Pregunta 2 de 5", texto, **3 opciones** (o Verdadero/Falso) y reloj de **15 s** que se vacía. | Pollito chico mirando el reloj (sin distraer). |
+| 4 | **Respuesta** (1,5-2 s) | Correcta: se pinta + animación de acierto. Incorrecta: la elegida queda marcada, se ilumina la correcta, tono amable. Sin respuesta a tiempo: "¡Se acabó el tiempo!". | Acierto: lluvia de huevos + pollitos que cruzan. Error: un huevo se rompe (ver 7.1). |
+| 5 | **Resultado final** | Puntaje y aciertos ("4 de 5"). Si "gana" (umbral a definir, ver P6): festejo. Si no: animación distinta, amable. | Gana: pantalla llena de huevos y pollitos festejando. Pierde: pollito amable "¡Buen intento!". |
 | 6 | **Ranking del día** | Top 10 con nombre (si lo dejó; si no, "Jugador/a"). Se resalta la partida recién jugada. | — |
 | 7 | **Vuelta al inicio** | Botón "Jugar de nuevo" y regreso automático a la pantalla 0 a los 15 s. | — |
 
@@ -206,19 +206,34 @@ Reglas de seguridad para el stand:
 - **Menú del operador oculto**: mantener apretado el logo 5 segundos + PIN. Desde ahí: ver cantidad de partidas, forzar envío de datos, borrar el ranking del día, activar o silenciar sonido.
 - La tablet se deja "fijada" en la app (función de Android, sin programar nada).
 
+### 6.1 Estilo tomado del video de referencia ("Trivia Nexo")
+Lo miré (cuadros sueltos del video, 1 min 44 s, formato vertical). Es una trivia anterior para otra marca. Vale la pena copiar:
+- **Pantalla vertical**, fondo del color principal de la marca con una **trama grande y suave del logo** (rombos/formas del isotipo en un tono más claro).
+- **Tarjeta blanca** con la pregunta en una franja del color de la marca y el **isotipo en un círculo** "colgado" arriba de la tarjeta.
+- **Opciones como botones con borde** y la letra en un circulito (A, B, C); la elegida se rellena con el color de la marca.
+- Debajo de la tarjeta, un **ícono grande de ✓ (verde) o ✗ (rojo)** como devolución inmediata.
+- **Formulario** "Antes de comenzar, ¡registrate!" con botones rápidos de dominio de mail al costado del campo (Outlook/Gmail): coincide con el autocompletado que pidió Facundo.
+- **Pregunta rompehielo** al inicio ("¿Ya conocías la marca?", con Sí/No y emojis): idea opcional para Feller.
+- **Final**: puntaje grande dentro de un círculo con estrellas, botón "Canjear premio" y una pantalla de "Felicitaciones" con fuegos artificiales en colores de la marca; cierre con "Trivia + logo".
+
+Qué mejorar respecto de esa referencia: allí casi no hay movimiento (cambios de pantalla directos). En Feller se suman el pollito, los huevos, la cuenta regresiva y transiciones suaves. Ojo con el contraste: en Feller el ✓ no puede ser rojo, porque el rojo es el color de la marca; el acierto va en verde o en blanco sobre rojo, y el error en gris (a definir con diseño).
+
 ---
 
-## 7. Animaciones del pollito (marca Feller)
+## 7. Animaciones del pollito y los huevos (marca Feller)
 
-### 7.1 Qué se anima en cada momento
-| Momento | Animación propuesta | Duración |
-|---|---|---|
-| Espera | Pollito "vivo": respira, parpadea, mira a los lados; cada tanto da un saltito. | En bucle |
-| **3-2-1** (pedido) | El pollito salta en cada número o da vuelta un cartel con el número; en "¡A jugar!" abre las alas. | 3-4 s |
-| **Acierto** (pedido) | Dos variantes que se alternan para que no aburra: (a) una fila de 3 a 5 pollitos cruza caminando por abajo de la pantalla; (b) el pollito salta y festeja con confeti en colores de Feller. | 1,5-2 s |
-| Error | Pollito ladea la cabeza, gesto de "¡casi!". Nunca burlón. | 1 s |
-| **Final gana** (pedido) | Gran festejo: pollito salta con alas arriba + confeti. *(Idea a validar con la marca: aparece un huevo dorado como "trofeo", porque el pollito de Feller es el que después pone huevos.)* | 3 s |
-| **Final pierde** (pedido) | Animación distinta y amable: pollito saluda o "abraza" la pantalla, texto "¡Buen intento! Probá otra vez". | 2-3 s |
+### 7.1 Catálogo de animaciones
+Combina lo que pidió Facundo: el **pollito** como personaje y los **huevos** de su trivia de referencia ("que se llene la pantalla de huevos", "que se rompa un huevo"). Feller vende pollitos ponedores (no huevos): el relato es "el pollito de Feller es el que después pone huevos", así que ambos conviven bien.
+
+| Momento | Animación propuesta | Duración | Técnica |
+|---|---|---|---|
+| Espera | Pollito "vivo": respira, parpadea, mira a los lados; cada tanto da un saltito. Algún huevo rueda suave por el fondo. | En bucle | SVG por partes |
+| **3-2-1** | Un huevo grande en el centro: en el 3 tiembla, en el 2 se raja, en el 1 se abre y **sale el pollito** gritando "¡A jugar!". | 3-4 s | Lottie (o SVG por partes) |
+| **Acierto** | **Lluvia de huevos** cayendo desde arriba + 3 a 5 pollitos que **cruzan caminando** por abajo. Variante alternada: los huevos "explotan" en confeti de colores de la marca. | 1,5-2 s | Huevos: imágenes livianas movidas por código. Pollitos: SVG por partes. |
+| **Error** | **Un huevo cae y se rompe** en el centro; de la cáscara asoma el pollito **sorprendido** (no triste ni burlón) y dice "¡Casi!". | 1-1,5 s | Lottie o secuencia de cuadros |
+| Sin tiempo | El reloj suena, el pollito se tapa los ojos con las alas. | 1 s | SVG por partes |
+| **Final gana** | **La pantalla se llena de huevos** que rebotan y se acumulan; aparecen pollitos festejando con alas arriba; puntaje grande en el centro. Opcional: un huevo dorado de "trofeo". | 3 s | Huevos por código + Lottie del festejo |
+| **Final pierde** | Animación distinta y amable: el pollito saluda y empuja un huevo hacia el jugador, "¡Buen intento! Probá otra vez". | 2-3 s | Lottie o SVG por partes |
 
 ### 7.2 Cómo hacerlas livianas en Android
 | Técnica | Qué es | A favor | En contra | Uso recomendado |
@@ -230,6 +245,7 @@ Reglas de seguridad para el stand:
 
 Reglas para que vaya fluido en una tablet de gama media:
 - Una sola animación "pesada" a la vez (por ejemplo, no confeti + caminata + Lottie juntos).
+- Lluvia de huevos: hasta ~30 huevos en acierto y ~60 en el final; cada huevo es una imagen chica reutilizada, que solo se mueve y gira (lo más barato para la tablet).
 - Cada archivo Lottie por debajo de ~300 KB; imágenes en WebP.
 - Todo se carga al abrir la app (y queda dentro del APK), así no hay esperas ni hace falta internet.
 - "Modo liviano" automático en equipos lentos: menos partículas, se mantiene el pollito.
@@ -243,6 +259,19 @@ Reglas para que vaya fluido en una tablet de gama media:
   2. El equipo audiovisual lo anima en After Effects a partir de ese dibujo (para los Lottie).
   3. Último recurso: ilustración de banco de imágenes con licencia, adaptada a los colores de la marca, con aprobación del cliente.
 - Mientras tanto, el prototipo usa un pollito provisorio.
+- **Novedad**: el manual de marca de Feller que llegó **no incluye el pollito ilustrado**. Hay que pedírselo a Feller o encargarlo a Mariano (opción 1).
+
+### 7.4 Assets que faltan (checklist)
+| Asset | Estado | Qué hacer |
+|---|---|---|
+| Manual de marca de Feller (colores, usos del logo, tipografías, fotos) | ✅ Recibido (queda fuera del repo) | — |
+| **Pollito en vector, por capas y poses** (7.3) | ❌ No está en el manual | Pedirlo a Feller; si no hay, lo dibuja Mariano y Feller lo aprueba. |
+| **Huevo en vector**: entero, rajado, roto (cáscara + interior), dorado opcional | ❌ Falta | Lo dibuja Mariano en el mismo estilo del pollito. |
+| **Logo en SVG** (versión positiva, negativa blanca y escala de grises) | ❓ Confirmar | Si solo hay PDF o PNG, pedir el original vectorial (AI/SVG/PDF editable). |
+| **Tipografías con licencia para app** | ❌ Las dos del manual son comerciales | Pedir a Feller la licencia (que cubra "app" o "embebida"); si no la tiene, proponer alternativas gratuitas parecidas de Google Fonts y que Feller elija. |
+| Sonidos (acierto, error, reloj, festejo) | Opcional | Banco de sonidos con licencia o producción propia del equipo audiovisual. |
+| Fotos de marca para fondos (pollitos en granja) | Opcional | Del material de Feller, en alta resolución. |
+| Preguntas validadas | 🟡 20 preguntas en la trivia de referencia | Que **Feller valide las cifras** (gramos de proteína, consumo anual, pesos, etc.) antes del evento. |
 
 ---
 
@@ -280,19 +309,20 @@ Reglas para que vaya fluido en una tablet de gama media:
 **Ya respondidas:**
 1. ✅ **Dónde se juega:** en una tablet, una persona por vez.
 2. ✅ **Datos y ranking:** nombre, mail y teléfono, los tres opcionales; mail con autocompletado de dominios comunes.
+3. ✅ **Preguntas:** 5 por jugador, 3 opciones (algunas Verdadero/Falso), al azar de un banco (hoy 20).
+4. ✅ **Tiempos:** 15 segundos por pregunta.
+- ✅ **Tablet:** Samsung Galaxy Tab A9 (sección 11).
 
 **Faltan (cada una con sugerencia para un "sí"):**
-3. **Preguntas:** banco de 30 a 50, salen 10 al azar por partida, con 4 opciones o verdadero/falso. ¿Sí?
-4. **Tiempos:** 15 segundos por pregunta, más puntos cuanto más rápido. ¿Sí?
 5. **Internet:** funciona sin internet y sube los datos solo cuando hay conexión. ¿Sí?
-6. **Idioma, ganar y premio:** solo español; "gana" quien acierta 7 de 10 o más (se cambia desde el panel); el premio lo entrega el stand. ¿Sí?
-7. **Fecha y equipo:** ¿qué día es el evento y en qué tablet (marca/modelo) se juega? Sugerencia: si todavía no hay tablet, usar una de gama media de 10 pulgadas, del año 2023 o más nueva.
+6. **Ganar y premio:** "gana" quien acierta **4 de 5 o más** (se cambia desde el panel); el premio lo entrega el stand; solo en español. ¿Sí?
+7. **Fecha y cantidad de tablets:** ¿qué día es el evento y cuántas tablets se usan? Sugerencia: una sola Galaxy Tab A9, y tener el APK listo y probado en ella al menos una semana antes.
 
 ---
 
 ## 10. Qué necesito para empezar
 
-**Orden de envío por Drive:** (1) la trivia de referencia que hizo Facundo, (2) el manual de marca de Feller con logos, colores y tipografías, (3) el pollito ilustrado (sección 7.3), (4) las preguntas en la planilla de abajo.
+**Ya llegó:** la trivia de referencia (20 preguntas y requisitos) y el manual de marca de Feller. **Falta:** el pollito ilustrado y los huevos (7.3 y 7.4), la licencia de tipografías, el logo en vector y la validación de las preguntas por parte de Feller. Para las preguntas nuevas o corregidas, usar la planilla de abajo (con 3 opciones, `opcion_d` queda vacía).
 
 ### 10.1 Preguntas: planilla propuesta
 Google Sheets o Excel, una fila por pregunta. **Primera fila = estos títulos:**
@@ -322,3 +352,26 @@ Por una **carpeta de Drive** compartida (no al repo). En el repo solo quedan eje
 
 ### 10.4 Accesos
 - Que Javier confirme dónde está el proyecto de **Supabase** de esta trivia (o creamos uno nuevo en la cuenta del estudio) y qué código corre en **`trivia-evento`** de Vercel.
+
+---
+
+## 11. Tablet del evento: Samsung Galaxy Tab A9
+
+### 11.1 Datos del equipo
+Fuentes: fichas técnicas públicas (GSMArena y otras). No pude comprobarlo en el equipo ni en la página oficial de Samsung.
+
+| Dato | Valor | Qué significa para el juego |
+|---|---|---|
+| Pantalla | 8,7" LCD, **1340 × 800**, 60 Hz | Pantalla chica de tablet: textos y botones grandes. Se diseña **vertical** (como la referencia Nexo); 60 Hz = la meta es animación fluida a 60 cuadros por segundo. |
+| Procesador | MediaTek Helio G99 (gama media, 2022) | Alcanza para todo lo de la sección 7 si se respetan las reglas de 7.2. |
+| Memoria | 4 u 8 GB de RAM (según versión); 64/128 GB | Hay que probar en la versión de **4 GB** (el peor caso). El APK va a pesar pocos MB. |
+| Android | Salió con Android 13; según GSMArena se actualiza hasta Android 16 | El APK (Capacitor) funciona desde Android 6 en adelante: **no hay problema de versión**. |
+| Batería | 5100 mAh | Para un día de stand: **dejarla enchufada** y con "pantalla siempre encendida" dentro de la app. |
+
+### 11.2 Requisitos y preparación de la tablet
+- **Orientación**: vertical fija (la app no gira).
+- **Antes del evento** (con wifi): actualizar Android y, sobre todo, la app **"Android System WebView"** desde Play Store. El juego se dibuja con ese componente; una versión vieja puede trabar animaciones.
+- **Instalación**: copiar el APK y permitir "instalar apps desconocidas" (no hace falta Play Store).
+- **Modo stand**: brillo alto fijo, sonido a volumen medio, "fijar pantalla" activado, notificaciones silenciadas, ahorro de batería apagado.
+- **Rendimiento**: medir en la tablet real (con las herramientas de desarrollador de Android) que el acierto, el error y el final no bajen de ~50 cuadros por segundo. Si bajan, se activa el "modo liviano" (menos huevos, sin confeti) sin cambiar el diseño.
+- **Prueba final**: 30 partidas seguidas sin reiniciar, para descartar que se ponga lenta con el uso.
