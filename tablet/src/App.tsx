@@ -4,6 +4,8 @@ import type { GameConfig, PlayRecord, Question } from './config/types';
 import { ConfigContext } from './lib/configContext';
 import { dailyRanking, pickQuestions } from './lib/game';
 import { setSound, sfx, startMusic, stopMusic } from './lib/sound';
+import { autoBackup } from './lib/files';
+import { playsToCsv } from './lib/csv';
 import { addPlay, loadConfig, loadPlays, resetConfig, saveConfig, savePlays } from './lib/storage';
 import { Attract } from './screens/Attract';
 import { Countdown } from './screens/Countdown';
@@ -110,7 +112,10 @@ export default function App() {
         total: next.length,
         score: next.reduce((s, x) => s + x.score, 0),
       };
-      setPlays(addPlay(record));
+      const all = addPlay(record);
+      setPlays(all);
+      // Copia de seguridad automática en la tablet (no frena el juego).
+      void autoBackup(`partidas-${config.settings.deviceName.replace(/\s+/g, '-').toLowerCase()}.csv`, playsToCsv(all));
       setLastPlayId(record.id);
       setScreen('final');
     },

@@ -3,7 +3,7 @@ import { Chick } from '../components/Chick';
 import type { ChickStyle, GameConfig, PlayRecord, Settings, Texts, Theme, WrongAnimation } from '../config/types';
 import { ConfigContext } from '../lib/configContext';
 import { playsToCsv } from '../lib/csv';
-import { imageToDataUrl, saveTextFile } from '../lib/files';
+import { imageToDataUrl, lastBackup, lastExport, markExported, saveTextFile } from '../lib/files';
 import { dailyRanking } from '../lib/game';
 import { QUESTIONS_TEMPLATE, questionsFromCsv } from '../lib/questionsCsv';
 import { setSound, sfx } from '../lib/sound';
@@ -109,14 +109,32 @@ function Panel({ config, plays, onSaveConfig, onSavePlays, onResetConfig, onClos
   if (tab === 'partidas') {
     const today = dailyRanking(plays, new Date(), Number.MAX_SAFE_INTEGER);
     const device = config.settings.deviceName.replace(/\s+/g, '-').toLowerCase();
+    const exportedAt = lastExport();
+    const pending = exportedAt ? plays.filter((p) => p.playedAt > exportedAt).length : plays.length;
+    const backup = lastBackup();
+    const fmt = (iso: string) => new Date(iso).toLocaleString('es-AR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
     body = (
       <>
-        <p>
-          Hoy: <b>{today.length}</b> partidas · Guardadas en total: <b>{plays.length}</b> · Con permiso de contacto: <b>{plays.filter((p) => p.consent).length}</b>
+        <p className="op-count">
+          Partidas guardadas en esta tablet: <b>{plays.length}</b> (hoy: <b>{today.length}</b>) · Con permiso de contacto: <b>{plays.filter((p) => p.consent).length}</b>
         </p>
+        {pending > 0 ? (
+          <p className="op-warn">
+            Hay <b>{pending}</b> partidas sin exportar{exportedAt ? ` desde el ${fmt(exportedAt)}` : ''}. Exportá la planilla al cerrar el día.
+          </p>
+        ) : (
+          <p className="op-msg">Todo exportado{exportedAt ? ` (última vez: ${fmt(exportedAt)})` : ''}.</p>
+        )}
         <div className="op-row">
-          <button type="button" className="btn btn--primary" onClick={() => save(`partidas-${device}-${stamp}.csv`, playsToCsv(plays))}>
-            Descargar planilla (CSV)
+          <button
+            type="button"
+            className="btn btn--primary"
+            onClick={async () => {
+              await save(`partidas-${device}-${stamp}.csv`, playsToCsv(plays));
+              markExported();
+            }}
+          >
+            Exportar ahora (planilla CSV)
           </button>
           <ConfirmButton
             label="Borrar partidas de hoy"
@@ -127,7 +145,10 @@ function Panel({ config, plays, onSaveConfig, onSavePlays, onResetConfig, onClos
             }}
           />
         </div>
-        <p className="op-note">Descargá la planilla antes de borrar. Cada tablet guarda sus propias partidas; después se unen las planillas.</p>
+        <p className="op-note">
+          Copia automática: {backup ? (backup.ok ? `${backup.where} (${fmt(backup.at)})` : 'no se pudo guardar la última copia') : 'todavía no hay (se hace después de cada partida, solo en la tablet)'}.
+        </p>
+        <p className="op-note">Exportá la planilla antes de borrar. Cada tablet guarda sus propias partidas; después se unen las dos planillas.</p>
       </>
     );
   } else if (tab === 'preguntas') {

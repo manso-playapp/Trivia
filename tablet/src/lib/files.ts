@@ -59,3 +59,64 @@ export function imageToDataUrl(file: File, maxSide = 512): Promise<string> {
     reader.readAsDataURL(file);
   });
 }
+
+export interface BackupStatus {
+  at: string;
+  ok: boolean;
+  where: string;
+}
+const BACKUP_KEY = 'trivia.backup.v1';
+const EXPORT_KEY = 'trivia.export.v1';
+
+/**
+ * Copia de seguridad automática (solo en la tablet): después de cada partida se reescribe
+ * la planilla completa en Documentos/Trivia/ (se puede copiar con un cable USB).
+ * Si Android no deja escribir ahí, se guarda en la memoria interna de la app.
+ * Nunca interrumpe el juego: si falla, solo queda registrado para el operador.
+ */
+export async function autoBackup(filename: string, csv: string): Promise<void> {
+  if (!Capacitor.isNativePlatform()) return;
+  const { Filesystem, Directory, Encoding } = await import('@capacitor/filesystem');
+  let status: BackupStatus;
+  try {
+    await Filesystem.writeFile({ path: `Trivia/${filename}`, data: csv, directory: Directory.Documents, encoding: Encoding.UTF8, recursive: true });
+    status = { at: new Date().toISOString(), ok: true, where: `Documentos/Trivia/${filename}` };
+  } catch {
+    try {
+      await Filesystem.writeFile({ path: `Trivia/${filename}`, data: csv, directory: Directory.Data, encoding: Encoding.UTF8, recursive: true });
+      status = { at: new Date().toISOString(), ok: true, where: 'memoria interna de la app' };
+    } catch {
+      status = { at: new Date().toISOString(), ok: false, where: '' };
+    }
+  }
+  try {
+    localStorage.setItem(BACKUP_KEY, JSON.stringify(status));
+  } catch {
+    /* nada */
+  }
+}
+
+export function lastBackup(): BackupStatus | null {
+  try {
+    return JSON.parse(localStorage.getItem(BACKUP_KEY) ?? 'null') as BackupStatus | null;
+  } catch {
+    return null;
+  }
+}
+
+/** Cuándo se exportó la planilla por última vez (para avisar si hay partidas sin exportar). */
+export function markExported(): void {
+  try {
+    localStorage.setItem(EXPORT_KEY, new Date().toISOString());
+  } catch {
+    /* nada */
+  }
+}
+
+export function lastExport(): string | null {
+  try {
+    return localStorage.getItem(EXPORT_KEY);
+  } catch {
+    return null;
+  }
+}
