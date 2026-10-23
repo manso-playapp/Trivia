@@ -20,8 +20,8 @@ Actualizado el mismo día con las primeras respuestas de Facundo (P1 y P2) y el 
 | **Recomendación animaciones** | Framer Motion (transiciones) + CSS (cuenta regresiva) + confeti liviano; Lottie solo para piezas de marca. |
 | **Recomendación APK** | Capacitor: la misma web empaquetada como app, funcionando **sin internet**. |
 | **Primera entrega propuesta** | Un link web con la trivia jugable y animada (preguntas y colores de prueba) para probar en el celular. |
-| **Ya decidido** | Una tablet **Samsung Galaxy Tab A9**, una persona por vez. **5 preguntas** al azar por jugador, **3 opciones**, **15 segundos**. Formulario con nombre, mail y teléfono, **todos opcionales**, con autocompletado del mail. Animaciones con el **pollito y huevos**: cuenta 3-2-1, acierto (lluvia de huevos), error (huevo que se rompe), final gana / pierde. |
-| **Qué necesito de Facundo** | Responder lo que falta (P5, P6 y fecha, sección 9); pollito y huevos ilustrados, licencia de tipografías, logo en vector y preguntas validadas por Feller (sección 7.4). |
+| **Ya decidido** | Una tablet **Samsung Galaxy Tab A9**, una persona por vez. **5 preguntas** al azar por jugador, **3 opciones**, **15 segundos**. Formulario con nombre, mail y teléfono, **todos opcionales**, con autocompletado del mail. **Sin internet** y **solo en español**. Animaciones con el **pollito** (personaje) y **huevos de consumo** (producto), siempre separados: cuenta 3-2-1, acierto (lluvia de huevos + pollitos caminando), error (huevo que se rompe), final con **felicitación siempre**. Sin premios en pantalla. |
+| **Qué necesito de Facundo** | Fecha del evento y cantidad de tablets (sección 9); pollito y huevos ilustrados, licencia de tipografías, logo en vector y preguntas validadas por Feller (sección 7.4). |
 
 ---
 
@@ -114,7 +114,7 @@ Cada juego tiene un **tema** guardado en la base de datos y editable desde el pa
 - Colores: fondo, texto, principal, acierto, error, botones (con selector de color y **vista previa**).
 - Tipografías: títulos y textos (se suben los archivos del manual).
 - Logo (versión clara y oscura), fondo (imagen o video corto), mascota/Lottie opcional.
-- Sonidos opcionales, textos (bienvenida, "¡Correcto!", pantalla final, bases legales).
+- Sonidos opcionales, textos (bienvenida, "¡Correcto!", pantalla final, aviso de privacidad).
 - El juego lee el tema al arrancar. En el APK el tema queda **guardado dentro** para funcionar sin internet, y se actualiza cuando hay conexión.
 
 Hoy el repo tiene la mitad de esto (colores en un JSON, logo y fondo), pero sin editor y sin tipografías.
@@ -174,7 +174,7 @@ Cada etapa termina con algo que Facundo puede **abrir y probar**. Los plazos son
 - El formulario opcional con autocompletado (sección 8) va en la etapa 4.
 
 ### Decisiones que necesita de Facundo
-Lo que falta de la sección 9 (P5, P6 y fecha del evento), y quién habla con Javier por los accesos (Vercel `trivia-evento`, Supabase).
+Fecha del evento y cantidad de tablets (sección 9), y quién habla con Javier por los accesos (Vercel `trivia-evento`, Supabase).
 
 ---
 
@@ -197,7 +197,7 @@ Confirmado por Facundo: **una tablet (Samsung Galaxy Tab A9), una persona por ve
 | 2 | **Cuenta regresiva 3-2-1** | Números grandes, uno por segundo, y "¡A jugar!". | El pollito acompaña cada número (salta o sostiene el cartel). |
 | 3 | **Pregunta** (×5) | "Pregunta 2 de 5", texto, **3 opciones** (o Verdadero/Falso) y reloj de **15 s** que se vacía. | Pollito chico mirando el reloj (sin distraer). |
 | 4 | **Respuesta** (1,5-2 s) | Correcta: se pinta + animación de acierto. Incorrecta: la elegida queda marcada, se ilumina la correcta, tono amable. Sin respuesta a tiempo: "¡Se acabó el tiempo!". | Acierto: lluvia de huevos + pollitos que cruzan. Error: un huevo se rompe (ver 7.1). |
-| 5 | **Resultado final** | Puntaje y aciertos ("4 de 5"). Si "gana" (umbral a definir, ver P6): festejo. Si no: animación distinta, amable. | Gana: pantalla llena de huevos y pollitos festejando. Pierde: pollito amable "¡Buen intento!". |
+| 5 | **Resultado final** | **Siempre felicita**: "¡Felicitaciones, [nombre]!" (o "¡Felicitaciones!" si no dejó nombre), con puntaje y aciertos ("4 de 5"). Nunca "perdiste", ni premios, ganadores o sorteos. | Festejo del pollito con huevos cayendo; más grande con 4 de 5 o más. |
 | 6 | **Ranking del día** | Top 10 con nombre (si lo dejó; si no, "Jugador/a"). Se resalta la partida recién jugada. | — |
 | 7 | **Vuelta al inicio** | Botón "Jugar de nuevo" y regreso automático a la pantalla 0 a los 15 s. | — |
 
@@ -214,7 +214,7 @@ Lo miré (cuadros sueltos del video, 1 min 44 s, formato vertical). Es una trivi
 - Debajo de la tarjeta, un **ícono grande de ✓ (verde) o ✗ (rojo)** como devolución inmediata.
 - **Formulario** "Antes de comenzar, ¡registrate!" con botones rápidos de dominio de mail al costado del campo (Outlook/Gmail): coincide con el autocompletado que pidió Facundo.
 - **Pregunta rompehielo** al inicio ("¿Ya conocías la marca?", con Sí/No y emojis): idea opcional para Feller.
-- **Final**: puntaje grande dentro de un círculo con estrellas, botón "Canjear premio" y una pantalla de "Felicitaciones" con fuegos artificiales en colores de la marca; cierre con "Trivia + logo".
+- **Final**: puntaje grande dentro de un círculo con estrellas, y una pantalla de "Felicitaciones" con fuegos artificiales en colores de la marca; cierre con "Trivia + logo".
 
 Qué mejorar respecto de esa referencia: allí casi no hay movimiento (cambios de pantalla directos). En Feller se suman el pollito, los huevos, la cuenta regresiva y transiciones suaves. Ojo con el contraste: en Feller el ✓ no puede ser rojo, porque el rojo es el color de la marca; el acierto va en verde o en blanco sobre rojo, y el error en gris (a definir con diseño).
 
@@ -223,23 +223,27 @@ Qué mejorar respecto de esa referencia: allí casi no hay movimiento (cambios d
 ## 7. Animaciones del pollito y los huevos (marca Feller)
 
 ### 7.1 Catálogo de animaciones
-Combina lo que pidió Facundo: el **pollito** como personaje y los **huevos** de su trivia de referencia ("que se llene la pantalla de huevos", "que se rompa un huevo"). Feller vende pollitos ponedores (no huevos): el relato es "el pollito de Feller es el que después pone huevos", así que ambos conviven bien.
+Combina lo que pidió Facundo: el **pollito** como personaje y los **huevos** de su trivia de referencia ("que se llene la pantalla de huevos", "que se rompa un huevo"). 
+
+> **REGLA DE MARCA (aclarada por el cliente):** Feller vende pollitos ponedores, que de grandes ponen **huevos para comer**. Los huevos del juego son **huevos de consumo (alimento), no huevos de incubación**. **Prohibido**: que un pollito salga de un huevo, que un huevo se raje o abra para dejar salir un pollito, o cualquier imagen que sugiera un nacimiento desde el huevo. El pollito (personaje) y los huevos (producto) aparecen siempre **como elementos separados**.
+>
+> **REGLA DEL CIERRE:** el juego **felicita siempre** al jugador. No hay mensajes de "perdiste", ni ganadores, perdedores, premios o sorteos en pantalla. Solo cambia la intensidad del festejo según el puntaje.
 
 | Momento | Animación propuesta | Duración | Técnica |
 |---|---|---|---|
 | Espera | Pollito "vivo": respira, parpadea, mira a los lados; cada tanto da un saltito. Algún huevo rueda suave por el fondo. | En bucle | SVG por partes |
-| **3-2-1** | Un huevo grande en el centro: en el 3 tiembla, en el 2 se raja, en el 1 se abre y **sale el pollito** gritando "¡A jugar!". | 3-4 s | Lottie (o SVG por partes) |
-| **Acierto** | **Lluvia de huevos** cayendo desde arriba + 3 a 5 pollitos que **cruzan caminando** por abajo. Variante alternada: los huevos "explotan" en confeti de colores de la marca. | 1,5-2 s | Huevos: imágenes livianas movidas por código. Pollitos: SVG por partes. |
-| **Error** | **Un huevo cae y se rompe** en el centro; de la cáscara asoma el pollito **sorprendido** (no triste ni burlón) y dice "¡Casi!". | 1-1,5 s | Lottie o secuencia de cuadros |
+| **3-2-1** | **Solo el pollito**: rebota con cada número, mira al jugador y en "¡A jugar!" abre las alas. Sin huevos. | 3-4 s | SVG por partes (o Lottie) |
+| **Acierto** | **Lluvia de huevos** cayendo desde arriba y, **por separado**, 3 a 5 pollitos que **cruzan caminando** por abajo. Variante alternada: confeti en colores de la marca. | 1,5-2 s | Huevos: imágenes livianas movidas por código. Pollitos: SVG por partes. |
+| **Error** | **Un huevo cae y se rompe** (como pidió Facundo), sin nada que salga de él. Al costado, el pollito reacciona amable (se lleva el ala a la cabeza, "¡Casi!"). | 1-1,5 s | Huevo: Lottie o secuencia de cuadros. Pollito: SVG por partes. |
 | Sin tiempo | El reloj suena, el pollito se tapa los ojos con las alas. | 1 s | SVG por partes |
-| **Final gana** | **La pantalla se llena de huevos** que rebotan y se acumulan; aparecen pollitos festejando con alas arriba; puntaje grande en el centro. Opcional: un huevo dorado de "trofeo". | 3 s | Huevos por código + Lottie del festejo |
-| **Final pierde** | Animación distinta y amable: el pollito saluda y empuja un huevo hacia el jugador, "¡Buen intento! Probá otra vez". | 2-3 s | Lottie o SVG por partes |
+| **Final (4 de 5 o más)** | **Festejo grande**: "¡Felicitaciones, [nombre]!", la pantalla se llena de huevos que caen y rebotan, pollitos festejando con alas arriba, puntaje grande. | 3 s | Huevos por código + Lottie del festejo |
+| **Final (menos de 4)** | **Festejo más suave**, también con "¡Felicitaciones, [nombre]!": el pollito aplaude, caen algunos huevos, puntaje y "¡Gracias por jugar!". | 2-3 s | SVG por partes o Lottie |
 
 ### 7.2 Cómo hacerlas livianas en Android
 | Técnica | Qué es | A favor | En contra | Uso recomendado |
 |---|---|---|---|---|
 | **SVG animado por partes** | El pollito dibujado en vector con las partes separadas (cuerpo, alas, patas, ojos) y animado desde el código. | El más liviano (decenas de KB), nítido en cualquier tamaño, los colores se pueden cambiar. | Movimientos simples (saltos, aleteo, parpadeo, caminata básica). | **Pollito base**: espera, 3-2-1, error, caminata de acierto. |
-| **Lottie** | Animación hecha en After Effects y exportada a un archivo que la app reproduce. | Calidad de animación profesional; la puede hacer el equipo de Experiencias Audiovisuales. | Hay que exportarla con cuidado (sin efectos pesados); algo más de peso. | **Piezas especiales**: festejo de acierto y finales gana / pierde. |
+| **Lottie** | Animación hecha en After Effects y exportada a un archivo que la app reproduce. | Calidad de animación profesional; la puede hacer el equipo de Experiencias Audiovisuales. | Hay que exportarla con cuidado (sin efectos pesados); algo más de peso. | **Piezas especiales**: huevo que se rompe y festejos finales. |
 | **Sprites** (secuencia de cuadros) | Varias imágenes PNG/WebP del pollito en distintas posiciones, pasadas rápido como dibujo animado. | Funciona aunque solo tengamos dibujos en PNG. | Pesa más y se ve pixelado si se agranda. | **Plan B** si no hay vector. |
 | Canvas / motor de juegos | Dibujar todo cuadro por cuadro con un motor de juegos. | Máxima libertad. | Excesivo para esto, más lento de hacer. | No se usa. |
 
@@ -266,7 +270,7 @@ Reglas para que vaya fluido en una tablet de gama media:
 |---|---|---|
 | Manual de marca de Feller (colores, usos del logo, tipografías, fotos) | ✅ Recibido (queda fuera del repo) | — |
 | **Pollito en vector, por capas y poses** (7.3) | ❌ No está en el manual | Pedirlo a Feller; si no hay, lo dibuja Mariano y Feller lo aprueba. |
-| **Huevo en vector**: entero, rajado, roto (cáscara + interior), dorado opcional | ❌ Falta | Lo dibuja Mariano en el mismo estilo del pollito. |
+| **Huevo de consumo en vector**: entero y roto (cáscara partida + clara y yema). Nunca con un pollito adentro. | ❌ Falta | Lo dibuja Mariano en el mismo estilo del pollito. |
 | **Logo en SVG** (versión positiva, negativa blanca y escala de grises) | ❓ Confirmar | Si solo hay PDF o PNG, pedir el original vectorial (AI/SVG/PDF editable). |
 | **Tipografías con licencia para app** | ❌ Las dos del manual son comerciales | Pedir a Feller la licencia (que cubra "app" o "embebida"); si no la tiene, proponer alternativas gratuitas parecidas de Google Fonts y que Feller elija. |
 | Sonidos (acierto, error, reloj, festejo) | Opcional | Banco de sonidos con licencia o producción propia del equipo audiovisual. |
@@ -312,11 +316,15 @@ Reglas para que vaya fluido en una tablet de gama media:
 3. ✅ **Preguntas:** 5 por jugador, 3 opciones (algunas Verdadero/Falso), al azar de un banco (hoy 20).
 4. ✅ **Tiempos:** 15 segundos por pregunta.
 - ✅ **Tablet:** Samsung Galaxy Tab A9 (sección 11).
+5. ✅ **Internet:** se juega **sin internet**.
+6. ✅ **Idioma:** solo español. El cierre **felicita siempre**, sin premios en pantalla.
 
-**Faltan (cada una con sugerencia para un "sí"):**
-5. **Internet:** funciona sin internet y sube los datos solo cuando hay conexión. ¿Sí?
-6. **Ganar y premio:** "gana" quien acierta **4 de 5 o más** (se cambia desde el panel); el premio lo entrega el stand; solo en español. ¿Sí?
+**Falta:**
 7. **Fecha y cantidad de tablets:** ¿qué día es el evento y cuántas tablets se usan? Sugerencia: una sola Galaxy Tab A9, y tener el APK listo y probado en ella al menos una semana antes.
+
+**Para qué se necesita la fecha** (en una línea, para pasarle a Facundo): *con la fecha armamos el calendario hacia atrás: el pollito aprobado por Feller unas 3 semanas antes, las preguntas validadas 2 semanas antes y la app final probada en la tablet 1 semana antes; como mínimo necesitamos unas 4 semanas desde que llega el dibujo del pollito.*
+
+**Para qué se necesita la cantidad de tablets:** con una sola, el ranking y los datos quedan juntos en ese equipo; con dos o más, sin internet, cada tablet tiene su propio ranking y los datos se juntan después en el panel.
 
 ---
 
@@ -345,7 +353,7 @@ Google Sheets o Excel, una fila por pregunta. **Primera fila = estos títulos:**
 - **Logos** en SVG (o PNG con fondo transparente, mínimo 2000 px): versión color, blanca y negra.
 - **Colores** en código HEX (si el manual los tiene, alcanza).
 - **Tipografías**: los archivos (.ttf/.otf/.woff2) **y confirmar que la licencia permite usarlas en una app**. Si no, elegimos una gratuita parecida.
-- Opcional: fondos, íconos, mascota, video/animación de marca, sonido o jingle, bases y condiciones del concurso.
+- Opcional: fondos, íconos, mascota, video/animación de marca, sonido o jingle.
 
 ### 10.3 Cómo enviarlo
 Por una **carpeta de Drive** compartida (no al repo). En el repo solo quedan ejemplos inventados, salvo que Facundo autorice otra cosa.
