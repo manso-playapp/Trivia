@@ -6,7 +6,7 @@ import { playsToCsv } from '../lib/csv';
 import { imageToDataUrl, lastBackup, lastExport, markExported, saveTextFile } from '../lib/files';
 import { dailyRanking } from '../lib/game';
 import { QUESTIONS_TEMPLATE, questionsFromCsv } from '../lib/questionsCsv';
-import { testSound, unlockAudio } from '../lib/sound';
+import { audioDetails, testSound, unlockAudio } from '../lib/sound';
 import { useAudioState } from '../lib/useAudioState';
 import { mergeConfig } from '../lib/storage';
 
@@ -490,11 +490,17 @@ function RangeField({ label, value, min, max, onChange }: { label: string; value
 
 function AudioStatus() {
   const state = useAudioState();
-  if (state === 'running') return <p className="op-msg">Sonido activo.</p>;
+  const details = <span className="op-note op-audio-details">{audioDetails()}</span>;
+  if (state === 'running')
+    return (
+      <p className="op-msg">
+        Sonido activo. {details}
+      </p>
+    );
   if (state === 'unsupported') return <p className="op-warn">Este equipo no permite sonido en la app.</p>;
   return (
     <button type="button" className="op-warn op-warn--button" onClick={() => unlockAudio()}>
-      Bloqueado por el navegador: tocá acá para activar.
+      Bloqueado por el navegador: tocá acá para activar. {details}
     </button>
   );
 }

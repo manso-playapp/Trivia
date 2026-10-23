@@ -455,3 +455,4 @@ button, input { font: inherit; }
 .op-count { font-size: 1.05rem; color: var(--text) !important; }
 .op-warn--button { border: 0; width: 100%; text-align: left; font: inherit; cursor: pointer; }
 .attract__muted { position: absolute; top: max(env(safe-area-inset-top), 2cqh); right: 4cqw; color: var(--on-brand); opacity: 0.75; z-index: 3; }
+.op-audio-details { display: block; font-size: 0.8rem; font-weight: 400; margin-top: 4px; }
