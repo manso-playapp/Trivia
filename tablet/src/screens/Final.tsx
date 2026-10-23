@@ -2,8 +2,9 @@ import { useEffect } from 'react';
 import { animate, motion, useMotionValue, useTransform } from 'framer-motion';
 import { BrandBadge } from '../components/Brand';
 import { Chick } from '../components/Chick';
-import { ChickParade, Confetti, EggRain } from '../components/Effects';
+import { BandSweep, ChickParade, Confetti } from '../components/Effects';
 import { useConfig } from '../lib/configContext';
+import { useFrozen } from '../lib/preview';
 import { sfx } from '../lib/sound';
 
 /**
@@ -25,12 +26,14 @@ export function Final({
 }) {
   const { texts, settings } = useConfig();
   const big = correct >= settings.bigCelebrationAt;
+  const frozen = useFrozen();
 
   useEffect(() => {
+    if (frozen) return;
     sfx.celebrate();
     const t = window.setTimeout(onNext, big ? 8000 : 7000);
     return () => window.clearTimeout(t);
-  }, [big, onNext]);
+  }, [big, onNext, frozen]);
 
   return (
     <div className="screen final" onClick={onNext}>
@@ -57,16 +60,16 @@ export function Final({
         {correct} de {total} respuestas correctas
       </p>
       {!big && <p className="final__thanks">{texts.thanks}</p>}
-      <Chick pose="celebrate" size={big ? 'min(40vw, 240px)' : 'min(32vw, 190px)'} />
+      <Chick pose="celebrate" size={big ? 'min(40cqw, 240px)' : 'min(32cqw, 190px)'} />
       <span className="final__tap">Tocá para ver el ranking</span>
       {big ? (
         <>
-          <EggRain count={55} pile seed={7} />
-          <ChickParade count={5} size={80} />
+          <BandSweep />
+          <ChickParade count={6} size={84} />
           <Confetti count={44} />
         </>
       ) : (
-        <EggRain count={14} pile seed={5} />
+        <Confetti count={16} seed={5} />
       )}
     </div>
   );

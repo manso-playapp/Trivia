@@ -1,3 +1,4 @@
+import { clientConfig } from '../config/client';
 import { defaultConfig } from '../config/defaults';
 import type { GameConfig, PlayRecord } from '../config/types';
 
@@ -22,18 +23,24 @@ function write(key: string, value: unknown): void {
   }
 }
 
-/** Mezcla lo guardado con los valores de fábrica, por si faltan campos nuevos. */
-export function mergeConfig(saved: Partial<GameConfig> | null): GameConfig {
-  if (!saved) return defaultConfig;
+function mergeInto(base: GameConfig, over: Partial<GameConfig> | null | undefined): GameConfig {
+  if (!over) return base;
   return {
     version: 1,
-    theme: { ...defaultConfig.theme, ...saved.theme },
-    chick: { ...defaultConfig.chick, ...saved.chick },
-    egg: { ...defaultConfig.egg, ...saved.egg },
-    texts: { ...defaultConfig.texts, ...saved.texts },
-    settings: { ...defaultConfig.settings, ...saved.settings },
-    questions: saved.questions?.length ? saved.questions : defaultConfig.questions,
+    theme: { ...base.theme, ...over.theme },
+    chick: { ...base.chick, ...over.chick },
+    texts: { ...base.texts, ...over.texts },
+    settings: { ...base.settings, ...over.settings },
+    questions: over.questions?.length ? over.questions : base.questions,
   };
+}
+
+/** Configuración de fábrica: demostración + marca del cliente (si el build la incluye). */
+export const factoryConfig: GameConfig = mergeInto(defaultConfig, clientConfig as Partial<GameConfig>);
+
+/** Mezcla lo guardado con los valores de fábrica, por si faltan campos nuevos. */
+export function mergeConfig(saved: Partial<GameConfig> | null): GameConfig {
+  return mergeInto(factoryConfig, saved);
 }
 
 export function loadConfig(): GameConfig {

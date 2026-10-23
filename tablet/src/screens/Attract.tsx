@@ -1,15 +1,14 @@
 import { motion } from 'framer-motion';
-import { BrandBadge } from '../components/Brand';
+import { Band, BrandBadge } from '../components/Brand';
 import { Chick } from '../components/Chick';
-import { Egg } from '../components/Egg';
 import { useConfig } from '../lib/configContext';
 
 export function Attract({ onStart, onOperator }: { onStart: () => void; onOperator: () => void }) {
-  const { texts } = useConfig();
+  const { texts, theme } = useConfig();
   return (
     <div className="screen attract" onClick={onStart}>
       <div onClick={(e) => e.stopPropagation()}>
-        <BrandBadge onLongPress={onOperator} size={120} />
+        <BrandBadge onLongPress={onOperator} size={150} />
       </div>
       <motion.h1
         className="attract__title"
@@ -19,15 +18,8 @@ export function Attract({ onStart, onOperator }: { onStart: () => void; onOperat
       >
         {texts.attractTitle}
       </motion.h1>
-      <div className="attract__stage">
-        <div className="attract__egg attract__egg--a">
-          <Egg size={70} />
-        </div>
-        <Chick pose="idle" size="min(58vw, 380px)" />
-        <div className="attract__egg attract__egg--b">
-          <Egg size={56} />
-        </div>
-      </div>
+      {/* El slogan va en la banda solo si el logo no lo trae */}
+      {theme.slogan && !theme.logoOnBrand && <Band>{theme.slogan}</Band>}
       <motion.div
         className="attract__cta"
         animate={{ scale: [1, 1.06, 1] }}
@@ -35,6 +27,13 @@ export function Attract({ onStart, onOperator }: { onStart: () => void; onOperat
       >
         {texts.attractCta}
       </motion.div>
+      <div className="attract__stage">
+        {theme.hero ? (
+          <img className="attract__hero" src={theme.hero} alt="" draggable={false} />
+        ) : (
+          <Chick pose="idle" size="min(58cqw, 380px)" />
+        )}
+      </div>
     </div>
   );
 }

@@ -1,12 +1,12 @@
 import { useEffect, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
-import { BrandBadge } from '../components/Brand';
+import { Band, BrandBadge } from '../components/Brand';
 import { Chick } from '../components/Chick';
-import { BrokenEgg, Egg } from '../components/Egg';
-import { ChickParade, EggRain } from '../components/Effects';
+import { BandSweep, ChickParade } from '../components/Effects';
 import type { Question } from '../config/types';
 import { useConfig } from '../lib/configContext';
 import { scoreFor } from '../lib/game';
+import { useFrozen } from '../lib/preview';
 import { sfx } from '../lib/sound';
 
 export interface Answer {
@@ -15,7 +15,7 @@ export interface Answer {
   score: number;
 }
 
-type Phase = 'asking' | 'correct' | 'wrong' | 'timeout';
+export type Phase = 'asking' | 'correct' | 'wrong' | 'timeout';
 
 const LETTERS = ['A', 'B', 'C', 'D'];
 
@@ -24,23 +24,29 @@ export function QuestionScreen({
   number,
   total,
   onAnswered,
+  previewPhase,
+  previewPicked = null,
 }: {
   question: Question;
   number: number;
   total: number;
   onAnswered: (a: Answer) => void;
+  /** solo para la galería de escenas */
+  previewPhase?: Phase;
+  previewPicked?: number | null;
 }) {
   const { settings } = useConfig();
+  const frozen = useFrozen();
   const seconds = settings.secondsPerQuestion;
-  const [phase, setPhase] = useState<Phase>('asking');
-  const [picked, setPicked] = useState<number | null>(null);
-  const [left, setLeft] = useState(seconds);
+  const [phase, setPhase] = useState<Phase>(previewPhase ?? 'asking');
+  const [picked, setPicked] = useState<number | null>(previewPicked);
+  const [left, setLeft] = useState(frozen ? seconds * 0.6 : seconds);
   const startedAt = useRef(performance.now());
   const answer = useRef<Answer | null>(null);
 
   // Reloj: se calcula desde la hora de inicio (no se atrasa si la tablet se pone lenta).
   useEffect(() => {
-    if (phase !== 'asking') return;
+    if (phase !== 'asking' || frozen) return;
     let lastWhole = seconds;
     const id = window.setInterval(() => {
       const remaining = Math.max(0, seconds - (performance.now() - startedAt.current) / 1000);
@@ -58,17 +64,17 @@ export function QuestionScreen({
       }
     }, 100);
     return () => window.clearInterval(id);
-  }, [phase, seconds, question.id]);
+  }, [phase, seconds, question.id, frozen]);
 
   // Después de mostrar la devolución, pasa a la siguiente.
   useEffect(() => {
-    if (phase === 'asking') return;
-    const t = window.setTimeout(() => answer.current && onAnswered(answer.current), phase === 'correct' ? 2200 : 2400);
+    if (phase === 'asking' || frozen) return;
+    const t = window.setTimeout(() => answer.current && onAnswered(answer.current), 2300);
     return () => window.clearTimeout(t);
-  }, [phase, onAnswered]);
+  }, [phase, onAnswered, frozen]);
 
   const choose = (i: number) => {
-    if (phase !== 'asking') return;
+    if (phase !== 'asking' || frozen) return;
     const remaining = Math.max(0, seconds - (performance.now() - startedAt.current) / 1000);
     const ok = i === question.correct;
     answer.current = { questionId: question.id, correct: ok, score: scoreFor(ok, remaining, seconds) };
@@ -82,7 +88,7 @@ export function QuestionScreen({
   return (
     <div className="screen question">
       <div className="question__top">
-        <BrandBadge size={72} />
+        <BrandBadge size={96} />
         <div className="progress">
           {Array.from({ length: total }, (_, i) => (
             <span key={i} className={`progress__dot ${i < number - 1 ? 'is-done' : ''} ${i === number - 1 ? 'is-current' : ''}`} />
@@ -103,10 +109,7 @@ export function QuestionScreen({
           <h2 className="question__text">{question.text}</h2>
         </div>
         <div className="timer">
-          <div
-            className={`timer__bar ${urgent ? 'is-urgent' : ''}`}
-            style={{ transform: `scaleX(${left / seconds})` }}
-          />
+          <div className={`timer__bar ${urgent ? 'is-urgent' : ''}`} style={{ transform: `scaleX(${left / seconds})` }} />
           <span className={`timer__num ${urgent ? 'is-urgent' : ''}`}>{Math.ceil(left)}</span>
         </div>
         <div className="options">
@@ -129,7 +132,7 @@ export function QuestionScreen({
                 transition={{ delay: phase === 'asking' ? 0.15 + i * 0.1 : 0, type: 'spring', stiffness: 220, damping: 20 }}
                 whileTap={phase === 'asking' ? { scale: 0.96 } : undefined}
               >
-                <span className="option__letter">{LETTERS[i]}</span>
+                <span className="option__letter">{isCorrect && phase !== 'asking' ? '✓' : LETTERS[i]}</span>
                 <span className="option__text">{opt}</span>
               </motion.button>
             );
@@ -138,51 +141,49 @@ export function QuestionScreen({
       </motion.div>
 
       <div className="question__feedback">
-        {phase === 'asking' && <Chick pose="idle" size={110} />}
+        {phase === 'asking' && <Chick pose="idle" size={120} />}
         {phase === 'correct' && (
           <motion.div className="feedback feedback--ok" initial={{ scale: 0.4, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ type: 'spring', stiffness: 260, damping: 14 }}>
             <span className="feedback__mark">✓</span>
             <span>¡Correcto!</span>
           </motion.div>
         )}
-        {phase === 'wrong' && <WrongEgg label="¡Casi!" />}
+        {phase === 'wrong' && (settings.wrongAnimation === 'timido' ? <WrongShy /> : <WrongCasi />)}
         {phase === 'timeout' && (
           <motion.div className="feedback feedback--timeout" initial={{ scale: 0.4, opacity: 0 }} animate={{ scale: 1, opacity: 1 }}>
-            <Chick pose="surprised" size={110} />
-            <span>¡Se acabó el tiempo!</span>
+            <Chick pose="surprised" size={120} />
+            <Band>¡Se acabó el tiempo!</Band>
           </motion.div>
         )}
       </div>
 
       {phase === 'correct' && (
         <>
-          <EggRain count={26} seed={number} />
-          <ChickParade count={4} size={84} />
+          <BandSweep />
+          <ChickParade count={5} size={92} />
         </>
       )}
     </div>
   );
 }
 
-/** Error: un huevo cae y se rompe; al costado, el pollito reacciona amable. */
-function WrongEgg({ label }: { label: string }) {
-  const [landed, setLanded] = useState(false);
+/** Error, opción A (por defecto): el pollito inclina la cabeza sorprendido y aparece "¡Casi!" sobre la banda. */
+function WrongCasi() {
   return (
-    <div className="feedback feedback--wrong">
-      <div className="wrong-egg">
-        {!landed ? (
-          <motion.div initial={{ y: -380, rotate: -20 }} animate={{ y: 0, rotate: 10 }} transition={{ duration: 0.45, ease: 'easeIn' }} onAnimationComplete={() => setLanded(true)}>
-            <Egg size={64} />
-          </motion.div>
-        ) : (
-          <motion.div initial={{ scaleY: 0.4, scaleX: 1.3 }} animate={{ scaleY: 1, scaleX: 1 }} transition={{ type: 'spring', stiffness: 300, damping: 12 }} style={{ originY: 1 }}>
-            <BrokenEgg size={150} />
-          </motion.div>
-        )}
-      </div>
-      <div className="wrong-chick">
-        <Chick pose="surprised" size={100} />
-        <span>{label}</span>
+    <motion.div className="feedback feedback--wrong" initial={{ scale: 0.6, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ type: 'spring', stiffness: 240, damping: 15 }}>
+      <Chick pose="surprised" size={130} />
+      <Band>¡Casi!</Band>
+    </motion.div>
+  );
+}
+
+/** Error, opción B: el pollito se asoma tímido desde abajo y vuelve a esconderse. */
+function WrongShy() {
+  return (
+    <div className="feedback feedback--shy">
+      <Band>¡Uy! Era la otra</Band>
+      <div className="shy-chick">
+        <Chick pose="wave" size={150} />
       </div>
     </div>
   );

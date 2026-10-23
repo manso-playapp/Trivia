@@ -1,6 +1,6 @@
 import { useRef, useState, type ReactNode } from 'react';
 import { Chick } from '../components/Chick';
-import type { ChickStyle, GameConfig, PlayRecord, Settings, Texts, Theme } from '../config/types';
+import type { ChickStyle, GameConfig, PlayRecord, Settings, Texts, Theme, WrongAnimation } from '../config/types';
 import { ConfigContext } from '../lib/configContext';
 import { playsToCsv } from '../lib/csv';
 import { imageToDataUrl, saveTextFile } from '../lib/files';
@@ -142,7 +142,10 @@ function Panel({ config, plays, onSaveConfig, onSavePlays, onResetConfig, onClos
           <ColorField label="Respuesta correcta" value={config.theme.correct} onChange={(v) => setTheme({ correct: v })} />
           <ColorField label="Respuesta elegida incorrecta" value={config.theme.wrong} onChange={(v) => setTheme({ wrong: v })} />
         </div>
-        <LogoField logo={config.theme.logo} onChange={(logo) => setTheme({ logo })} say={say} />
+        <ImageField label="Logo para fondo blanco (PNG transparente o SVG)" value={config.theme.logo} onChange={(logo) => setTheme({ logo })} say={say} />
+        <ImageField label="Logo en blanco, para el fondo de color (opcional)" value={config.theme.logoOnBrand} onChange={(logoOnBrand) => setTheme({ logoOnBrand })} say={say} dark />
+        <ImageField label="Foto de la pantalla de espera (opcional, fondo recortado)" value={config.theme.hero} onChange={(hero) => setTheme({ hero })} say={say} dark maxSide={1200} />
+        <TextField label="Slogan (aparece en una banda)" value={config.theme.slogan} onChange={(v) => setTheme({ slogan: v })} />
         <TextField label="Nombre de la marca (si no hay logo)" value={config.theme.brandName} onChange={(v) => setTheme({ brandName: v })} />
         <TextField label="Título de la pantalla de espera" value={config.texts.attractTitle} onChange={(v) => setTexts({ attractTitle: v })} />
         <TextField label="Botón de la pantalla de espera" value={config.texts.attractCta} onChange={(v) => setTexts({ attractCta: v })} />
@@ -185,6 +188,13 @@ function Panel({ config, plays, onSaveConfig, onSavePlays, onResetConfig, onClos
           <NumberField label="Aciertos para el festejo grande" value={config.settings.bigCelebrationAt} min={1} max={20} onChange={(v) => setSettings({ bigCelebrationAt: v })} />
           <NumberField label="Volver al inicio sin tocar (segundos)" value={config.settings.idleResetSeconds} min={15} max={300} onChange={(v) => setSettings({ idleResetSeconds: v })} />
         </div>
+        <label className="field">
+          <span>Cuando la respuesta es incorrecta</span>
+          <select value={config.settings.wrongAnimation} onChange={(e) => setSettings({ wrongAnimation: e.target.value as WrongAnimation })}>
+            <option value="casi">Pollito sorprendido y «¡Casi!»</option>
+            <option value="timido">Pollito tímido que se asoma</option>
+          </select>
+        </label>
         <label className="consent">
           <input id="op-sound" type="checkbox" checked={config.settings.sound} onChange={(e) => setSettings({ sound: e.target.checked })} />
           <span>Sonido activado</span>
@@ -237,6 +247,9 @@ function Panel({ config, plays, onSaveConfig, onSavePlays, onResetConfig, onClos
         </div>
         <section className="op-section">{body}</section>
         {msg && <p className="op-msg">{msg}</p>}
+        <p className="op-note">
+          Para ver todas las pantallas fijas, abrí el juego agregando <b>#escenas</b> al final de la dirección.
+        </p>
       </div>
     </div>
   );
@@ -333,27 +346,43 @@ function FileButton({ label, accept, onFile, primary }: { label: string; accept:
   );
 }
 
-function LogoField({ logo, onChange, say }: { logo: string; onChange: (v: string) => void; say: (m: string) => void }) {
+function ImageField({
+  label,
+  value,
+  onChange,
+  say,
+  dark,
+  maxSide = 512,
+}: {
+  label: string;
+  value: string;
+  onChange: (v: string) => void;
+  say: (m: string) => void;
+  dark?: boolean;
+  maxSide?: number;
+}) {
   return (
     <div className="field">
-      <span>Logo (PNG con fondo transparente o SVG)</span>
+      <span>{label}</span>
       <div className="op-row op-logo">
-        <div className="op-logo__preview">{logo ? <img src={logo} alt="Logo cargado" /> : <em>Sin logo</em>}</div>
+        <div className="op-logo__preview" style={dark ? { background: 'var(--brand)' } : undefined}>
+          {value ? <img src={value} alt="" /> : <em>Sin imagen</em>}
+        </div>
         <FileButton
-          label="Elegir logo"
+          label="Elegir imagen"
           accept="image/png,image/jpeg,image/svg+xml,image/webp"
           onFile={async (f) => {
             try {
-              onChange(await imageToDataUrl(f));
-              say('Logo cargado.');
+              onChange(await imageToDataUrl(f, maxSide));
+              say('Imagen cargada.');
             } catch {
               say('No se pudo cargar la imagen.');
             }
           }}
         />
-        {logo && (
+        {value && (
           <button type="button" className="btn btn--ghost" onClick={() => onChange('')}>
-            Quitar logo
+            Quitar
           </button>
         )}
       </div>

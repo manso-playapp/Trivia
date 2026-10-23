@@ -18,7 +18,10 @@ export const defaultConfig: GameConfig = {
     headingFont: 'Fira Sans',
     bodyFont: 'Saira',
     logo: '',
+    logoOnBrand: '',
+    hero: '',
     brandName: 'Playapp',
+    slogan: '',
   },
   chick: {
     body: '#FFD23F',
@@ -29,12 +32,6 @@ export const defaultConfig: GameConfig = {
     cheek: '#FF8A80',
     headScale: 1,
     eyeScale: 1,
-  },
-  egg: {
-    shell: '#F6EBD9',
-    shellShade: '#E3CFAF',
-    yolk: '#FFB627',
-    white: '#FFFFFF',
   },
   texts: {
     attractTitle: 'Trivia',
@@ -54,6 +51,7 @@ export const defaultConfig: GameConfig = {
     operatorPin: '1234',
     deviceName: 'Tablet 1',
     sound: true,
+    wrongAnimation: 'casi',
   },
   questions: [
     { id: 'd1', text: '¿Cuántos días tiene un año bisiesto?', options: ['365', '366', '364'], correct: 1, active: true },

@@ -1,15 +1,18 @@
 import { useEffect, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Chick } from '../components/Chick';
+import { useFrozen } from '../lib/preview';
 import { sfx } from '../lib/sound';
 
 const STEPS = ['3', '2', '1', '¡A jugar!'];
 
 /** Cuenta regresiva SOLO con el pollito (sin huevos). */
-export function Countdown({ onDone }: { onDone: () => void }) {
-  const [step, setStep] = useState(0);
+export function Countdown({ onDone, initialStep = 0 }: { onDone: () => void; initialStep?: number }) {
+  const [step, setStep] = useState(initialStep);
+  const frozen = useFrozen();
 
   useEffect(() => {
+    if (frozen) return;
     if (step < STEPS.length - 1) sfx.count();
     else sfx.go();
     const t = window.setTimeout(() => {
@@ -17,7 +20,7 @@ export function Countdown({ onDone }: { onDone: () => void }) {
       else onDone();
     }, step < STEPS.length - 1 ? 900 : 1000);
     return () => window.clearTimeout(t);
-  }, [step, onDone]);
+  }, [step, onDone, frozen]);
 
   const last = step === STEPS.length - 1;
   return (
@@ -40,7 +43,7 @@ export function Countdown({ onDone }: { onDone: () => void }) {
         animate={{ y: [0, -46, 0] }}
         transition={{ duration: 0.55, ease: 'easeOut' }}
       >
-        <Chick pose={last ? 'celebrate' : 'idle'} size="min(46vw, 300px)" />
+        <Chick pose={last ? 'celebrate' : 'idle'} size="min(46cqw, 300px)" />
       </motion.div>
     </div>
   );

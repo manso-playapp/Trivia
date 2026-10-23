@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState, type CSSProperties } from 'react';
-import { AnimatePresence, motion } from 'framer-motion';
+import { AnimatePresence, motion, MotionGlobalConfig } from 'framer-motion';
 import type { GameConfig, PlayRecord, Question } from './config/types';
 import { ConfigContext } from './lib/configContext';
 import { dailyRanking, pickQuestions } from './lib/game';
@@ -12,6 +12,7 @@ import { Operator } from './screens/Operator';
 import { QuestionScreen, type Answer } from './screens/QuestionScreen';
 import { Ranking } from './screens/Ranking';
 import { anonymousPlayer, Register, type Player } from './screens/Register';
+import { Scenes } from './screens/Scenes';
 
 type Screen = 'attract' | 'register' | 'countdown' | 'question' | 'final' | 'ranking';
 
@@ -31,6 +32,10 @@ function themeVars(c: GameConfig): CSSProperties {
     '--font-body': `'${t.bodyFont}', system-ui, sans-serif`,
   } as CSSProperties;
 }
+
+const showScenes = typeof location !== 'undefined' && location.hash === '#escenas';
+// En la galería de escenas todo se muestra quieto, en su estado final.
+if (showScenes) MotionGlobalConfig.skipAnimations = true;
 
 export default function App() {
   const [config, setConfig] = useState<GameConfig>(loadConfig);
@@ -124,6 +129,8 @@ export default function App() {
   else if (screen === 'final')
     view = <Final name={player.name} correct={correctCount} total={questions.length} score={score} onNext={onFinalDone} />;
   else if (screen === 'ranking') view = <Ranking rows={ranking} currentId={lastPlayId} onRestart={goHome} />;
+
+  if (showScenes) return <Scenes config={config} vars={themeVars(config)} />;
 
   return (
     <ConfigContext.Provider value={config}>

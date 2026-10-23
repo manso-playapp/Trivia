@@ -1,8 +1,8 @@
 import { createContext, useContext } from 'react';
-import { defaultConfig } from '../config/defaults';
+import { factoryConfig } from './storage';
 import type { GameConfig } from '../config/types';
 
-export const ConfigContext = createContext<GameConfig>(defaultConfig);
+export const ConfigContext = createContext<GameConfig>(factoryConfig);
 
 export function useConfig(): GameConfig {
   return useContext(ConfigContext);

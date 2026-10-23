@@ -11,25 +11,31 @@ export interface Question {
 export interface Theme {
   /** color principal de la marca */
   brand: string;
-  /** texto sobre el color principal */
+  /** texto sobre el color principal y sobre el fondo */
   onBrand: string;
   /** fondo de las pantallas */
   background: string;
-  /** trama del fondo (un tono del principal) */
+  /** bandas inclinadas del fondo (un tono del principal) */
   pattern: string;
   /** tarjetas */
   surface: string;
   text: string;
+  /** color secundario (textos suaves) */
   muted: string;
   correct: string;
   wrong: string;
   /** familias tipográficas (deben estar incluidas en la app) */
   headingFont: string;
   bodyFont: string;
-  /** logo como data URL (se carga desde el panel); vacío = solo texto */
+  /** logo para fondos claros (URL o data URL); vacío = solo texto */
   logo: string;
+  /** logo para el fondo de color (versión en blanco); vacío = se usa el logo común en un círculo */
+  logoOnBrand: string;
+  /** foto de portada de la pantalla de espera (con fondo recortado); vacío = pollito dibujado */
+  hero: string;
   /** nombre que se muestra si no hay logo */
   brandName: string;
+  slogan: string;
 }
 
 export interface ChickStyle {
@@ -45,13 +51,6 @@ export interface ChickStyle {
   eyeScale: number;
 }
 
-export interface EggStyle {
-  shell: string;
-  shellShade: string;
-  yolk: string;
-  white: string;
-}
-
 export interface Texts {
   attractTitle: string;
   attractCta: string;
@@ -61,6 +60,8 @@ export interface Texts {
   congrats: string;
   thanks: string;
 }
+
+export type WrongAnimation = 'casi' | 'timido';
 
 export interface Settings {
   questionsPerGame: number;
@@ -72,13 +73,14 @@ export interface Settings {
   /** identifica la tablet en la planilla (ej. "Tablet 1") */
   deviceName: string;
   sound: boolean;
+  /** animación cuando la respuesta es incorrecta */
+  wrongAnimation: WrongAnimation;
 }
 
 export interface GameConfig {
   version: 1;
   theme: Theme;
   chick: ChickStyle;
-  egg: EggStyle;
   texts: Texts;
   settings: Settings;
   questions: Question[];
