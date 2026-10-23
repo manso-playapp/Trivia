@@ -21,8 +21,8 @@ export function BrandBadge({ onLongPress, size = 96 }: { onLongPress?: () => voi
 
   if (theme.logoOnBrand) {
     return (
-      <div className="brand-logo" style={{ height: size * 0.8 }} {...handlers}>
-        <img src={theme.logoOnBrand} alt={theme.brandName} draggable={false} />
+      <div className="brand-logo" {...handlers}>
+        <img src={theme.logoOnBrand} alt={theme.brandName} draggable={false} style={{ height: size * 0.8 }} />
       </div>
     );
   }

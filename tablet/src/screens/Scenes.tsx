@@ -53,7 +53,7 @@ export function Scenes({ config, vars }: { config: GameConfig; vars: CSSProperti
       <div className="scenes">
         <header className="scenes__head">
           <h1>Escenas de la trivia</h1>
-          <p>Pantallas fijas para aprobar el diseño. En el juego cada una tiene su animación. Marca de {config.theme.brandName}, preguntas de prueba.</p>
+          <p>Pantallas fijas para aprobar el diseño. En el juego cada una tiene su animación. Marca y preguntas de {config.theme.brandName}.</p>
         </header>
         <div className="scenes__grid">
           <Frame title="1. Espera" note="Lo que se ve cuando nadie juega" {...f}>

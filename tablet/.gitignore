@@ -1,7 +1,7 @@
 node_modules
 dist
-# Datos de clientes (preguntas, logos, marca): nunca al repo
-client-data/
+# Packs de cliente (preguntas, logos, marca): nunca al repo
+packs/
 android/app/release/
 *.keystore
 *.jks
