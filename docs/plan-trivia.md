@@ -146,6 +146,8 @@ Hoy el repo tiene la mitad de esto (colores en un JSON, logo y fondo), pero sin 
 
 ## 4. Plan de trabajo por etapas
 
+> **Actualización:** con el evento en noviembre, el plan vigente es el de la **sección 12**. Esta sección queda como referencia del plan completo (sin apuro).
+
 Cada etapa termina con algo que Facundo puede **abrir y probar**. Los plazos son estimados para una persona y dependen de las respuestas de la sección 9.
 
 | # | Entrega | Qué puede probar Facundo | Estimado |
@@ -198,7 +200,7 @@ Confirmado por Facundo: **una tablet (Samsung Galaxy Tab A9), una persona por ve
 | 3 | **Pregunta** (×5) | "Pregunta 2 de 5", texto, **3 opciones** (o Verdadero/Falso) y reloj de **15 s** que se vacía. | Pollito chico mirando el reloj (sin distraer). |
 | 4 | **Respuesta** (1,5-2 s) | Correcta: se pinta + animación de acierto. Incorrecta: la elegida queda marcada, se ilumina la correcta, tono amable. Sin respuesta a tiempo: "¡Se acabó el tiempo!". | Acierto: lluvia de huevos + pollitos que cruzan. Error: un huevo se rompe (ver 7.1). |
 | 5 | **Resultado final** | **Siempre felicita**: "¡Felicitaciones, [nombre]!" (o "¡Felicitaciones!" si no dejó nombre), con puntaje y aciertos ("4 de 5"). Nunca "perdiste", ni premios, ganadores o sorteos. | Festejo del pollito con huevos cayendo; más grande con 4 de 5 o más. |
-| 6 | **Ranking del día** | Top 10 con nombre (si lo dejó; si no, "Jugador/a"). Se resalta la partida recién jugada. | — |
+| 6 | **Ranking del día** | Top 10 con nombre (si lo dejó; si no, "Jugador/a"). Se resalta la partida recién jugada. Con 2 tablets sin internet, **cada tablet tiene su propio ranking**. | — |
 | 7 | **Vuelta al inicio** | Botón "Jugar de nuevo" y regreso automático a la pantalla 0 a los 15 s. | — |
 
 Reglas de seguridad para el stand:
@@ -319,8 +321,10 @@ Reglas para que vaya fluido en una tablet de gama media:
 5. ✅ **Internet:** se juega **sin internet**.
 6. ✅ **Idioma:** solo español. El cierre **felicita siempre**, sin premios en pantalla.
 
-**Falta:**
-7. **Fecha y cantidad de tablets:** ¿qué día es el evento y cuántas tablets se usan? Sugerencia: una sola Galaxy Tab A9, y tener el APK listo y probado en ella al menos una semana antes.
+7. ✅ **Fecha y tablets:** el evento es **en noviembre** (día exacto a confirmar), con **2 tablets**; el juego se puede replicar. Ver el plan para noviembre en la sección 12.
+
+**Contexto (antes de la respuesta):**
+- **Fecha y cantidad de tablets:** ¿qué día es el evento y cuántas tablets se usan? Sugerencia: una sola Galaxy Tab A9, y tener el APK listo y probado en ella al menos una semana antes.
 
 **Para qué se necesita la fecha** (en una línea, para pasarle a Facundo): *con la fecha armamos el calendario hacia atrás: el pollito aprobado por Feller unas 3 semanas antes, las preguntas validadas 2 semanas antes y la app final probada en la tablet 1 semana antes; como mínimo necesitamos unas 4 semanas desde que llega el dibujo del pollito.*
 
@@ -383,3 +387,58 @@ Fuentes: fichas técnicas públicas (GSMArena y otras). No pude comprobarlo en e
 - **Modo stand**: brillo alto fijo, sonido a volumen medio, "fijar pantalla" activado, notificaciones silenciadas, ahorro de batería apagado.
 - **Rendimiento**: medir en la tablet real (con las herramientas de desarrollador de Android) que el acierto, el error y el final no bajen de ~50 cuadros por segundo. Si bajan, se activa el "modo liviano" (menos huevos, sin confeti) sin cambiar el diseño.
 - **Prueba final**: 30 partidas seguidas sin reiniciar, para descartar que se ponga lenta con el uso.
+
+---
+
+## 12. Plan para noviembre (2 tablets, sin internet)
+
+Datos de Facundo: **evento en noviembre, 2 tablets**, el juego se puede replicar. Hoy es viernes 23/10: quedan **entre 2 y 5 semanas** según el día exacto.
+
+### 12.1 Cómo funcionan las 2 tablets
+- Las dos tienen **la misma app instalada** (mismo APK), con las mismas preguntas y la misma marca.
+- Funcionan **solas, sin internet** y sin conectarse entre sí. **Cada una tiene su propio ranking del día.**
+- Los datos (nombre, mail y teléfono de quien dio permiso, puntaje, fecha y hora, número de tablet) quedan guardados en cada tablet.
+- **Cómo se juntan**: desde el menú oculto del operador, cada tablet **genera una planilla** (CSV, se abre con Excel). Se pasa por cable USB o, cuando haya wifi, por mail o Drive. Las dos planillas se unen en una sola, y la planilla dice de qué tablet viene cada fila.
+- El envío automático a una base de datos y un panel web quedan como **extra** del escenario B (12.4). En el escenario A no hacen falta.
+- Si se quiere replicar el juego en más tablets, se instala el mismo APK: no cambia nada.
+
+### 12.2 ¿Reutilizar el repo de Javier o empezar limpio?
+**Recomendación: empezar un proyecto limpio**, dentro de este mismo repositorio en una carpeta nueva, y dejar el código de Javier como referencia.
+- Lo de Javier está pensado para jugar **en vivo con internet** (servidor, base de datos, presentador). Lo de noviembre es lo contrario: **una app que funciona sola en la tablet, sin internet**. Para adaptarlo habría que desarmar casi todo.
+- Además hoy no compila y tiene problemas de seguridad (sección 1). Arreglarlo cuesta días que no tenemos y no suma al juego de la tablet.
+- Un proyecto limpio y chico (React + Capacitor, la misma tecnología web) se arma rápido y va directo al APK. **Ya verifiqué que el APK se puede generar desde acá.**
+- Del repo de Javier se aprovechan las ideas: tema por cliente, importar preguntas desde planilla y modelo de datos (para cuando se sume el panel).
+
+### 12.3 Orden de trabajo (etapas cortas)
+| Etapa | Entrega | Fecha objetivo | Cómo se prueba |
+|---|---|---|---|
+| **1. Juego completo** | Pantalla de espera, datos opcionales con autocompletado de mail, 3-2-1, **5 preguntas al azar, 15 s, 3 opciones**, **una animación por momento** (hecha en código), marca Feller (colores, logo, tipografía provisoria), final **siempre con felicitación**, ranking del día, menú del operador con planilla. Con las 20 preguntas de referencia y un **pollito provisorio**. | **viernes 30/10** | Link para jugar en el celular **y APK de prueba** para instalar en la Tab A9 que tiene Facundo. |
+| **2. Marca definitiva** | Pollito y huevos dibujados por Mariano y aprobados por Feller, preguntas con cifras validadas, aviso de privacidad aprobado, sonidos, ajustes de lo que Facundo marque. | **viernes 6/11** | APK nuevo en la Tab A9: prueba de fluidez y de las 30 partidas. |
+| **3. Versión final** | APK firmado, instalado en **las 2 tablets**, ensayo general y prueba de la planilla de datos. | **lunes 9/11** (escenario A) o una semana antes del evento (B) | Ensayo con las 2 tablets como en el stand. |
+| 4. Extras (solo B) | Ver 12.4. | antes del 20/11 | — |
+
+### 12.4 Dos escenarios
+| | **A: evento en la 1.ª quincena (≈ 2-3 semanas)** | **B: evento en la 2.ª quincena (≈ 4-5 semanas)** |
+|---|---|---|
+| **Entra** | Etapas 1, 2 y 3: juego completo, marca Feller, pollito y huevos, animaciones de cada momento, 2 tablets, planilla de datos. | Todo lo de A, más: festejos más elaborados en **Lottie** (equipo audiovisual), **tipografías originales** si llega la licencia, **envío automático** de datos a una base y **panel web** para ver y descargar, más variantes de animación para que no se repita, video de atracción en la pantalla de espera. |
+| **Se recorta** | Pollito dibujado por **Mariano** (sin esperar que Feller mande uno; Feller solo aprueba). **Tipografías gratuitas parecidas** (Google Fonts) en vez de esperar licencias. Animaciones **simples hechas en código**, sin Lottie. Datos por **planilla manual** desde cada tablet, sin panel web ni envío automático. | Casi nada; solo lo que no llegue a aprobarse a tiempo. |
+| **Fecha límite para "congelar" la app** | 3 días antes del evento | 1 semana antes del evento |
+
+**Lo que NO se recorta en ningún escenario:**
+1. **Probar en la Galaxy Tab A9 real** (y en las 2 tablets antes del evento): fluidez y 30 partidas seguidas.
+2. **Que Feller valide las cifras de las preguntas** (gramos de proteína, consumo anual, pesos, etc.).
+3. **Aviso de privacidad y casilla de permiso** para mail y teléfono, con texto aprobado por Feller.
+4. **Regla de marca**: huevos de consumo, nunca un pollito saliendo de un huevo, cierre siempre con felicitación y sin premios.
+5. **APK firmado y la llave de firma guardada a salvo** (fuera del repo), con copia del APK por si hay que reinstalar en el stand.
+
+### 12.5 Qué necesito de Facundo esta semana
+| Para cuándo | Qué | Por qué |
+|---|---|---|
+| **lunes 26/10** | **Día exacto del evento** (o al menos la quincena). | Define el escenario A o B. Mientras tanto se trabaja como si fuera A (el más corto). |
+| **lunes 26/10** | **OK para que Mariano dibuje el pollito y el huevo** ya, y avisar a Feller que lo va a aprobar. Si Feller tiene un pollito propio, que lo mande ese mismo día. | Es lo que más tarda; el resto avanza en paralelo. Boceto el miércoles 28/10 y aprobación de Feller el viernes 30/10. |
+| **martes 27/10** | Pedir a Feller el **logo en vector** (AI, SVG o PDF editable). | Para que se vea nítido en la tablet. |
+| **martes 27/10** | Decidir **tipografías**: ¿Feller tiene licencia para app? Si no hay respuesta ese día, se usan alternativas gratuitas parecidas. | Evita frenar el diseño. |
+| **miércoles 28/10** | Mandarle a Feller **las 20 preguntas para validar cifras** y el **texto del aviso de privacidad** para aprobar. Respuesta antes del **martes 3/11**. | Son las dos cosas que no se recortan y dependen del cliente. |
+| **viernes 30/10** | **Instalar el APK de prueba en la Tab A9** (o mandarme quién la tiene) y jugar 5 partidas. | Primera prueba de fluidez en el equipo real. |
+
+**Datos del cliente**: preguntas, logos y manual no se suben al repo. Para armar el APK se cargan desde una carpeta excluida del repo, y el APK se comparte en forma privada (Drive).
