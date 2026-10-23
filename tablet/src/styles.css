@@ -359,3 +359,29 @@ button, input { font: inherit; }
   .bg-pattern { animation: none; }
   .fx-confetti { display: none; }
 }
+
+/* ===== Panel del operador ===== */
+.btn--danger { background: #c0392b; color: #fff; }
+.op-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; }
+.op-head .card__title { margin: 0; text-align: left; }
+.op-tabs { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 14px; }
+.op-tabs button { border: 0; border-radius: 999px; padding: 10px 16px; background: #f0f0f3; color: var(--text); font-weight: 600; }
+.op-tabs button.is-active { background: var(--brand); color: var(--on-brand); }
+.op-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 0 16px; }
+.op-note { font-size: 0.92rem; color: var(--muted); }
+.op-errors { color: #c0392b; font-size: 0.92rem; padding-left: 18px; }
+.op-questions { padding-left: 22px; display: grid; gap: 8px; max-height: 40vh; overflow-y: auto; }
+.op-questions li.is-off { opacity: 0.5; }
+.op-questions .consent { margin-top: 0; }
+.op-correct { color: var(--ok); font-weight: 700; }
+.op-logo { align-items: center; }
+.op-logo__preview { width: 96px; height: 96px; border-radius: 50%; background: #f0f0f3; display: grid; place-items: center; overflow: hidden; padding: 10px; }
+.op-logo__preview img { max-width: 100%; max-height: 100%; object-fit: contain; }
+.op-color__row { display: flex; gap: 8px; align-items: center; }
+.field .op-color__row input[type='color'] { width: 56px; height: 48px; padding: 2px; flex: none; }
+.field input[type='range'] { padding: 0; border: 0; accent-color: var(--brand); }
+.field textarea { width: 100%; padding: 12px 14px; font: inherit; border: 2px solid #d9d9de; border-radius: 14px; user-select: text; -webkit-user-select: text; }
+.op-chick__preview { display: flex; justify-content: center; align-items: flex-end; gap: 12px; border-radius: 18px; padding: 16px; margin-bottom: 8px; }
+.op-section h3 { margin-top: 18px; }
+.op-color__row { flex-wrap: nowrap; }
+.field .op-color__row input:not([type='color']) { flex: 1; width: auto; min-width: 0; }
