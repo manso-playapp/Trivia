@@ -323,12 +323,8 @@ Reglas para que vaya fluido en una tablet de gama media:
 
 7. ✅ **Fecha y tablets:** el evento es **en noviembre** (día exacto a confirmar), con **2 tablets**; el juego se puede replicar. Ver el plan para noviembre en la sección 12.
 
-**Contexto (antes de la respuesta):**
-- **Fecha y cantidad de tablets:** ¿qué día es el evento y cuántas tablets se usan? Sugerencia: una sola Galaxy Tab A9, y tener el APK listo y probado en ella al menos una semana antes.
+Antes se había estimado un mínimo de 4 semanas desde que llegara el dibujo del pollito. Con el plazo de noviembre el calendario se achica (sección 12): Mariano dibuja el pollito ya y Feller lo aprueba en la primera semana. Lo que tiene que llegar del cliente: el día exacto, el logo en vector y la validación de las preguntas.
 
-**Para qué se necesita la fecha** (en una línea, para pasarle a Facundo): *con la fecha armamos el calendario hacia atrás: el pollito aprobado por Feller unas 3 semanas antes, las preguntas validadas 2 semanas antes y la app final probada en la tablet 1 semana antes; como mínimo necesitamos unas 4 semanas desde que llega el dibujo del pollito.*
-
-**Para qué se necesita la cantidad de tablets:** con una sola, el ranking y los datos quedan juntos en ese equipo; con dos o más, sin internet, cada tablet tiene su propio ranking y los datos se juntan después en el panel.
 
 ---
 
