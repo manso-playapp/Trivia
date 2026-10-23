@@ -453,3 +453,58 @@ Espera → datos opcionales con autocompletado de mail y casilla de permiso → 
 | 4 | **Aviso de privacidad.** | Sí: usá un texto base corto; se lo paso a Feller junto con las preguntas y lo aprueba el martes 27. |
 | 5 | **Logo.** | Sí: compartí la carpeta de Drive con el manual y el logo (o el PDF del manual) para que lo saque de ahí; si Feller manda el vector, se reemplaza. |
 | 6 | **Aprobación del pollito.** | Sí: le paso a Feller la lámina el sábado 24 o el domingo 25 y pido respuesta para el martes 27. |
+
+---
+
+## 13. Fase 2: Playapp Trivia como producto
+
+> Para después del evento de Feller. No frena esa entrega. Lo que ya quedó listo en la versión de Feller: el juego (el "motor") lee **todo lo del cliente desde un único pack** (`packs/<cliente>/`: `pack.json` con marca, colores, tipografías, pollito, textos y ajustes; `preguntas.csv`; carpeta `assets/` con logos y fotos). Feller es el pack n.º 1. Un cliente nuevo es un pack nuevo, sin tocar el motor.
+
+### 13.1 Arquitectura recomendada
+- **Un motor, muchos packs.** El motor es el juego que ya existe (`tablet/`). Cada cliente aporta su pack. Las escenas (espera, datos, 3-2-1, pregunta, acierto, error, felicitación, ranking) son las mismas; cambian la marca, el personaje, los textos y los tiempos.
+- **Tres salidas desde el mismo pack:**
+  1. **Web instalable (PWA)** para PC con TV táctil o kiosco: se abre en Chrome en pantalla completa y queda instalada como app. Funciona sin internet una vez instalada. Es la opción más barata y la primera que conviene.
+  2. **APK Android** con Capacitor (lo que ya se usa para Feller).
+  3. **Instalable de escritorio** (Windows) con Electron o Tauri: solo si un cliente necesita que no se vea el navegador o que arranque solo al prender la PC. Se puede postergar: la PWA en modo kiosco de Chrome cubre casi todos los casos.
+- **El personaje** también va en el pack: hoy es el pollito dibujado en código y con colores configurables; para otros clientes se suma un "personaje por defecto" o se reemplaza por ilustraciones del cliente (por capas, mismo esquema de poses).
+
+### 13.2 Panel web
+- **Quién carga:** recomendado empezar con que **lo carga Manso** (equipo de Comunicación 360°) y el cliente solo revisa y aprueba. El autoservicio del cliente viene después, cuando el panel esté probado.
+- **Qué tiene:** clientes y juegos; editor de marca con vista previa en vivo (colores, logo, tipografía, personaje); carga de preguntas por planilla; textos y aviso de privacidad; botón **"Exportar"** (web, APK); y una página con las escenas fijas para que el cliente apruebe (como `#escenas` de hoy).
+- **Roles:** administrador de Manso (todo), editor de Manso (sus clientes), cliente (ver y aprobar; más adelante, editar sus preguntas).
+- **Base de datos y archivos:** Supabase (el estudio ya lo usa): tablas de clientes, juegos, packs (versionados), usuarios y partidas sincronizadas; almacenamiento de logos y fotos en Supabase Storage. Un pack exportado es un archivo `.zip` (JSON + assets) que también sirve para respaldo.
+- **Exportación automática:**
+  - **Web/PWA:** totalmente automatizable: el panel genera el pack, un proceso de compilación (GitHub Actions o Vercel) arma la web y la publica en una dirección del cliente.
+  - **APK:** automatizable con GitHub Actions (compila con el pack y entrega el archivo). Lo que **no** conviene automatizar sin cuidado es la **firma** del APK final: la llave de firma tiene que guardarse como secreto del sistema de compilación, con copia de seguridad fuera de él. Publicar en Google Play sigue siendo manual (revisión de Google).
+  - **Escritorio (Windows):** automatizable, pero el instalador sin firma digital muestra advertencias; firmar cuesta dinero por año.
+- **Partidas y datos:** cada dispositivo sigue funcionando sin internet; cuando hay conexión, envía las partidas al panel. El cliente descarga su planilla desde ahí.
+
+### 13.3 Qué se reutiliza del trabajo de Javier (ideas, no código)
+- Modelo de datos cliente → juego → preguntas → jugadores → respuestas, y temas por cliente.
+- Importar preguntas desde planilla.
+- **Modo en vivo** (presentador + pantalla grande + celulares por QR): sirve como segundo producto para eventos con público. Se rehace sobre el motor nuevo cuando haya demanda.
+- No se reutiliza su código: hoy no compila, su base de datos no se puede crear tal cual y tiene problemas de seguridad (sección 1).
+
+### 13.4 Costos y riesgos
+- **Costos fijos estimados:** Supabase y Vercel tienen planes gratuitos que alcanzan para empezar; con varios clientes, planes pagos de alrededor de USD 20-25 por mes cada uno. Cuenta de Google Play: USD 25 una sola vez (solo si se publica en la tienda). Firma de instalador de Windows: pago anual (solo si se hace la versión de escritorio). *Precios de referencia; confirmarlos al contratar.*
+- **Firma del APK:** si se pierde la llave, no se pueden actualizar las apps instaladas. Guardarla en dos lugares seguros.
+- **Licencias de tipografías:** muchas fuentes de marca no permiten usarse dentro de apps. Regla del producto: usar la fuente del cliente solo con licencia para app; si no, una gratuita parecida (como con Feller).
+- **Datos de jugadores:** son datos personales de terceros. El cliente es el responsable de la base; Manso la procesa. Hace falta un texto de consentimiento aprobado por cada cliente, guardar solo lo necesario, plazo de borrado y acceso con usuario y contraseña. No es asesoramiento legal: conviene una revisión legal única para el modelo de producto.
+- **Rendimiento:** cada personaje o animación nueva se prueba en una tablet de gama media antes de venderla.
+
+### 13.5 Plan por etapas (una persona, estimado)
+| Etapa | Qué incluye | Esfuerzo |
+|---|---|---|
+| 1. Motor prolijo | Ordenar el código de Feller como motor: packs con formato fijo y validado, personaje intercambiable, documentación del pack. | 1 semana |
+| 2. Web instalable (PWA) | Salida web instalable y sin internet para PC y TV táctil, modo kiosco. | 3-5 días |
+| 3. Exportación automática | Compilación automática web + APK desde un pack (GitHub Actions), con firma segura. | 1 semana |
+| 4. Panel web (uso interno de Manso) | Clientes, editor de marca con vista previa, preguntas, escenas para aprobar, botón Exportar, partidas sincronizadas. | 3-4 semanas |
+| 5. Autoservicio del cliente | Acceso del cliente para editar preguntas y descargar sus datos. | 2 semanas |
+| 6. Escritorio (opcional) | Instalable de Windows, solo si un cliente lo pide. | 1 semana |
+
+Total para vender el producto con panel interno (etapas 1 a 4): **unas 6 a 8 semanas** de una persona. *Estimación; se ajusta después de la etapa 1.*
+
+### 13.6 Decisiones para Facundo
+1. **¿Primero panel interno (lo usa Manso) y después autoservicio del cliente?** *Sugerencia: sí.*
+2. **¿La salida para PC y TV táctil arranca como web instalable (PWA) y el instalable de Windows queda solo para quien lo pida?** *Sugerencia: sí.*
+3. **¿Seguimos con Supabase + Vercel (lo que ya usa el estudio) para el panel y las exportaciones?** *Sugerencia: sí.*
