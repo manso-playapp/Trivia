@@ -2,6 +2,7 @@ import { motion } from 'framer-motion';
 import { BrandBadge } from '../components/Brand';
 import { Chick } from '../components/Chick';
 import { useConfig } from '../lib/configContext';
+import { useAudioState } from '../lib/useAudioState';
 
 /**
  * Portada. Jerarquía: 1) foto héroe, 2) título medio, 3) un solo llamado a la acción
@@ -11,6 +12,8 @@ export function Attract({ onStart, onOperator, layout }: { onStart: () => void; 
   const { texts, theme } = useConfig();
   const variant = layout ?? theme.attractLayout;
   const hero = variant === 'b' ? theme.heroAlt || theme.hero : theme.hero;
+  const audio = useAudioState();
+  const { settings } = useConfig();
 
   const logo = (
     <div className="attract__sign" onClick={(e) => e.stopPropagation()}>
@@ -55,6 +58,12 @@ export function Attract({ onStart, onOperator, layout }: { onStart: () => void; 
         )}
         {logo}
       </div>
+      {/* Aviso discreto si el navegador todavía no dejó sonar (se activa con el primer toque) */}
+      {settings.sound && audio !== 'running' && (
+        <span className="attract__muted" title="Sonido desactivado por el navegador: se activa al tocar" aria-label="Sonido bloqueado">
+          <svg viewBox="0 0 24 24" width="26" height="26" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4z" fill="currentColor" /><path d="M16 9l5 6M21 9l-5 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" /></svg>
+        </span>
+      )}
       {/* Título y botón forman un solo bloque, abajo, en la zona del pulgar */}
       <div className="attract__bottom">
         {titles}

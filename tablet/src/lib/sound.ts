@@ -1,28 +1,111 @@
 // Sonidos PROPIOS, generados en el momento con Web Audio: no hay archivos de audio,
 // no se necesita internet y no hay licencias de terceros.
-// El navegador solo permite sonar después de un toque: el primer sonido es el toque de la portada.
+// Los navegadores solo dejan sonar después de un toque: en CUALQUIER toque se intenta
+// "desbloquear" el audio (se reintenta en cada toque hasta que quede activo).
 // Android aplica además el volumen "multimedia" del equipo: con ese volumen en 0, no suena nada.
+
+export type AudioState = 'running' | 'blocked' | 'unsupported';
 
 let ctx: AudioContext | null = null;
 let master: GainNode | null = null;
 let enabled = true;
 let volume = 0.7;
 let musicTimer: number | null = null;
+const listeners = new Set<(s: AudioState) => void>();
 
-function audio(): AudioContext | null {
-  if (!enabled || volume <= 0) return null;
+function ensureContext(): AudioContext | null {
+  if (ctx) return ctx;
   try {
-    if (!ctx) {
-      ctx = new AudioContext();
-      master = ctx.createGain();
-      master.connect(ctx.destination);
-    }
-    master!.gain.value = volume;
-    if (ctx.state === 'suspended') void ctx.resume();
+    const AC = window.AudioContext ?? (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
+    if (!AC) return null;
+    ctx = new AC();
+    master = ctx.createGain();
+    master.gain.value = enabled ? volume : 0;
+    master.connect(ctx.destination);
+    ctx.onstatechange = notify;
     return ctx;
   } catch {
     return null;
   }
+}
+
+export function audioState(): AudioState {
+  if (!ctx) return typeof window !== 'undefined' && (window.AudioContext || (window as unknown as { webkitAudioContext?: unknown }).webkitAudioContext) ? 'blocked' : 'unsupported';
+  return ctx.state === 'running' ? 'running' : 'blocked';
+}
+
+function notify() {
+  const s = audioState();
+  listeners.forEach((fn) => fn(s));
+}
+
+export function onAudioState(fn: (s: AudioState) => void): () => void {
+  listeners.add(fn);
+  return () => listeners.delete(fn);
+}
+
+// Archivo WAV de silencio (generado acá): en iPhone, reproducir un <audio> dentro del toque
+// hace que el sonido salga por el canal multimedia y no dependa del interruptor de silencio.
+let silentUrl: string | null = null;
+function silentWav(): string {
+  if (silentUrl) return silentUrl;
+  const samples = 800;
+  const buf = new ArrayBuffer(44 + samples);
+  const v = new DataView(buf);
+  const w = (o: number, t: string) => [...t].forEach((c, i) => v.setUint8(o + i, c.charCodeAt(0)));
+  w(0, 'RIFF'); v.setUint32(4, 36 + samples, true); w(8, 'WAVE'); w(12, 'fmt ');
+  v.setUint32(16, 16, true); v.setUint16(20, 1, true); v.setUint16(22, 1, true);
+  v.setUint32(24, 8000, true); v.setUint32(28, 8000, true); v.setUint16(32, 1, true); v.setUint16(34, 8, true);
+  w(36, 'data'); v.setUint32(40, samples, true);
+  for (let i = 0; i < samples; i++) v.setUint8(44 + i, 128);
+  silentUrl = URL.createObjectURL(new Blob([buf], { type: 'audio/wav' }));
+  return silentUrl;
+}
+
+let htmlUnlocked = false;
+/** Se llama dentro de un toque. Devuelve true si el audio quedó activo. */
+export function unlockAudio(): boolean {
+  const a = ensureContext();
+  if (!a) return false;
+  if (!htmlUnlocked) {
+    try {
+      const el = new Audio(silentWav());
+      el.setAttribute('playsinline', '');
+      void el.play().then(() => (htmlUnlocked = true)).catch(() => {});
+    } catch {
+      /* nada */
+    }
+  }
+  if (a.state !== 'running') void a.resume().then(notify).catch(() => {});
+  // Un sonido vacío dentro del toque termina de habilitar el audio en algunos equipos.
+  try {
+    const src = a.createBufferSource();
+    src.buffer = a.createBuffer(1, 1, 22050);
+    src.connect(a.destination);
+    src.start(0);
+  } catch {
+    /* nada */
+  }
+  notify();
+  return a.state === 'running';
+}
+
+// Desbloqueo en cualquier toque (se reintenta hasta que quede activo).
+if (typeof window !== 'undefined') {
+  const handler = () => {
+    if (unlockAudio() && htmlUnlocked) {
+      ['pointerdown', 'touchend', 'click', 'keydown'].forEach((ev) => window.removeEventListener(ev, handler, true));
+    }
+  };
+  ['pointerdown', 'touchend', 'click', 'keydown'].forEach((ev) => window.addEventListener(ev, handler, true));
+}
+
+function audio(): AudioContext | null {
+  if (!enabled || volume <= 0) return null;
+  const a = ensureContext();
+  if (!a) return null;
+  if (a.state !== 'running') void a.resume().catch(() => {});
+  return a;
 }
 
 /** Volumen 0 a 100 y silencio, desde el menú del operador. */
@@ -31,6 +114,20 @@ export function setSound(on: boolean, vol0to100: number) {
   volume = Math.max(0, Math.min(100, vol0to100)) / 100;
   if (master) master.gain.value = enabled ? volume : 0;
   if (!enabled || volume <= 0) stopMusic();
+}
+
+/** "Probar sonido": suena siempre (aunque esté silenciado o en 0), con el volumen elegido o al 60 %. */
+export function testSound() {
+  unlockAudio();
+  const prevEnabled = enabled;
+  const prevVolume = volume;
+  enabled = true;
+  volume = prevVolume > 0 ? prevVolume : 0.6;
+  if (master) master.gain.value = volume;
+  sfx.correct();
+  enabled = prevEnabled;
+  volume = prevVolume;
+  window.setTimeout(() => master && (master.gain.value = enabled ? volume : 0), 900);
 }
 
 function tone(freq: number, start: number, dur: number, type: OscillatorType = 'sine', vol = 0.18, endFreq?: number) {
@@ -43,7 +140,8 @@ function tone(freq: number, start: number, dur: number, type: OscillatorType = '
   osc.frequency.setValueAtTime(freq, t);
   if (endFreq) osc.frequency.exponentialRampToValueAtTime(endFreq, t + dur);
   gain.gain.setValueAtTime(0.0001, t);
-  gain.gain.exponentialRampToValueAtTime(vol, t + 0.015);
+  // Niveles pensados para el parlante de una tablet en un stand con ruido.
+  gain.gain.exponentialRampToValueAtTime(Math.min(0.6, vol * 2.5), t + 0.015);
   gain.gain.exponentialRampToValueAtTime(0.0001, t + dur);
   osc.connect(gain).connect(master);
   osc.start(t);

@@ -6,7 +6,8 @@ import { playsToCsv } from '../lib/csv';
 import { imageToDataUrl, lastBackup, lastExport, markExported, saveTextFile } from '../lib/files';
 import { dailyRanking } from '../lib/game';
 import { QUESTIONS_TEMPLATE, questionsFromCsv } from '../lib/questionsCsv';
-import { setSound, sfx } from '../lib/sound';
+import { testSound, unlockAudio } from '../lib/sound';
+import { useAudioState } from '../lib/useAudioState';
 import { mergeConfig } from '../lib/storage';
 
 type Tab = 'partidas' | 'preguntas' | 'marca' | 'pollito' | 'ajustes';
@@ -231,10 +232,11 @@ function Panel({ config, plays, onSaveConfig, onSavePlays, onResetConfig, onClos
           <button type="button" className={`btn ${config.settings.sound ? 'btn--ghost' : 'btn--primary'}`} onClick={() => setSettings({ sound: !config.settings.sound })}>
             {config.settings.sound ? 'Silenciar' : 'Activar sonido (está silenciado)'}
           </button>
-          <button type="button" className="btn btn--ghost" onClick={() => (setSound(true, config.settings.volume), sfx.correct())}>
+          <button type="button" className="btn btn--ghost" onClick={() => testSound()}>
             Probar sonido
           </button>
         </div>
+        <AudioStatus />
         <label className="field">
           <span>Volumen: {config.settings.volume}</span>
           <input type="range" min={0} max={100} step={5} value={config.settings.volume} onChange={(e) => setSettings({ volume: Number(e.target.value) })} />
@@ -483,5 +485,16 @@ function RangeField({ label, value, min, max, onChange }: { label: string; value
       </span>
       <input type="range" min={min} max={max} step={0.01} value={value} onChange={(e) => onChange(Number(e.target.value))} />
     </label>
+  );
+}
+
+function AudioStatus() {
+  const state = useAudioState();
+  if (state === 'running') return <p className="op-msg">Sonido activo.</p>;
+  if (state === 'unsupported') return <p className="op-warn">Este equipo no permite sonido en la app.</p>;
+  return (
+    <button type="button" className="op-warn op-warn--button" onClick={() => unlockAudio()}>
+      Bloqueado por el navegador: tocá acá para activar.
+    </button>
   );
 }

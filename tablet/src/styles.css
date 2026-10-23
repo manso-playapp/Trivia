@@ -453,3 +453,5 @@ button, input { font: inherit; }
 
 .op-warn { background: #fff4d6; color: #6b4e00; border-radius: 12px; padding: 10px 12px; }
 .op-count { font-size: 1.05rem; color: var(--text) !important; }
+.op-warn--button { border: 0; width: 100%; text-align: left; font: inherit; cursor: pointer; }
+.attract__muted { position: absolute; top: max(env(safe-area-inset-top), 2cqh); right: 4cqw; color: var(--on-brand); opacity: 0.75; z-index: 3; }
