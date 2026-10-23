@@ -1,0 +1,70 @@
+import type { GameConfig } from './types';
+
+// Configuración de DEMOSTRACIÓN. Marca genérica y preguntas inventadas.
+// La marca y las preguntas de cada cliente se cargan desde el panel del
+// operador y nunca se guardan en el repositorio.
+export const defaultConfig: GameConfig = {
+  version: 1,
+  theme: {
+    brand: '#E8552F',
+    onBrand: '#FFFFFF',
+    background: '#E8552F',
+    pattern: '#EF6E4C',
+    surface: '#FFFFFF',
+    text: '#2B2B2E',
+    muted: '#6E6F73',
+    correct: '#2E9E57',
+    wrong: '#6E6F73',
+    headingFont: 'Fira Sans',
+    bodyFont: 'Saira',
+    logo: '',
+    brandName: 'Playapp',
+  },
+  chick: {
+    body: '#FFD23F',
+    bodyShade: '#F4B400',
+    beak: '#F28C28',
+    legs: '#F28C28',
+    eye: '#2B2B2E',
+    cheek: '#FF8A80',
+    headScale: 1,
+    eyeScale: 1,
+  },
+  egg: {
+    shell: '#F6EBD9',
+    shellShade: '#E3CFAF',
+    yolk: '#FFB627',
+    white: '#FFFFFF',
+  },
+  texts: {
+    attractTitle: 'Trivia',
+    attractCta: 'Tocá para jugar',
+    registerTitle: 'Antes de comenzar, ¡contanos quién sos!',
+    privacy:
+      'Tus datos se usan solo para contactarte si nos das permiso. Podés pedir que los borremos cuando quieras.',
+    consent: 'Acepto que me contacten con novedades.',
+    congrats: '¡Felicitaciones',
+    thanks: '¡Gracias por jugar!',
+  },
+  settings: {
+    questionsPerGame: 5,
+    secondsPerQuestion: 15,
+    bigCelebrationAt: 4,
+    idleResetSeconds: 30,
+    operatorPin: '1234',
+    deviceName: 'Tablet 1',
+    sound: true,
+  },
+  questions: [
+    { id: 'd1', text: '¿Cuántos días tiene un año bisiesto?', options: ['365', '366', '364'], correct: 1, active: true },
+    { id: 'd2', text: '¿Cuál es el planeta más grande del sistema solar?', options: ['Saturno', 'Tierra', 'Júpiter'], correct: 2, active: true },
+    { id: 'd3', text: '¿Cuántos lados tiene un hexágono?', options: ['6', '8', '5'], correct: 0, active: true },
+    { id: 'd4', text: 'El agua hierve a 100 °C a nivel del mar.', options: ['Verdadero', 'Falso'], correct: 0, active: true },
+    { id: 'd5', text: '¿En qué continente está Egipto?', options: ['Asia', 'África', 'Europa'], correct: 1, active: true },
+    { id: 'd6', text: '¿Qué gas toman las plantas para hacer la fotosíntesis?', options: ['Dióxido de carbono', 'Oxígeno', 'Helio'], correct: 0, active: true },
+    { id: 'd7', text: 'La Luna tiene luz propia.', options: ['Verdadero', 'Falso'], correct: 1, active: true },
+    { id: 'd8', text: '¿Cuántos minutos tiene una hora y media?', options: ['80', '90', '100'], correct: 1, active: true },
+    { id: 'd9', text: '¿Cuál es el océano más grande del mundo?', options: ['Atlántico', 'Índico', 'Pacífico'], correct: 2, active: true },
+    { id: 'd10', text: '¿Cuántas patas tiene una araña?', options: ['6', '8', '10'], correct: 1, active: true },
+  ],
+};

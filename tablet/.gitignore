@@ -1,0 +1,7 @@
+node_modules
+dist
+# Datos de clientes (preguntas, logos, marca): nunca al repo
+client-data/
+android/app/release/
+*.keystore
+*.jks
