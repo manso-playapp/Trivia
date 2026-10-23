@@ -48,7 +48,8 @@ export function ChickParade({ count = 8, size = 96, seed = 11, loop = false }: {
               : { bottom: `${c.bottom}%`, zIndex: c.z, animationDelay: `${c.delay}s`, animationDuration: `${c.duration}s`, animationIterationCount: loop ? 'infinite' : 1 }
           }
         >
-          <ChickSide size={c.size} />
+          {/* En pantallas bajas (celular acostado) los pollitos se achican */}
+          <ChickSide size={`min(${c.size}px, ${(c.size / 8).toFixed(1)}cqh)`} />
         </div>
       ))}
     </div>

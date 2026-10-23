@@ -86,6 +86,9 @@ export function QuestionScreen({
   };
 
   const urgent = phase === 'asking' && left <= 5;
+  // Textos largos: letra un poco más chica (si aun así no entra, las opciones scrollean).
+  const longText = question.text.length > 80;
+  const longOptions = question.options.some((o) => o.length > 45);
   return (
     <div className="screen question">
       <div className="question__top">
@@ -107,13 +110,13 @@ export function QuestionScreen({
           <span className="question__count">
             Pregunta {number} de {total}
           </span>
-          <h2 className="question__text">{question.text}</h2>
+          <h2 className={`question__text ${longText ? 'is-long' : ''}`}>{question.text}</h2>
         </div>
         <div className="timer">
           <div className={`timer__bar ${urgent ? 'is-urgent' : ''}`} style={{ transform: `scaleX(${left / seconds})` }} />
           <span className={`timer__num ${urgent ? 'is-urgent' : ''}`}>{Math.ceil(left)}</span>
         </div>
-        <div className="options">
+        <div className={`options ${longOptions ? 'is-long' : ''}`}>
           {question.options.map((opt, i) => {
             const isCorrect = i === question.correct;
             let state = '';
@@ -142,7 +145,7 @@ export function QuestionScreen({
       </motion.div>
 
       <div className="question__feedback">
-        {phase === 'asking' && <Chick pose="idle" size={120} />}
+        {phase === 'asking' && <Chick pose="idle" size="min(15cqh, 120px)" />}
         {phase === 'correct' && (
           <motion.div className="feedback feedback--ok" initial={{ scale: 0.4, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ type: 'spring', stiffness: 260, damping: 14 }}>
             <span className="feedback__mark">✓</span>
@@ -152,7 +155,7 @@ export function QuestionScreen({
         {phase === 'wrong' && (settings.wrongAnimation === 'timido' ? <WrongShy /> : <WrongCasi />)}
         {phase === 'timeout' && (
           <motion.div className="feedback feedback--timeout" initial={{ scale: 0.4, opacity: 0 }} animate={{ scale: 1, opacity: 1 }}>
-            <Chick pose="surprised" size={120} />
+            <Chick pose="surprised" size="min(14cqh, 120px)" />
             <Band>¡Se acabó el tiempo!</Band>
           </motion.div>
         )}
@@ -172,7 +175,7 @@ export function QuestionScreen({
 function WrongCasi() {
   return (
     <motion.div className="feedback feedback--wrong" initial={{ scale: 0.6, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ type: 'spring', stiffness: 240, damping: 15 }}>
-      <Chick pose="surprised" size={130} />
+      <Chick pose="surprised" size="min(15cqh, 130px)" />
       <Band>¡Casi!</Band>
     </motion.div>
   );
@@ -184,7 +187,7 @@ function WrongShy() {
     <div className="feedback feedback--shy">
       <Band>¡Uy! Era la otra</Band>
       <div className="shy-chick">
-        <Chick pose="tilt" size={150} />
+        <Chick pose="tilt" size="min(18cqh, 150px)" />
       </div>
     </div>
   );

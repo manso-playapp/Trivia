@@ -78,7 +78,12 @@ export interface Settings {
   operatorPin: string;
   /** identifica la tablet en la planilla (ej. "Tablet 1") */
   deviceName: string;
+  /** false = silenciado */
   sound: boolean;
+  /** 0 a 100 */
+  volume: number;
+  /** música de fondo suave */
+  music: boolean;
   /** animación cuando la respuesta es incorrecta */
   wrongAnimation: WrongAnimation;
 }

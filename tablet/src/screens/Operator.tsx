@@ -6,6 +6,7 @@ import { playsToCsv } from '../lib/csv';
 import { imageToDataUrl, saveTextFile } from '../lib/files';
 import { dailyRanking } from '../lib/game';
 import { QUESTIONS_TEMPLATE, questionsFromCsv } from '../lib/questionsCsv';
+import { setSound, sfx } from '../lib/sound';
 import { mergeConfig } from '../lib/storage';
 
 type Tab = 'partidas' | 'preguntas' | 'marca' | 'pollito' | 'ajustes';
@@ -204,10 +205,24 @@ function Panel({ config, plays, onSaveConfig, onSavePlays, onResetConfig, onClos
             <option value="timido">Pollito tímido que se asoma</option>
           </select>
         </label>
-        <label className="consent">
-          <input id="op-sound" type="checkbox" checked={config.settings.sound} onChange={(e) => setSettings({ sound: e.target.checked })} />
-          <span>Sonido activado</span>
+        <h3>Sonido</h3>
+        <div className="op-row">
+          <button type="button" className={`btn ${config.settings.sound ? 'btn--ghost' : 'btn--primary'}`} onClick={() => setSettings({ sound: !config.settings.sound })}>
+            {config.settings.sound ? 'Silenciar' : 'Activar sonido (está silenciado)'}
+          </button>
+          <button type="button" className="btn btn--ghost" onClick={() => (setSound(true, config.settings.volume), sfx.correct())}>
+            Probar sonido
+          </button>
+        </div>
+        <label className="field">
+          <span>Volumen: {config.settings.volume}</span>
+          <input type="range" min={0} max={100} step={5} value={config.settings.volume} onChange={(e) => setSettings({ volume: Number(e.target.value) })} />
         </label>
+        <label className="consent">
+          <input id="op-music" type="checkbox" checked={config.settings.music} onChange={(e) => setSettings({ music: e.target.checked })} />
+          <span>Música de fondo suave (mientras alguien juega)</span>
+        </label>
+        <p className="op-note">El volumen del equipo (multimedia) también cuenta: si está en 0, no suena nada.</p>
         <TextField
           label="PIN del operador (solo números)"
           value={config.settings.operatorPin}

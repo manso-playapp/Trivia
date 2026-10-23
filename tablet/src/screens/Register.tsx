@@ -4,6 +4,7 @@ import { BrandBadge } from '../components/Brand';
 import { Chick } from '../components/Chick';
 import { useConfig } from '../lib/configContext';
 import { emailSuggestions, emailTypoFix, isValidEmail, isValidPhone } from '../lib/email';
+import { sfx } from '../lib/sound';
 
 export interface Player {
   name: string;
@@ -29,6 +30,7 @@ export function Register({ onDone }: { onDone: (p: Player) => void }) {
   const hasContact = email.trim() !== '' || phone.trim() !== '';
 
   const play = () => {
+    sfx.tap();
     setTouched(true);
     if (emailBad || phoneBad) return;
     // Sin permiso no se guardan mail ni teléfono (pero se juega igual).
@@ -115,13 +117,13 @@ export function Register({ onDone }: { onDone: (p: Player) => void }) {
           <button type="button" className="btn btn--primary" onClick={play}>
             ¡Jugar!
           </button>
-          <button type="button" className="btn btn--ghost" onClick={() => onDone(anonymousPlayer)}>
+          <button type="button" className="btn btn--ghost" onClick={() => (sfx.tap(), onDone(anonymousPlayer))}>
             Jugar sin dejar datos
           </button>
         </div>
       </motion.div>
       <div className="register__chick">
-        <Chick pose="peck" size={110} />
+        <Chick pose="peck" size="min(110px, 18cqw)" />
       </div>
     </div>
   );

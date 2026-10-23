@@ -6,15 +6,13 @@ import { useConfig } from '../lib/configContext';
  * cabeza, ojo, pico y dos patas que alternan al caminar. Los pollitos no vuelan:
  * el ala nunca se mueve. Colores desde la configuración.
  */
-export function ChickSide({ size = 90, walking = true, style, className = '' }: { size?: number; walking?: boolean; style?: CSSProperties; className?: string }) {
+export function ChickSide({ size = 90, walking = true, style, className = '' }: { size?: number | string; walking?: boolean; style?: CSSProperties; className?: string }) {
   const { chick: c } = useConfig();
   return (
     <svg
       className={`chick-side ${walking ? 'chick-side--walk' : ''} ${className}`}
       viewBox="0 0 200 200"
-      width={size}
-      height={size}
-      style={style}
+      style={{ width: size, height: size, ...style }}
       aria-hidden="true"
     >
       <g className="cs__all">

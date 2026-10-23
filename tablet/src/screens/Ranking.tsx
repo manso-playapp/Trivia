@@ -2,6 +2,7 @@ import { motion } from 'framer-motion';
 import { BrandBadge } from '../components/Brand';
 import { Chick } from '../components/Chick';
 import type { PlayRecord } from '../config/types';
+import { sfx } from '../lib/sound';
 
 export function Ranking({ rows, currentId, onRestart }: { rows: PlayRecord[]; currentId: string | null; onRestart: () => void }) {
   return (
@@ -26,7 +27,7 @@ export function Ranking({ rows, currentId, onRestart }: { rows: PlayRecord[]; cu
           ))}
         </ol>
       </div>
-      <button type="button" className="btn btn--primary btn--big" onClick={onRestart}>
+      <button type="button" className="btn btn--primary btn--big" onClick={() => (sfx.tap(), onRestart())}>
         Jugar de nuevo
       </button>
       <div className="ranking__chick">

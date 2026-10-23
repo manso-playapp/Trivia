@@ -54,6 +54,8 @@ export const defaultConfig: GameConfig = {
     operatorPin: '1234',
     deviceName: 'Tablet 1',
     sound: true,
+    volume: 70,
+    music: false,
     wrongAnimation: 'casi',
   },
   questions: [

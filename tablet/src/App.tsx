@@ -3,7 +3,7 @@ import { AnimatePresence, motion, MotionGlobalConfig } from 'framer-motion';
 import type { GameConfig, PlayRecord, Question } from './config/types';
 import { ConfigContext } from './lib/configContext';
 import { dailyRanking, pickQuestions } from './lib/game';
-import { setSoundEnabled } from './lib/sound';
+import { setSound, sfx, startMusic, stopMusic } from './lib/sound';
 import { addPlay, loadConfig, loadPlays, resetConfig, saveConfig, savePlays } from './lib/storage';
 import { Attract } from './screens/Attract';
 import { Countdown } from './screens/Countdown';
@@ -48,7 +48,12 @@ export default function App() {
   const [lastPlayId, setLastPlayId] = useState<string | null>(null);
   const lastTouch = useRef(Date.now());
 
-  useEffect(() => setSoundEnabled(config.settings.sound), [config.settings.sound]);
+  useEffect(() => setSound(config.settings.sound, config.settings.volume), [config.settings.sound, config.settings.volume]);
+  // Música de fondo (si está activada) mientras alguien juega; se corta en el menú del operador.
+  useEffect(() => {
+    if (config.settings.music && config.settings.sound && !operator && screen !== 'attract') startMusic();
+    else stopMusic();
+  }, [config.settings.music, config.settings.sound, operator, screen]);
 
   const goHome = useCallback(() => {
     setScreen('attract');
@@ -121,7 +126,7 @@ export default function App() {
   const score = answers.reduce((s, a) => s + a.score, 0);
 
   let view: JSX.Element | null = null;
-  if (screen === 'attract') view = <Attract onStart={() => setScreen('register')} onOperator={() => setOperator(true)} />;
+  if (screen === 'attract') view = <Attract onStart={() => (sfx.tap(), setScreen('register'))} onOperator={() => setOperator(true)} />;
   else if (screen === 'register') view = <Register onDone={startGame} />;
   else if (screen === 'countdown') view = <Countdown onDone={onCountdownDone} />;
   else if (screen === 'question' && current)

@@ -15,6 +15,8 @@ button, input { font: inherit; }
   height: 100%;
   width: 100%;
   overflow: hidden;
+  /* clip: la pantalla nunca se desplaza sola (por ejemplo al enfocar un campo o tocar un botón del borde) */
+  overflow: clip;
   background: var(--bg);
   color: var(--text);
   font-family: var(--font-body);
@@ -170,17 +172,19 @@ button, input { font: inherit; }
 .countdown__num--go { font-size: clamp(3.5rem, 11cqh, 7rem); }
 
 /* ===== Pregunta ===== */
-.question { justify-content: flex-start; }
-.question__top { display: flex; flex-direction: column; align-items: center; gap: 12px; }
+/* La pantalla de pregunta entra completa en cualquier tamaño: la tarjeta se achica y, si hace falta, las opciones scrollean dentro de su zona */
+.question { justify-content: flex-start; gap: clamp(6px, 1.6cqh, 20px); padding-top: max(env(safe-area-inset-top), clamp(8px, 2cqh, 32px)); padding-bottom: clamp(8px, 2cqh, 32px); }
+.question__top { display: flex; flex-direction: column; align-items: center; gap: clamp(4px, 1cqh, 12px); flex: none; }
 .progress { display: flex; gap: 10px; }
 .progress__dot { width: 14px; height: 14px; border-radius: 50%; background: rgba(255, 255, 255, 0.4); }
 .progress__dot.is-done { background: var(--surface); }
 .progress__dot.is-current { background: var(--surface); transform: scale(1.35); }
-.question__card { padding: 0; overflow: hidden; }
-.question__header { background: var(--brand); color: var(--on-brand); padding: clamp(16px, 3cqh, 28px); text-align: center; }
-.question__count { font-size: 0.95rem; opacity: 0.85; }
-.question__text { font-family: var(--font-heading); font-weight: 700; margin: 6px 0 0; font-size: clamp(1.35rem, 3.3cqh, 2.1rem); line-height: 1.25; }
-.timer { position: relative; height: 34px; background: #ececf0; }
+.question__card { padding: 0; overflow: hidden; flex: 0 1 auto; min-height: 0; display: flex; flex-direction: column; }
+.question__header { background: var(--brand); color: var(--on-brand); padding: clamp(10px, 2.4cqh, 28px) clamp(12px, 3cqw, 28px); text-align: center; flex: none; }
+.question__count { font-size: clamp(0.8rem, min(1.8cqh, 3.2cqw), 0.95rem); opacity: 0.85; }
+.question__text { font-family: var(--font-heading); font-weight: 700; margin: 4px 0 0; font-size: clamp(1rem, min(3.2cqh, 5.6cqw), 2.1rem); line-height: 1.22; }
+.question__text.is-long { font-size: clamp(0.95rem, min(2.8cqh, 5cqw), 1.85rem); }
+.timer { position: relative; height: clamp(24px, 3.6cqh, 34px); background: #ececf0; flex: none; }
 .timer__bar {
   position: absolute;
   inset: 0;
@@ -190,23 +194,24 @@ button, input { font: inherit; }
   transition: transform 0.1s linear;
 }
 .timer__bar.is-urgent { opacity: 0.6; animation: pulse 0.5s ease-in-out infinite alternate; }
-.timer__num { position: absolute; inset: 0; display: grid; place-items: center; font-weight: 700; color: var(--text); font-size: 1.15rem; }
+.timer__num { position: absolute; inset: 0; display: grid; place-items: center; font-weight: 700; color: var(--text); font-size: clamp(0.95rem, 2.2cqh, 1.15rem); }
 .timer__num.is-urgent { color: var(--brand); }
 @keyframes pulse { to { opacity: 0.9; } }
 
-.options { display: grid; gap: 12px; padding: clamp(16px, 2.6cqh, 26px); }
+.options { display: grid; gap: clamp(6px, 1.4cqh, 12px); padding: clamp(10px, 2.2cqh, 26px); min-height: 0; overflow-y: auto; overscroll-behavior: contain; }
 .option {
   display: flex;
   align-items: center;
-  gap: 14px;
+  gap: clamp(8px, 2cqw, 14px);
   width: 100%;
   text-align: left;
-  padding: clamp(14px, 2.4cqh, 22px) 18px;
+  padding: clamp(8px, 1.8cqh, 22px) clamp(10px, 3cqw, 18px);
   border-radius: 16px;
   border: 2px solid var(--brand);
   background: #fff;
   color: var(--text);
-  font-size: clamp(1.1rem, 2.6cqh, 1.5rem);
+  line-height: 1.2;
+  font-size: clamp(0.92rem, min(2.4cqh, 4.3cqw), 1.5rem);
   font-weight: 600;
   cursor: pointer;
 }
@@ -227,9 +232,10 @@ button, input { font: inherit; }
 .option.is-wrong { background: var(--bad); border-color: var(--bad); color: #fff; }
 .option.is-wrong .option__letter { border-color: #fff; color: #fff; }
 .option.is-dim { opacity: 0.45; }
+.options.is-long .option { font-size: clamp(0.85rem, min(2.1cqh, 3.9cqw), 1.3rem); }
 
-.question__feedback { flex: 1; display: grid; place-items: center; min-height: 160px; width: 100%; }
-.feedback { display: flex; align-items: center; gap: 14px; font-family: var(--font-heading); font-weight: 800; font-size: clamp(1.6rem, 4cqh, 2.6rem); color: var(--on-brand); }
+.question__feedback { flex: 1 0 clamp(70px, 15cqh, 200px); display: grid; place-items: center; min-height: 0; width: 100%; }
+.feedback { display: flex; align-items: center; gap: 14px; font-family: var(--font-heading); font-weight: 800; font-size: clamp(1.2rem, min(4cqh, 7cqw), 2.6rem); color: var(--on-brand); }
 .feedback__mark {
   width: 1.8em;
   height: 1.8em;
@@ -429,3 +435,18 @@ button, input { font: inherit; }
 .scenes .scene--live .fx-layer *, .scenes .scene--live .chick * { animation-play-state: running !important; }
 .scenes .fx-confetti { animation-delay: -1s !important; }
 .scenes .shy-chick { animation-delay: -0.9s !important; animation-play-state: paused; }
+
+/* Celular acostado (pantalla muy baja): logo y espacios mínimos para que entren las 3 opciones */
+@container (max-height: 520px) {
+  .question { gap: 4px; padding-top: 6px; padding-bottom: 6px; }
+  .question__top { flex-direction: row; gap: 12px; }
+  .question__top .brand-logo img { height: 30px !important; }
+  .question__header { padding: 6px 12px; }
+  .question__count { display: none; }
+  .question__text, .question__text.is-long { font-size: clamp(0.9rem, 4.2cqh, 1.2rem); margin: 0; }
+  .timer { height: 20px; }
+  .options { padding: 6px 10px; gap: 5px; }
+  .option, .options.is-long .option { padding: 5px 10px; font-size: clamp(0.8rem, 3.8cqh, 1rem); }
+  .option__letter { width: 1.7em; height: 1.7em; }
+  .question__feedback { flex-basis: 52px; }
+}
