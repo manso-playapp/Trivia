@@ -33,6 +33,12 @@ export interface Theme {
   logoOnBrand: string;
   /** foto de portada de la pantalla de espera (con fondo recortado); vacío = pollito dibujado */
   hero: string;
+  /** foto para la variante B de la portada */
+  heroAlt: string;
+  /** diseño de la portada: A = foto grande en banda inclinada; B = foto sobre blanco y franja roja abajo */
+  attractLayout: 'a' | 'b';
+  /** línea corta bajo el título de la portada */
+  attractSubtitle: string;
   /** nombre que se muestra si no hay logo */
   brandName: string;
   slogan: string;

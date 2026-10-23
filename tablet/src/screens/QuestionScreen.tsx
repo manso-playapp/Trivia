@@ -88,7 +88,7 @@ export function QuestionScreen({
   return (
     <div className="screen question">
       <div className="question__top">
-        <BrandBadge size={96} />
+        <BrandBadge size={64} />
         <div className="progress">
           {Array.from({ length: total }, (_, i) => (
             <span key={i} className={`progress__dot ${i < number - 1 ? 'is-done' : ''} ${i === number - 1 ? 'is-current' : ''}`} />

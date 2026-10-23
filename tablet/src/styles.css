@@ -114,29 +114,41 @@ button, input { font: inherit; }
 .consent input { width: 28px; height: 28px; flex: none; accent-color: var(--brand); }
 .privacy, .register__hint { font-size: 0.9rem; color: var(--muted); margin: 8px 0 0; }
 
-/* ===== Pantalla de espera ===== */
-.attract { justify-content: flex-start; cursor: pointer; }
-.attract__title {
-  font-family: var(--font-heading);
-  font-weight: 800;
-  color: var(--on-brand);
-  font-size: clamp(3rem, 11cqh, 7rem);
-  margin: 0;
-  text-shadow: 0 6px 0 rgba(0, 0, 0, 0.12);
-}
-.attract__stage { position: relative; display: grid; place-items: end center; flex: 1; width: calc(100% + 2 * clamp(16px, 5cqw, 48px)); margin-bottom: calc(-1 * clamp(16px, 3cqh, 40px)); min-height: 0; }
-.attract__hero { width: 100%; max-height: 100%; object-fit: contain; object-position: bottom; pointer-events: none; }
+/* ===== Portada (pantalla de espera) ===== */
+.attract { padding: 0; gap: 0; justify-content: flex-start; cursor: pointer; }
+.attract__hero-zone { position: relative; width: 100%; height: 60%; flex: none; display: grid; place-items: end center; }
+.attract__hero { position: relative; z-index: 1; pointer-events: none; }
+.attract__sign { position: absolute; z-index: 2; }
+.attract__titles { display: grid; justify-items: center; gap: 4px; padding: 3cqh 16px 0; text-align: center; }
+.attract__title { font-family: var(--font-heading); font-weight: 800; color: var(--on-brand); font-size: clamp(2.2rem, 6.2cqh, 3.6rem); line-height: 1; margin: 0; letter-spacing: 0.01em; }
+.attract__subtitle { margin: 0; color: var(--on-brand); opacity: 0.88; font-size: clamp(1rem, 2.2cqh, 1.35rem); font-weight: 600; }
+.attract__cta-zone { flex: 1; width: 100%; display: grid; place-items: end center; padding: 0 clamp(16px, 7cqw, 56px) max(env(safe-area-inset-bottom), 5cqh); }
 .attract__cta {
+  position: relative;
+  width: 100%;
+  max-width: 560px;
+  text-align: center;
   background: var(--surface);
   color: var(--brand);
   font-family: var(--font-heading);
   font-weight: 800;
-  font-size: clamp(1.4rem, 3.6cqh, 2.2rem);
-  padding: 18px 40px;
+  font-size: clamp(1.6rem, 4.2cqh, 2.4rem);
+  padding: clamp(18px, 3.2cqh, 30px) 24px;
   border-radius: 999px;
-  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.18);
-  z-index: 1;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.22);
 }
+.attract__ripple { position: absolute; inset: 0; border-radius: inherit; border: 3px solid var(--surface); animation: ripple 1.8s ease-out infinite; pointer-events: none; }
+@keyframes ripple { from { transform: scale(1); opacity: 0.8; } to { transform: scale(1.12, 1.35); opacity: 0; } }
+
+/* A: foto grande sobre una banda blanca inclinada; el corte de la foto sigue la inclinación */
+.attract--a .attract__sign { top: max(env(safe-area-inset-top), 3cqh); left: 50%; transform: translateX(-50%); }
+.attract--a .attract__panel { position: absolute; left: -12%; right: -12%; top: 30%; bottom: 4%; background: var(--surface); transform: skewY(-9deg); box-shadow: 0 14px 30px rgba(0, 0, 0, 0.18); }
+.attract--a .attract__hero { width: 108%; max-width: none; height: 74%; object-fit: cover; object-position: center top; margin-bottom: 3%; clip-path: polygon(0 0, 100% 0, 100% 86%, 0 100%); }
+
+/* B: arriba blanco con la foto que entra desde el borde; abajo franja roja con corte inclinado */
+.attract--b .attract__hero-zone { background: var(--surface); clip-path: polygon(0 0, 100% 0, 100% 88%, 0 100%); place-items: end start; }
+.attract--b .attract__sign { top: max(env(safe-area-inset-top), 3cqh); right: 6%; }
+.attract--b .attract__hero { width: 118%; max-width: none; margin-left: -14%; margin-bottom: 9%; }
 
 /* ===== Registro ===== */
 .register { justify-content: flex-start; overflow-y: auto; }

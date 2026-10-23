@@ -56,8 +56,11 @@ export function Scenes({ config, vars }: { config: GameConfig; vars: CSSProperti
           <p>Pantallas fijas para aprobar el diseño. En el juego cada una tiene su animación. Marca y preguntas de {config.theme.brandName}.</p>
         </header>
         <div className="scenes__grid">
-          <Frame title="1. Espera" note="Lo que se ve cuando nadie juega" {...f}>
-            <Attract onStart={noop} onOperator={noop} />
+          <Frame title="1A. Portada: foto en banda" note="Variante A" {...f}>
+            <Attract onStart={noop} onOperator={noop} layout="a" />
+          </Frame>
+          <Frame title="1B. Portada: pollito en la mano" note="Variante B" {...f}>
+            <Attract onStart={noop} onOperator={noop} layout="b" />
           </Frame>
           <Frame title="2. Datos (opcionales)" note="Nombre, mail con sugerencias y teléfono" {...f}>
             <Register onDone={noop} />

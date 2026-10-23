@@ -37,7 +37,7 @@ export function Final({
 
   return (
     <div className="screen final" onClick={onNext}>
-      <BrandBadge size={84} />
+      <BrandBadge size={64} />
       <motion.h1
         className="final__title"
         initial={{ scale: 0.5, opacity: 0 }}

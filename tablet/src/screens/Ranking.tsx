@@ -6,7 +6,7 @@ import type { PlayRecord } from '../config/types';
 export function Ranking({ rows, currentId, onRestart }: { rows: PlayRecord[]; currentId: string | null; onRestart: () => void }) {
   return (
     <div className="screen ranking">
-      <BrandBadge size={84} />
+      <BrandBadge size={64} />
       <div className="card ranking__card">
         <h2 className="card__title">Ranking del día</h2>
         {rows.length === 0 && <p className="register__hint">Todavía no hay partidas hoy.</p>}

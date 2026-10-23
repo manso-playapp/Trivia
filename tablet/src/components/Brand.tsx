@@ -6,7 +6,7 @@ import { useConfig } from '../lib/configContext';
  * si no, el logo común dentro de un círculo blanco.
  * Mantenerlo apretado 3 segundos abre el menú del operador (oculto para el público).
  */
-export function BrandBadge({ onLongPress, size = 96 }: { onLongPress?: () => void; size?: number }) {
+export function BrandBadge({ onLongPress, size = 96, light = false }: { onLongPress?: () => void; size?: number; light?: boolean }) {
   const { theme } = useConfig();
   const timer = useRef<number | null>(null);
   const start = () => {
@@ -19,6 +19,14 @@ export function BrandBadge({ onLongPress, size = 96 }: { onLongPress?: () => voi
   };
   const handlers = { onPointerDown: start, onPointerUp: cancel, onPointerLeave: cancel, onContextMenu: (e: MouseEvent) => e.preventDefault() };
 
+  // Sobre fondo blanco: logo a color, sin círculo.
+  if (light && theme.logo) {
+    return (
+      <div className="brand-logo" {...handlers}>
+        <img src={theme.logo} alt={theme.brandName} draggable={false} style={{ height: size * 0.8 }} />
+      </div>
+    );
+  }
   if (theme.logoOnBrand) {
     return (
       <div className="brand-logo" {...handlers}>

@@ -42,7 +42,7 @@ export function Register({ onDone }: { onDone: (p: Player) => void }) {
 
   return (
     <div className="screen register">
-      <BrandBadge size={84} />
+      <BrandBadge size={64} />
       <motion.div
         className="card register__card"
         initial={{ y: 40, opacity: 0 }}
