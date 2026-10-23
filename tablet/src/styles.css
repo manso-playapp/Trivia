@@ -297,7 +297,7 @@ button, input { font: inherit; }
 
 /* ===== Efectos ===== */
 .fx-layer { position: absolute; inset: 0; pointer-events: none; overflow: hidden; z-index: 20; }
-.fx-parade { position: absolute; left: 0; transform: translate3d(-20cqw, 0, 0); animation: parade 2.2s linear both; will-change: transform; }
+.fx-parade { position: absolute; left: 0; transform: translate3d(-25cqw, 0, 0); animation: parade 3s linear both; will-change: transform; }
 @keyframes parade { to { transform: translate3d(110cqw, 0, 0); } }
 .fx-confetti { position: absolute; top: 0; transform: translate3d(0, -5cqh, 0); animation-name: confetti; animation-timing-function: ease-in; animation-fill-mode: both; border-radius: 2px; }
 @keyframes confetti { to { transform: translate3d(0, 110cqh, 0) rotate(var(--rot)); } }
@@ -322,37 +322,38 @@ button, input { font: inherit; }
 @keyframes breathe { 50% { transform: scale(1.025, 0.985); } }
 @keyframes look { 0%, 100% { transform: rotate(0); } 30% { transform: rotate(-6deg); } 60% { transform: rotate(5deg); } }
 
-/* camina */
-.chick--walk .chick__all { animation: bob 0.3s ease-in-out infinite alternate; }
-.chick--walk .chick__leg--l { animation: step 0.3s ease-in-out infinite alternate; }
-.chick--walk .chick__leg--r { animation: step 0.3s ease-in-out infinite alternate-reverse; }
-.chick--walk .chick__wing--l { animation: flap-l 0.3s ease-in-out infinite alternate; }
-.chick--walk .chick__wing--r { animation: flap-r 0.3s ease-in-out infinite alternate; }
-@keyframes bob { to { transform: translateY(-4%); } }
-@keyframes step { from { transform: rotate(-22deg); } to { transform: rotate(22deg); } }
-@keyframes flap-l { to { transform: rotate(18deg); } }
-@keyframes flap-r { to { transform: rotate(-18deg); } }
+/* saltitos cortos en el lugar (festejo) */
+.chick--hop .chick__all { animation: hop 0.55s cubic-bezier(0.3, 0, 0.4, 1) infinite alternate; }
+@keyframes hop { from { transform: translateY(0) scale(1.05, 0.95); } to { transform: translateY(-9%) scale(0.98, 1.03); } }
 
-/* festeja: salta con las alas arriba */
-.chick--celebrate .chick__all { animation: hop 0.5s cubic-bezier(0.3, 0, 0.4, 1) infinite alternate; }
-.chick--celebrate .chick__wing--l { animation: cheer-l 0.25s ease-in-out infinite alternate; }
-.chick--celebrate .chick__wing--r { animation: cheer-r 0.25s ease-in-out infinite alternate; }
-@keyframes hop { from { transform: translateY(0) scale(1.04, 0.96); } to { transform: translateY(-14%) scale(0.98, 1.03); } }
-@keyframes cheer-l { from { transform: rotate(60deg); } to { transform: rotate(95deg); } }
-@keyframes cheer-r { from { transform: rotate(-60deg); } to { transform: rotate(-95deg); } }
+/* picotea el piso */
+.chick--peck .chick__all { animation: breathe 2.4s ease-in-out infinite; }
+.chick--peck .chick__head { animation: peck 2.6s ease-in-out infinite; }
+@keyframes peck { 0%, 55%, 100% { transform: translateY(0) rotate(0); } 62%, 76% { transform: translateY(16%) rotate(4deg); } 69% { transform: translateY(11%) rotate(4deg); } }
 
-/* sorprendido: ojos grandes, salta hacia atrás */
+/* sorprendido: ojos grandes, inclina la cabeza y da un saltito hacia atrás */
 .chick--surprised .chick__eyes { animation: none; transform: scale(1.3); }
 .chick--surprised .chick__all { animation: startle 0.5s ease-out 1; }
-.chick--surprised .chick__wing--l { transform: rotate(35deg); }
-.chick--surprised .chick__wing--r { transform: rotate(-35deg); }
-@keyframes startle { 30% { transform: translateY(-10%) rotate(-4deg); } 60% { transform: translateY(0) rotate(3deg); } }
+.chick--surprised .chick__head { transform: rotate(-12deg); transition: transform 0.25s; }
+@keyframes startle { 30% { transform: translateY(-7%); } 60% { transform: translateY(0); } }
 
-/* saluda con un ala */
-.chick--wave .chick__all { animation: breathe 2.4s ease-in-out infinite; }
-.chick--wave .chick__wing--r { animation: wave 0.45s ease-in-out infinite alternate; }
-.chick--wave .chick__head { animation: look 5s ease-in-out infinite; }
-@keyframes wave { from { transform: rotate(-70deg); } to { transform: rotate(-115deg); } }
+/* inclina la cabeza, curioso */
+.chick--tilt .chick__all { animation: breathe 2.4s ease-in-out infinite; }
+.chick--tilt .chick__head { animation: tilt 3s ease-in-out infinite; }
+@keyframes tilt { 0%, 100% { transform: rotate(0); } 25%, 60% { transform: rotate(14deg); } }
+
+/* ===== Pollito de perfil caminando (manada) ===== */
+.chick-side { display: block; overflow: visible; }
+.cs__all, .cs__leg, .cs__head { transform-box: fill-box; }
+.cs__leg { transform-origin: 50% 0%; }
+.cs__head { transform-origin: 20% 90%; }
+.chick-side--walk .cs__all { animation: cs-bob 0.36s ease-in-out infinite alternate; }
+.chick-side--walk .cs__leg--front { animation: cs-step 0.36s ease-in-out infinite alternate; }
+.chick-side--walk .cs__leg--back { animation: cs-step 0.36s ease-in-out infinite alternate-reverse; }
+.chick-side--walk .cs__head { animation: cs-nod 0.36s ease-in-out infinite alternate; }
+@keyframes cs-bob { from { transform: translateY(0); } to { transform: translateY(-4%); } }
+@keyframes cs-step { from { transform: rotate(-26deg); } to { transform: rotate(26deg); } }
+@keyframes cs-nod { from { transform: translateX(0) rotate(0); } to { transform: translateX(3%) rotate(3deg); } }
 
 /* Equipos lentos o personas que pidieron menos movimiento */
 @media (prefers-reduced-motion: reduce) {
@@ -424,12 +425,7 @@ button, input { font: inherit; }
 .scene figcaption { display: grid; gap: 2px; }
 .scene figcaption span { color: #5b5c60; font-size: 0.92rem; }
 .scenes .bg-pattern, .scenes .chick *, .scenes .fx-layer * { animation-play-state: paused !important; }
-.scenes .fx-parade:nth-child(1) { animation-delay: -1.75s !important; }
-.scenes .fx-parade:nth-child(2) { animation-delay: -1.48s !important; }
-.scenes .fx-parade:nth-child(3) { animation-delay: -1.21s !important; }
-.scenes .fx-parade:nth-child(4) { animation-delay: -0.94s !important; }
-.scenes .fx-parade:nth-child(5) { animation-delay: -0.67s !important; }
-.scenes .fx-parade:nth-child(6) { animation-delay: -0.40s !important; }
 .scenes .fx-band { animation-delay: -0.45s !important; }
+.scenes .scene--live .fx-layer *, .scenes .scene--live .chick * { animation-play-state: running !important; }
 .scenes .fx-confetti { animation-delay: -1s !important; }
 .scenes .shy-chick { animation-delay: -0.9s !important; animation-play-state: paused; }

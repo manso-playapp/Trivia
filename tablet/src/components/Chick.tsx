@@ -1,7 +1,8 @@
 import type { CSSProperties } from 'react';
 import { useConfig } from '../lib/configContext';
 
-export type ChickPose = 'idle' | 'walk' | 'celebrate' | 'surprised' | 'wave';
+/** Movimientos creíbles de un pollito: no vuela ni aletea. */
+export type ChickPose = 'idle' | 'hop' | 'peck' | 'surprised' | 'tilt';
 
 interface Props {
   pose?: ChickPose;
@@ -14,13 +15,14 @@ interface Props {
 
 /**
  * Pollito dibujado por capas (patas, alas, cuerpo, cabeza, ojos, pico).
- * Cada capa se anima por CSS según la pose (ver styles.css, sección "Pollito").
+ * Cada capa se anima por CSS según la pose (ver styles.css, sección "Pollito"). Las alas
+ * quedan siempre pegadas al cuerpo.
  * Colores y proporciones salen de la configuración: se ajustan sin tocar el dibujo.
  */
 export function Chick({ pose = 'idle', size = 160, className = '', style, flip = false }: Props) {
   const { chick: c } = useConfig();
   const eye = 1 * c.eyeScale;
-  const mouthOpen = pose !== 'idle' && pose !== 'walk';
+  const mouthOpen = pose === 'hop' || pose === 'surprised';
   return (
     <svg
       className={`chick chick--${pose} ${flip ? 'chick--flip' : ''} ${className}`}

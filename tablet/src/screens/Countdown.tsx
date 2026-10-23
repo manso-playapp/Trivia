@@ -43,7 +43,7 @@ export function Countdown({ onDone, initialStep = 0 }: { onDone: () => void; ini
         animate={{ y: [0, -46, 0] }}
         transition={{ duration: 0.55, ease: 'easeOut' }}
       >
-        <Chick pose={last ? 'celebrate' : 'idle'} size="min(46cqw, 300px)" />
+        <Chick pose={last ? 'hop' : 'idle'} size="min(46cqw, 300px)" />
       </motion.div>
     </div>
   );

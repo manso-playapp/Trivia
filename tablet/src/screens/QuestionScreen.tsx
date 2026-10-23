@@ -69,7 +69,8 @@ export function QuestionScreen({
   // Después de mostrar la devolución, pasa a la siguiente.
   useEffect(() => {
     if (phase === 'asking' || frozen) return;
-    const t = window.setTimeout(() => answer.current && onAnswered(answer.current), 2300);
+    // En el acierto se espera a que cruce la manada de pollitos.
+    const t = window.setTimeout(() => answer.current && onAnswered(answer.current), phase === 'correct' ? 3200 : 2300);
     return () => window.clearTimeout(t);
   }, [phase, onAnswered, frozen]);
 
@@ -160,7 +161,7 @@ export function QuestionScreen({
       {phase === 'correct' && (
         <>
           <BandSweep />
-          <ChickParade count={5} size={92} />
+          <ChickParade count={8} size={100} />
         </>
       )}
     </div>
@@ -183,7 +184,7 @@ function WrongShy() {
     <div className="feedback feedback--shy">
       <Band>¡Uy! Era la otra</Band>
       <div className="shy-chick">
-        <Chick pose="wave" size={150} />
+        <Chick pose="tilt" size={150} />
       </div>
     </div>
   );

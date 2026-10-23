@@ -121,7 +121,7 @@ export function Register({ onDone }: { onDone: (p: Player) => void }) {
         </div>
       </motion.div>
       <div className="register__chick">
-        <Chick pose="wave" size={110} />
+        <Chick pose="peck" size={110} />
       </div>
     </div>
   );

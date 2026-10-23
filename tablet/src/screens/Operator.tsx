@@ -171,7 +171,7 @@ function Panel({ config, plays, onSaveConfig, onSavePlays, onResetConfig, onClos
         <ConfigContext.Provider value={config}>
           <div className="op-chick__preview" style={{ background: config.theme.background }}>
             <Chick pose="idle" size={150} />
-            <Chick pose="celebrate" size={110} />
+            <Chick pose="hop" size={110} />
             <Chick pose="surprised" size={110} />
           </div>
         </ConfigContext.Provider>

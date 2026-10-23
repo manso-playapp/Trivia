@@ -30,7 +30,7 @@ export function Ranking({ rows, currentId, onRestart }: { rows: PlayRecord[]; cu
         Jugar de nuevo
       </button>
       <div className="ranking__chick">
-        <Chick pose="wave" size={110} />
+        <Chick pose="peck" size={110} />
       </div>
     </div>
   );

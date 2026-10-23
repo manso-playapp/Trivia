@@ -2,6 +2,8 @@ import type { CSSProperties, ReactNode } from 'react';
 import type { GameConfig, PlayRecord } from '../config/types';
 import { ConfigContext } from '../lib/configContext';
 import { PreviewContext } from '../lib/preview';
+import { BrandBadge } from '../components/Brand';
+import { ChickParade } from '../components/Effects';
 import { Attract } from './Attract';
 import { Countdown } from './Countdown';
 import { Final } from './Final';
@@ -19,14 +21,14 @@ const sampleRanking: PlayRecord[] = [
   { id: 'r5', device: 'Tablet 1', playedAt: '', name: 'Jorge', email: '', phone: '', consent: false, correct: 2, total: 5, score: 270 },
 ];
 
-function Frame({ title, note, config, vars, children }: { title: string; note?: string; config: GameConfig; vars: CSSProperties; children: ReactNode }) {
+function Frame({ title, note, config, vars, children, live = false }: { title: string; note?: string; config: GameConfig; vars: CSSProperties; children: ReactNode; live?: boolean }) {
   return (
-    <figure className="scene">
+    <figure className={`scene ${live ? 'scene--live' : ''}`}>
       <div className="scene__viewport">
         <ConfigContext.Provider value={config}>
           <div className="app scene__app" style={vars}>
             <div className="bg-pattern" aria-hidden="true" />
-            <div className="screen-wrap">{children}</div>
+            <div className="screen-wrap">{live ? <PreviewContext.Provider value={false}>{children}</PreviewContext.Provider> : children}</div>
           </div>
         </ConfigContext.Provider>
       </div>
@@ -73,6 +75,20 @@ export function Scenes({ config, vars }: { config: GameConfig; vars: CSSProperti
           </Frame>
           <Frame title="5. Acierto" note="Pollitos que cruzan + banda que barre" {...f}>
             <QuestionScreen question={q} number={2} total={5} onAnswered={noop} previewPhase="correct" previewPicked={q.correct} />
+          </Frame>
+          <Frame title="5b. Manada caminando" note="En movimiento: de izquierda a derecha, de perfil" {...f} live>
+            <div className="screen question">
+              <div className="question__top">
+                <BrandBadge size={64} />
+              </div>
+              <div className="question__feedback">
+                <div className="feedback feedback--ok">
+                  <span className="feedback__mark">✓</span>
+                  <span>¡Correcto!</span>
+                </div>
+              </div>
+              <ChickParade count={8} size={100} loop />
+            </div>
           </Frame>
           <Frame title="6a. Error: «¡Casi!»" note="Opción por defecto" config={casi} vars={vars}>
             <QuestionScreen question={q} number={2} total={5} onAnswered={noop} previewPhase="wrong" previewPicked={wrongPick} />

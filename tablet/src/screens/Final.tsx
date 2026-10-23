@@ -60,12 +60,12 @@ export function Final({
         {correct} de {total} respuestas correctas
       </p>
       {!big && <p className="final__thanks">{texts.thanks}</p>}
-      <Chick pose="celebrate" size={big ? 'min(40cqw, 240px)' : 'min(32cqw, 190px)'} />
+      <Chick pose="hop" size={big ? 'min(40cqw, 240px)' : 'min(32cqw, 190px)'} />
       <span className="final__tap">Tocá para ver el ranking</span>
       {big ? (
         <>
           <BandSweep />
-          <ChickParade count={6} size={84} />
+          <ChickParade count={10} size={104} seed={5} />
           <Confetti count={44} />
         </>
       ) : (

@@ -1,6 +1,7 @@
 import { useMemo, type CSSProperties } from 'react';
 import { useConfig } from '../lib/configContext';
-import { Chick } from './Chick';
+import { useFrozen } from '../lib/preview';
+import { ChickSide } from './ChickSide';
 
 // Efectos de pantalla completa. Solo animan posición y giro (lo más liviano
 // para una tablet de gama media). La cantidad de piezas está acotada.
@@ -14,13 +15,40 @@ function seeded(seed: number) {
   };
 }
 
-/** Pollitos que cruzan caminando por abajo de la pantalla. */
-export function ChickParade({ count = 4, size = 90 }: { count?: number; size?: number }) {
+/**
+ * Manada de pollitos de perfil que cruza caminando de izquierda a derecha.
+ * Distintos tamaños y velocidades: los más chicos van "más lejos" (más arriba y más lentos).
+ */
+export function ChickParade({ count = 8, size = 96, seed = 11, loop = false }: { count?: number; size?: number; seed?: number; loop?: boolean }) {
+  const frozen = useFrozen();
+  const chicks = useMemo(() => {
+    const r = seeded(seed * 7919 + count);
+    return Array.from({ length: count }, (_, i) => {
+      const depth = r(); // 0 = cerca, 1 = lejos
+      return {
+        key: i,
+        size: Math.round(size * (1 - depth * 0.45)),
+        bottom: 1 + depth * 9,
+        duration: 2.2 + depth * 1.0,
+        delay: i * 0.12 + r() * 0.15,
+        z: Math.round((1 - depth) * 10),
+        spread: 4 + (i / Math.max(1, count - 1)) * 80,
+      };
+    });
+  }, [count, size, seed]);
   return (
     <div className="fx-layer" aria-hidden="true">
-      {Array.from({ length: count }, (_, i) => (
-        <div key={i} className="fx-parade" style={{ animationDelay: `${i * 0.22}s`, bottom: `${2 + (i % 2) * 3}%` }}>
-          <Chick pose="walk" size={size} />
+      {chicks.map((c) => (
+        <div
+          key={c.key}
+          className="fx-parade"
+          style={
+            frozen
+              ? { left: `${c.spread}%`, bottom: `${c.bottom}%`, zIndex: c.z, animation: 'none', transform: 'none' }
+              : { bottom: `${c.bottom}%`, zIndex: c.z, animationDelay: `${c.delay}s`, animationDuration: `${c.duration}s`, animationIterationCount: loop ? 'infinite' : 1 }
+          }
+        >
+          <ChickSide size={c.size} />
         </div>
       ))}
     </div>
