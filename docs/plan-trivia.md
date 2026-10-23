@@ -19,7 +19,7 @@ Actualizado el mismo día con las primeras respuestas de Facundo (P1 y P2) y el 
 | **APK hoy** | Nada armado. **Verifiqué que se puede generar un APK desde este entorno de nube** (APK de prueba compilado y firmado en modo prueba). |
 | **Recomendación animaciones** | Framer Motion (transiciones) + CSS (cuenta regresiva) + confeti liviano; Lottie solo para piezas de marca. |
 | **Recomendación APK** | Capacitor: la misma web empaquetada como app, funcionando **sin internet**. |
-| **Primera entrega propuesta** | Un link web con la trivia jugable y animada (preguntas y colores de prueba) para probar en el celular. |
+| **Primera entrega propuesta** | Lámina del pollito (sáb 24/10) y link web jugable (dom 25/10); APK en la Tab A9 el lun 26/10. Evento: **02/11** (plan de 10 días, sección 12). |
 | **Ya decidido** | Una tablet **Samsung Galaxy Tab A9**, una persona por vez. **5 preguntas** al azar por jugador, **3 opciones**, **15 segundos**. Formulario con nombre, mail y teléfono, **todos opcionales**, con autocompletado del mail. **Sin internet** y **solo en español**. Animaciones con el **pollito** (personaje) y **huevos de consumo** (producto), siempre separados: cuenta 3-2-1, acierto (lluvia de huevos + pollitos caminando), error (huevo que se rompe), final con **felicitación siempre**. Sin premios en pantalla. |
 | **Qué necesito de Facundo** | Fecha del evento y cantidad de tablets (sección 9); pollito y huevos ilustrados, licencia de tipografías, logo en vector y preguntas validadas por Feller (sección 7.4). |
 
@@ -146,7 +146,7 @@ Hoy el repo tiene la mitad de esto (colores en un JSON, logo y fondo), pero sin 
 
 ## 4. Plan de trabajo por etapas
 
-> **Actualización:** con el evento en noviembre, el plan vigente es el de la **sección 12**. Esta sección queda como referencia del plan completo (sin apuro).
+> **Actualización:** el evento es el **02/11/2026**; el plan vigente es el de 10 días de la **sección 12**. Esta sección queda como referencia del plan completo (sin apuro).
 
 Cada etapa termina con algo que Facundo puede **abrir y probar**. Los plazos son estimados para una persona y dependen de las respuestas de la sección 9.
 
@@ -265,16 +265,16 @@ Reglas para que vaya fluido en una tablet de gama media:
   2. El equipo audiovisual lo anima en After Effects a partir de ese dibujo (para los Lottie).
   3. Último recurso: ilustración de banco de imágenes con licencia, adaptada a los colores de la marca, con aprobación del cliente.
 - Mientras tanto, el prototipo usa un pollito provisorio.
-- **Novedad**: el manual de marca de Feller que llegó **no incluye el pollito ilustrado**. Hay que pedírselo a Feller o encargarlo a Mariano (opción 1).
+- **Decisión final (evento 02/11)**: el manual no trae el pollito y Mariano no lo va a dibujar. **Lo dibujo yo en SVG por capas** y Feller lo aprueba con una lámina (sección 12.1). Las opciones de arriba quedan como referencia.
 
 ### 7.4 Assets que faltan (checklist)
 | Asset | Estado | Qué hacer |
 |---|---|---|
 | Manual de marca de Feller (colores, usos del logo, tipografías, fotos) | ✅ Recibido (queda fuera del repo) | — |
-| **Pollito en vector, por capas y poses** (7.3) | ❌ No está en el manual | Pedirlo a Feller; si no hay, lo dibuja Mariano y Feller lo aprueba. |
-| **Huevo de consumo en vector**: entero y roto (cáscara partida + clara y yema). Nunca con un pollito adentro. | ❌ Falta | Lo dibuja Mariano en el mismo estilo del pollito. |
+| **Pollito en vector, por capas y poses** (7.3) | ❌ No existe | **Lo dibujo yo en SVG por capas** (12.1); Feller lo aprueba con una lámina. |
+| **Huevo de consumo en vector**: entero y roto (cáscara partida + clara y yema). Nunca con un pollito adentro. | ❌ Falta | Lo dibujo yo en SVG, en el mismo estilo del pollito. |
 | **Logo en SVG** (versión positiva, negativa blanca y escala de grises) | ❓ Confirmar | Si solo hay PDF o PNG, pedir el original vectorial (AI/SVG/PDF editable). |
-| **Tipografías con licencia para app** | ❌ Las dos del manual son comerciales | Pedir a Feller la licencia (que cubra "app" o "embebida"); si no la tiene, proponer alternativas gratuitas parecidas de Google Fonts y que Feller elija. |
+| **Tipografías** | ✅ Resuelto (12.1) | Saira es gratuita (SIL OFL): se usa la original. Centrale Sans es comercial: se reemplaza por Fira Sans (SIL OFL). La original queda como mejora posterior. |
 | Sonidos (acierto, error, reloj, festejo) | Opcional | Banco de sonidos con licencia o producción propia del equipo audiovisual. |
 | Fotos de marca para fondos (pollitos en granja) | Opcional | Del material de Feller, en alta resolución. |
 | Preguntas validadas | 🟡 20 preguntas en la trivia de referencia | Que **Feller valide las cifras** (gramos de proteína, consumo anual, pesos, etc.) antes del evento. |
@@ -321,9 +321,9 @@ Reglas para que vaya fluido en una tablet de gama media:
 5. ✅ **Internet:** se juega **sin internet**.
 6. ✅ **Idioma:** solo español. El cierre **felicita siempre**, sin premios en pantalla.
 
-7. ✅ **Fecha y tablets:** el evento es **en noviembre** (día exacto a confirmar), con **2 tablets**; el juego se puede replicar. Ver el plan para noviembre en la sección 12.
+7. ✅ **Fecha y tablets:** el evento es el **lunes 02/11/2026**, con **2 tablets**; el juego se puede replicar. Plan de 10 días en la sección 12.
 
-Antes se había estimado un mínimo de 4 semanas desde que llegara el dibujo del pollito. Con el plazo de noviembre el calendario se achica (sección 12): Mariano dibuja el pollito ya y Feller lo aprueba en la primera semana. Lo que tiene que llegar del cliente: el día exacto, el logo en vector y la validación de las preguntas.
+Antes se había estimado un mínimo de 4 semanas desde que llegara el dibujo del pollito. Con el evento el 02/11 el calendario se achica (sección 12): el pollito lo dibujo yo en SVG y Feller lo aprueba con una lámina. Lo que tiene que llegar del cliente: el logo, la validación de las preguntas y la aprobación del aviso de privacidad.
 
 
 ---
@@ -386,55 +386,70 @@ Fuentes: fichas técnicas públicas (GSMArena y otras). No pude comprobarlo en e
 
 ---
 
-## 12. Plan para noviembre (2 tablets, sin internet)
+## 12. Plan de 10 días (evento: lunes 02/11/2026)
 
-Datos de Facundo: **evento en noviembre, 2 tablets**, el juego se puede replicar. Hoy es viernes 23/10: quedan **entre 2 y 5 semanas** según el día exacto.
+> Reemplaza los escenarios A/B anteriores. Datos de Facundo: evento el **02/11**, **2 tablets** Galaxy Tab A9, **sin internet**. El pollito **no existe en vector y no lo dibuja Mariano**: lo dibujo yo en código. **No se escribe código del juego hasta tener el OK de Facundo.**
 
-### 12.1 Cómo funcionan las 2 tablets
-- Las dos tienen **la misma app instalada** (mismo APK), con las mismas preguntas y la misma marca.
-- Funcionan **solas, sin internet** y sin conectarse entre sí. **Cada una tiene su propio ranking del día.**
-- Los datos (nombre, mail y teléfono de quien dio permiso, puntaje, fecha y hora, número de tablet) quedan guardados en cada tablet.
-- **Cómo se juntan**: desde el menú oculto del operador, cada tablet **genera una planilla** (CSV, se abre con Excel). Se pasa por cable USB o, cuando haya wifi, por mail o Drive. Las dos planillas se unen en una sola, y la planilla dice de qué tablet viene cada fila.
-- El envío automático a una base de datos y un panel web quedan como **extra** del escenario B (12.4). En el escenario A no hacen falta.
-- Si se quiere replicar el juego en más tablets, se instala el mismo APK: no cambia nada.
+### 12.1 Decisiones
+- **Proyecto limpio** en una carpeta nueva de este repo (`tablet/`), con React + Framer Motion + Capacitor. Es la ruta más corta y segura: el juego vive entero en la tablet, sin servidor ni base de datos. **Del repo de Javier no se reutiliza código**, solo ideas: tema por cliente con colores en variables, importar preguntas desde planilla, modelo pregunta/opciones/correcta. Lo de Javier queda intacto como referencia.
+- **Pollito propio en SVG por capas** (cuerpo, ala izquierda y derecha, ojos, pico, patas, cresta), estilo simple y amable, amarillo, con detalles en la paleta de Feller. **Poses**: quieto (respira y parpadea), camina, festeja, sorprendido y saluda. Se anima con Framer Motion y CSS. **Nunca sale de un huevo.**
+  - **Cambio barato**: colores, proporciones (cabeza, ojos, pico) y grosor de línea quedan como valores sueltos de un solo archivo. Ajustar según lo que diga Feller lleva minutos, no días.
+  - Para aprobar: **una sola lámina (imagen PNG)** con las 5 poses y el pollito junto al logo, que Facundo le pasa a Feller.
+- **Tipografías** (licencias verificadas en fuentes públicas):
+  - **Saira** es **gratuita y libre** (licencia SIL Open Font License, está en Google Fonts): **se usa la original**. Corrección de lo dicho antes: no era comercial.
+  - **Centrale Sans** es comercial (Typedepot). Se reemplaza por **Fira Sans** (también SIL OFL, en Google Fonts), del mismo estilo: humanista, letra alta y abierta. Alternativa: Source Sans 3 (OFL). Cambiarla por la original queda como **mejora posterior** si Feller tiene licencia para app.
+  - Las fuentes van dentro del APK con su archivo de licencia, como pide la OFL.
+- **Panel simple dentro de la app** (menú oculto del operador, con PIN), porque no hay internet:
+  - **Preguntas**: importar la planilla (CSV) desde la tablet, activar o desactivar preguntas.
+  - **Marca**: colores con selector y vista previa; logo (imagen desde la tablet).
+  - **Datos**: exportar ranking y datos a **planilla CSV** (se abre con Excel); borrar el ranking del día.
+  - **Replicar**: exportar e importar la configuración, para dejar las 2 tablets iguales en un paso.
+- **Valores de fábrica**: el APK sale con preguntas y marca precargadas desde una carpeta **excluida del repo** (en el repo solo hay datos de ejemplo inventados). El APK se comparte en privado (Drive).
 
-### 12.2 ¿Reutilizar el repo de Javier o empezar limpio?
-**Recomendación: empezar un proyecto limpio**, dentro de este mismo repositorio en una carpeta nueva, y dejar el código de Javier como referencia.
-- Lo de Javier está pensado para jugar **en vivo con internet** (servidor, base de datos, presentador). Lo de noviembre es lo contrario: **una app que funciona sola en la tablet, sin internet**. Para adaptarlo habría que desarmar casi todo.
-- Además hoy no compila y tiene problemas de seguridad (sección 1). Arreglarlo cuesta días que no tenemos y no suma al juego de la tablet.
-- Un proyecto limpio y chico (React + Capacitor, la misma tecnología web) se arma rápido y va directo al APK. **Ya verifiqué que el APK se puede generar desde acá.**
-- Del repo de Javier se aprovechan las ideas: tema por cliente, importar preguntas desde planilla y modelo de datos (para cuando se sume el panel).
+### 12.2 Alcance mínimo (lo que entra sí o sí)
+Espera → datos opcionales con autocompletado de mail y casilla de permiso → 3-2-1 con el pollito → **5 preguntas al azar, 15 s, 3 opciones** → acierto o error con animación → **felicitación siempre** ("¡Felicitaciones, [nombre]!") con puntaje → ranking del día de esa tablet → **vuelve sola al inicio a los 30 s** sin tocar. Panel del operador (12.1), CSV, funciona sin internet, 2 tablets con el mismo APK.
 
-### 12.3 Orden de trabajo (etapas cortas)
-| Etapa | Entrega | Fecha objetivo | Cómo se prueba |
-|---|---|---|---|
-| **1. Juego completo** | Pantalla de espera, datos opcionales con autocompletado de mail, 3-2-1, **5 preguntas al azar, 15 s, 3 opciones**, **una animación por momento** (hecha en código), marca Feller (colores, logo, tipografía provisoria), final **siempre con felicitación**, ranking del día, menú del operador con planilla. Con las 20 preguntas de referencia y un **pollito provisorio**. | **viernes 30/10** | Link para jugar en el celular **y APK de prueba** para instalar en la Tab A9 que tiene Facundo. |
-| **2. Marca definitiva** | Pollito y huevos dibujados por Mariano y aprobados por Feller, preguntas con cifras validadas, aviso de privacidad aprobado, sonidos, ajustes de lo que Facundo marque. | **viernes 6/11** | APK nuevo en la Tab A9: prueba de fluidez y de las 30 partidas. |
-| **3. Versión final** | APK firmado, instalado en **las 2 tablets**, ensayo general y prueba de la planilla de datos. | **lunes 9/11** (escenario A) o una semana antes del evento (B) | Ensayo con las 2 tablets como en el stand. |
-| 4. Extras (solo B) | Ver 12.4. | antes del 20/11 | — |
+**Fuera del alcance para el 02/11** (mejoras después del evento): festejos en Lottie, tipografía Centrale Sans original, envío automático a una base de datos y panel web, más variantes de animación, video de atracción.
 
-### 12.4 Dos escenarios
-| | **A: evento en la 1.ª quincena (≈ 2-3 semanas)** | **B: evento en la 2.ª quincena (≈ 4-5 semanas)** |
+### 12.3 Día por día
+| Día | Trabajo | Entrega para probar |
 |---|---|---|
-| **Entra** | Etapas 1, 2 y 3: juego completo, marca Feller, pollito y huevos, animaciones de cada momento, 2 tablets, planilla de datos. | Todo lo de A, más: festejos más elaborados en **Lottie** (equipo audiovisual), **tipografías originales** si llega la licencia, **envío automático** de datos a una base y **panel web** para ver y descargar, más variantes de animación para que no se repita, video de atracción en la pantalla de espera. |
-| **Se recorta** | Pollito dibujado por **Mariano** (sin esperar que Feller mande uno; Feller solo aprueba). **Tipografías gratuitas parecidas** (Google Fonts) en vez de esperar licencias. Animaciones **simples hechas en código**, sin Lottie. Datos por **planilla manual** desde cada tablet, sin panel web ni envío automático. | Casi nada; solo lo que no llegue a aprobarse a tiempo. |
-| **Fecha límite para "congelar" la app** | 3 días antes del evento | 1 semana antes del evento |
+| **vie 23/10** | Plan (este documento). Esperar el OK de Facundo. | — |
+| **sáb 24/10** | Proyecto limpio; las pantallas del recorrido sin animaciones; tema configurable; **pollito SVG v1 + lámina**. | **Lámina del pollito** → Facundo se la pasa a Feller. |
+| **dom 25/10** | Lógica del juego (5 al azar, 15 s, 3 opciones, puntaje, felicitación, ranking local, reinicio a los 30 s); formulario con autocompletado y casilla de permiso. | **Link web jugable** en el celular (sin animaciones finas). |
+| **lun 26/10** | Animaciones: pollito en el 3-2-1; acierto (lluvia de huevos + pollitos caminando, por separado); error (huevo que se rompe, pollito sorprendido al lado); festejo final; espera. Marca Feller y tipografías. | **APK de prueba #1** en una Tab A9. |
+| **mar 27/10** | Panel del operador (preguntas, colores, logo, CSV, replicar). Aplicar los cambios de Feller al pollito. Cargar las preguntas validadas. | **APK #2**. |
+| **mié 28/10** | Aviso de privacidad aprobado, sonidos, "modo liviano", pulido y corrección de lo que marque Facundo. | **APK #3 = candidato final**. |
+| **jue 29/10** | **Facundo prueba en las 2 Tab A9** (12.4). Corrijo lo que aparezca. **Al final del día se congelan las funciones**: después solo se arreglan errores. | Informe de prueba de Facundo. |
+| **vie 30/10** | Solo errores. **APK final firmado.** Copia en Drive. | **APK final**. |
+| **sáb 31/10** | Instalación en las 2 tablets, ensayo general, prueba de la planilla CSV. | Tablets listas. |
+| **dom 01/11** | Reserva: sin cambios salvo algo urgente. Tablets cargadas y en modo stand (11.2). | — |
+| **lun 02/11** | **Evento.** Al cerrar, exportar el CSV de cada tablet y unir las dos planillas. | Planilla con los datos. |
 
-**Lo que NO se recorta en ningún escenario:**
-1. **Probar en la Galaxy Tab A9 real** (y en las 2 tablets antes del evento): fluidez y 30 partidas seguidas.
-2. **Que Feller valide las cifras de las preguntas** (gramos de proteína, consumo anual, pesos, etc.).
-3. **Aviso de privacidad y casilla de permiso** para mail y teléfono, con texto aprobado por Feller.
-4. **Regla de marca**: huevos de consumo, nunca un pollito saliendo de un huevo, cierre siempre con felicitación y sin premios.
-5. **APK firmado y la llave de firma guardada a salvo** (fuera del repo), con copia del APK por si hay que reinstalar en el stand.
+### 12.4 Prueba en la Galaxy Tab A9 (no se recorta)
+- **Cuándo**: APK #1 el **lunes 26** en al menos una tablet; prueba completa en **las 2 tablets el jueves 29/10** (fecha límite).
+- **Cómo**: en modo avión (sin internet), **30 partidas seguidas sin reiniciar**, con y sin datos, con aciertos, errores y tiempos agotados.
+- **Aprueba si**: no se cierra ni se traba; animaciones fluidas a simple vista (sin saltos en la lluvia de huevos ni en el festejo); vuelve sola al inicio a los 30 s; el autocompletado de mail funciona con el teclado Samsung; el CSV se abre bien en Excel con nombre, mail, teléfono y puntaje; la app no gira y la pantalla no se apaga.
+- Si algo va lento, se activa el "modo liviano" (menos huevos, sin confeti) sin cambiar el diseño.
 
-### 12.5 Qué necesito de Facundo esta semana
-| Para cuándo | Qué | Por qué |
+### 12.5 No se recorta
+1. Prueba en la Tab A9 real (12.4).
+2. **Cifras de las preguntas validadas por Feller** (antes del martes 27).
+3. **Aviso de privacidad y casilla de permiso**, con el texto aprobado por Feller.
+4. **Regla de marca**: huevos de consumo, nunca un pollito saliendo de un huevo, felicitación siempre, sin premios.
+5. APK firmado, con la llave de firma fuera del repo y copia del APK para reinstalar en el stand.
+
+### 12.6 Riesgos
+- **Pollito hecho en código**: se ve más simple que una ilustración profesional. Se mitiga con estilo plano y amable, y con ajustes rápidos según Feller.
+- **Feller tarda en aprobar** (pollito, preguntas, aviso): si el martes 27 no hay respuesta, se sigue con lo que hay y se cambia hasta el jueves 29.
+- **Tablets no disponibles para probar**: sin probar en el equipo real no se puede asegurar la fluidez.
+
+### 12.7 Qué necesito de Facundo en las próximas 48 h (hasta el domingo 25/10)
+| # | Pedido | Sugerencia lista para un "sí" |
 |---|---|---|
-| **lunes 26/10** | **Día exacto del evento** (o al menos la quincena). | Define el escenario A o B. Mientras tanto se trabaja como si fuera A (el más corto). |
-| **lunes 26/10** | **OK para que Mariano dibuje el pollito y el huevo** ya, y avisar a Feller que lo va a aprobar. Si Feller tiene un pollito propio, que lo mande ese mismo día. | Es lo que más tarda; el resto avanza en paralelo. Boceto el miércoles 28/10 y aprobación de Feller el viernes 30/10. |
-| **martes 27/10** | Pedir a Feller el **logo en vector** (AI, SVG o PDF editable). | Para que se vea nítido en la tablet. |
-| **martes 27/10** | Decidir **tipografías**: ¿Feller tiene licencia para app? Si no hay respuesta ese día, se usan alternativas gratuitas parecidas. | Evita frenar el diseño. |
-| **miércoles 28/10** | Mandarle a Feller **las 20 preguntas para validar cifras** y el **texto del aviso de privacidad** para aprobar. Respuesta antes del **martes 3/11**. | Son las dos cosas que no se recortan y dependen del cliente. |
-| **viernes 30/10** | **Instalar el APK de prueba en la Tab A9** (o mandarme quién la tiene) y jugar 5 partidas. | Primera prueba de fluidez en el equipo real. |
-
-**Datos del cliente**: preguntas, logos y manual no se suben al repo. Para armar el APK se cargan desde una carpeta excluida del repo, y el APK se comparte en forma privada (Drive).
+| 1 | **OK para arrancar** con esta ruta. | Sí: proyecto limpio, pollito dibujado por mí en SVG, Saira original + Fira Sans en lugar de Centrale Sans, panel dentro de la app. |
+| 2 | **Tablets para probar.** | Sí: tengo las 2 Tab A9; instalo el APK en una el lunes 26 y pruebo las dos el jueves 29. |
+| 3 | **Validación de preguntas.** | Sí: mando hoy o mañana las 20 preguntas a Feller y pido respuesta para el martes 27. |
+| 4 | **Aviso de privacidad.** | Sí: usá un texto base corto; se lo paso a Feller junto con las preguntas y lo aprueba el martes 27. |
+| 5 | **Logo.** | Sí: compartí la carpeta de Drive con el manual y el logo (o el PDF del manual) para que lo saque de ahí; si Feller manda el vector, se reemplaza. |
+| 6 | **Aprobación del pollito.** | Sí: le paso a Feller la lámina el sábado 24 o el domingo 25 y pido respuesta para el martes 27. |
