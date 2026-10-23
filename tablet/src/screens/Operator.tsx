@@ -146,6 +146,15 @@ function Panel({ config, plays, onSaveConfig, onSavePlays, onResetConfig, onClos
         <ImageField label="Logo en blanco, para el fondo de color (opcional)" value={config.theme.logoOnBrand} onChange={(logoOnBrand) => setTheme({ logoOnBrand })} say={say} dark />
         <ImageField label="Foto de la pantalla de espera (opcional, fondo recortado)" value={config.theme.hero} onChange={(hero) => setTheme({ hero })} say={say} dark maxSide={1200} />
         <TextField label="Slogan (aparece en una banda)" value={config.theme.slogan} onChange={(v) => setTheme({ slogan: v })} />
+        <label className="field">
+          <span>Diseño de la portada</span>
+          <select value={config.theme.attractLayout} onChange={(e) => setTheme({ attractLayout: e.target.value as 'a' | 'b' })}>
+            <option value="a">A: foto grande en banda inclinada</option>
+            <option value="b">B: foto sobre blanco y franja roja abajo</option>
+          </select>
+        </label>
+        <ImageField label="Foto de la portada B (opcional)" value={config.theme.heroAlt} onChange={(heroAlt) => setTheme({ heroAlt })} say={say} maxSide={1200} />
+        <TextField label="Línea bajo el título de la portada" value={config.theme.attractSubtitle} onChange={(v) => setTheme({ attractSubtitle: v })} />
         <TextField label="Nombre de la marca (si no hay logo)" value={config.theme.brandName} onChange={(v) => setTheme({ brandName: v })} />
         <TextField label="Título de la pantalla de espera" value={config.texts.attractTitle} onChange={(v) => setTexts({ attractTitle: v })} />
         <TextField label="Botón de la pantalla de espera" value={config.texts.attractCta} onChange={(v) => setTexts({ attractCta: v })} />
