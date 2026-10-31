@@ -95,3 +95,15 @@
 .explain{font-size:clamp(.95rem,2.1cqh,1.4rem);padding:10px 16px;max-height:none}
 .explain p{display:-webkit-box;-webkit-line-clamp:5;-webkit-box-orient:vertical;overflow:hidden}
 .is-feedback .feedback__sad svg{width:min(11cqh,96px)!important;height:min(11cqh,96px)!important}
+
+/* ===== Huevo: cae por detrás del cartel, más plano y translúcido ===== */
+.question__feedback{position:relative;z-index:40}
+.eggfx{z-index:30}
+.eggfx__splat{width:calc(var(--w)*2.5);height:calc(var(--w)*2.2);margin-left:calc(var(--w)*-1.25);margin-top:calc(var(--w)*-.7)}
+.eggfx__puddle{filter:drop-shadow(0 3px 3px #0004)}
+@keyframes fl-spread{60%{transform:scale(1.04,.78)}to{transform:scale(1,.7)}}
+@keyframes fl-yolkin{to{transform:scale(.62)}}
+.eggfx__yolk{filter:drop-shadow(0 2px 3px #0005)}
+.eggfx__shard>path:first-child{transform:scale(.62);transform-origin:center}
+.eggfx__shard>path:last-child{display:none}
+.eggfx__shard{filter:drop-shadow(0 2px 2px #0006)}
