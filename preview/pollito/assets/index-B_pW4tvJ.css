@@ -107,3 +107,12 @@
 .eggfx__shard>path:first-child{transform:scale(.62);transform-origin:center}
 .eggfx__shard>path:last-child{display:none}
 .eggfx__shard{filter:drop-shadow(0 2px 2px #0006)}
+
+/* ===== Todo el huevo resbala junto (clara + yema) dejando un rastro ancho ===== */
+@keyframes fl-massslide{from{translate:0 0}to{translate:0 100px}}
+@keyframes fl-yolkslide{from{translate:0 0}to{translate:0 100px}}
+.eggfx__puddle{animation:fl-spread .45s cubic-bezier(.2,1.25,.4,1) 1.5s forwards,fl-massslide 2.8s cubic-bezier(.5,0,.6,1) 2s forwards}
+.eggfx__drip--a{animation:fl-drip 2.4s ease-in 2.1s forwards,fl-massslide 2.8s cubic-bezier(.5,0,.6,1) 2s forwards}
+.eggfx__drip--b{animation:fl-drip 1.6s ease-in 2.4s forwards,fl-massslide 2.8s cubic-bezier(.5,0,.6,1) 2s forwards}
+@keyframes fl-trail{from{opacity:1;transform:scaleY(.252)}to{opacity:1;transform:scaleY(1)}}
+.eggfx__drip{display:none}
