@@ -27,7 +27,7 @@ Es también el contenido del artefacto "Trivia del Pollito" (claude.ai) y de la 
 
 ## `patches/`
 Scripts que se aplicaron sobre el bundle original de la v0.11 (`patch.py` … `patch6.py` y `panel.js`).
-Sirven de documentación de qué se cambió. El bundle actual ya los incluye: para cambios nuevos, editar
+Sirven de documentación de qué se cambió (`patch7.py`: portada dentro del panel blanco y contador de premios automático). El bundle actual ya los incluye: para cambios nuevos, editar
 `preview/pollito/assets/index-CQe1EuY2.js` directamente.
 
 ## Notas
