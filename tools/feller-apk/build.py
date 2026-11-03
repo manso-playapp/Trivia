@@ -1,8 +1,10 @@
 import zipfile,struct,sys
 import sys
 src=sys.argv[1]; dst=sys.argv[2]; bundle=sys.argv[3]  # APK base, salida sin firmar, carpeta con los assets nuevos
+hero=sys.argv[4] if len(sys.argv)>4 else None  # portada nueva (PNG): reemplaza hero-pollitos de la APK
 repl={'assets/public/assets/index-CQe1EuY2.js':bundle+'/index-CQe1EuY2.js',
       'assets/public/assets/index-B_pW4tvJ.css':bundle+'/index-B_pW4tvJ.css'}
+if hero: repl['assets/public/assets/hero-pollitos-BYSwqALi.png']=hero
 zin=zipfile.ZipFile(src); zout=zipfile.ZipFile(dst,'w')
 def skip(n): return n=='META-INF/MANIFEST.MF' or (n.startswith('META-INF/') and n.rsplit('.',1)[-1] in('SF','RSA','DSA','EC'))
 done=set()
