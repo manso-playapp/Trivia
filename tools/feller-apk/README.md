@@ -25,6 +25,11 @@ Es también el contenido del artefacto "Trivia del Pollito" (claude.ai) y de la 
    otra (`keytool -genkeypair ... -alias feller`) y desinstalar antes de instalar. La v0.11 estaba firmada con
    otra clave (debug) que no se pudo recuperar.
 
+## Atajo: `make-apk.sh`
+`./make-apk.sh trivia-feller-v0.12.apk feller.keystore trivia-feller-v0.13.apk` hace los pasos 3 y 4 de arriba
+(arma con el bundle de `preview/pollito/assets/`, baja apksig la primera vez, firma y verifica).
+Probado con una APK de prueba y una clave descartable; con la APK real y la clave `feller` queda sin pasos manuales.
+
 ## `patches/`
 Scripts que se aplicaron sobre el bundle original de la v0.11 (`patch.py` … `patch6.py` y `panel.js`).
 Sirven de documentación de qué se cambió (`patch7.py`: portada dentro del panel blanco y contador de premios automático). El bundle actual ya los incluye: para cambios nuevos, editar
