@@ -176,4 +176,5 @@
 .keypad button{padding:24px 0!important;font-size:1.9rem!important;font-weight:800;font-family:var(--font-heading)}
 .pin{font-size:1.5rem!important;letter-spacing:.14em!important;white-space:nowrap;min-height:2.6rem}
 
-.attract--a .attract__hero{position:absolute;left:0;top:0;width:100%;height:calc(100% + 9cqw);max-width:none;margin:0;object-fit:cover;object-position:center 22%;clip-path:polygon(0 calc(32% + 5cqw),100% calc(32% - 10.8cqw),100% calc(95% - 16.5cqw),0 calc(95% - .7cqw))}
+.attract--a .attract__panel{top:24%}
+.attract--a .attract__hero{position:absolute;left:0;top:0;width:100%;height:calc(100% + 9cqw);max-width:none;margin:0;object-fit:cover;object-position:center 36%;clip-path:polygon(0 calc(24% + 5.75cqw),100% calc(24% - 10.07cqw),100% calc(95% - 16.5cqw),0 calc(95% - .7cqw))}

@@ -24,10 +24,13 @@ if old in s:
 open(js, 'w', encoding='utf8').write(s)
 
 # 3) CSS: la foto de portada (vertical) queda dentro del panel blanco, recortada con sus diagonales.
+#    El panel sube a top:24% y la foto se encuadra al 36% para que entren el huevo y la marca
+#    de la gorra en tablets verticales (16:10 y 4:3).
 c = open(css, encoding='utf8').read()
-rule = ('.attract--a .attract__hero{position:absolute;left:0;top:0;width:100%;height:calc(100% + 9cqw);'
-        'max-width:none;margin:0;object-fit:cover;object-position:center 22%;'
-        'clip-path:polygon(0 calc(32% + 5cqw),100% calc(32% - 10.8cqw),100% calc(95% - 16.5cqw),0 calc(95% - .7cqw))}')
+rule = ('.attract--a .attract__panel{top:24%}\n'
+        '.attract--a .attract__hero{position:absolute;left:0;top:0;width:100%;height:calc(100% + 9cqw);'
+        'max-width:none;margin:0;object-fit:cover;object-position:center 36%;'
+        'clip-path:polygon(0 calc(24% + 5.75cqw),100% calc(24% - 10.07cqw),100% calc(95% - 16.5cqw),0 calc(95% - .7cqw))}')
 if rule not in c:
     c += '\n' + rule + '\n'
 open(css, 'w', encoding='utf8').write(c)
