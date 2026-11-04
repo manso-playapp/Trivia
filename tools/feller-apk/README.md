@@ -1,5 +1,7 @@
 # Trivia Feller — cómo rearmar la APK
 
+> Nota de cierre 04/11/2026: se conserva este procedimiento histórico. La promo LED entregada tiene su [propio cierre](../../docs/feller/CIERRE-2026-11-04.md). La APK v0.13 está en Drive; no se recompiló ni se verificó su equivalencia con este bundle en esta sesión.
+
 Estado al cierre de la sesión (31/10/2026): app "Trivia del Pollito" con los ajustes del PDF de correcciones.
 La app web ya compilada está en `preview/pollito/assets/` (`index-CQe1EuY2.js` y `index-B_pW4tvJ.css`).
 Es también el contenido del artefacto "Trivia del Pollito" (claude.ai) y de la APK `trivia-feller-v0.12.apk`.

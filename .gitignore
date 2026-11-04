@@ -22,3 +22,6 @@ build
 .claude/
 tsconfig.tsbuildinfo
 
+
+# Renders locales: entregables finales y enlaces registrados en docs/feller/
+/exports/

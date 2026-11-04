@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="es">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Feller · ¡Vení a jugar!</title><link rel="stylesheet" href="promo.css"></head>
+<body><main id="stage" aria-label="Video promocional de la trivia Feller">
+<div id="pattern" aria-hidden="true"></div>
+<header><img class="logo" src="assets/logo-oficial.png" alt="Cabaña Avícola Feller"><span class="brand-tag">TRIVIA DEL HUEVO</span></header>
+<section id="hook" class="scene">
+ <div class="hook-copy"><div class="kicker" data-enter="0">¿TE ANIMÁS AL DESAFÍO?</div><h1><span data-enter=".08">¿Cuánto</span><span data-enter=".25">sabés del</span><span class="yellow" data-enter=".42">huevo?</span></h1><div class="small-pill" data-enter=".65">Vení a jugar al stand de Feller <span class="arrow"></span></div></div>
+ <div class="halo" id="hook-halo"></div><div class="mascot hook-chick" data-art="chick" data-bounce="1"></div><div class="hook-eggs eggline" data-art="eggs"></div><div class="orbit" data-art="walking"></div>
+</section>
+<section id="countdown" class="scene">
+ <div class="count-title" data-enter="0">PREPARATE PARA JUGAR</div><div id="count-number">3</div><div class="count-chick left" data-art="chick" data-bounce="1"></div><div class="count-chick right" data-art="chick" data-bounce="1"></div><div class="count-caption">Pensá rápido. ¡Elegí tu respuesta!</div>
+</section>
+<section id="quiz" class="scene">
+ <div class="quiz-meta" data-enter="0"><span>UNA PREGUNTA. ¿TU RESPUESTA?</span><span class="timer" id="seconds">5</span></div>
+ <h2 data-enter=".08">¿Cuántos gramos<br>de proteína aporta<br>un huevo?</h2><div class="quiz-egg" id="quiz-egg"></div>
+ <div class="answers"><div class="answer" data-enter=".15" id="answer-a"><span class="letter">A</span><strong>6</strong><span>gramos</span><i class="answer-check"></i></div><div class="answer" data-enter=".29" id="answer-b"><span class="letter">B</span><strong>8</strong><span>gramos</span></div><div class="answer" data-enter=".43" id="answer-c"><span class="letter">C</span><strong>12</strong><span>gramos</span></div></div>
+ <div class="time-track"><div id="time-progress"></div></div><div class="quiz-bottom">ELEGÍ. RESPONDÉ. ¡PONETE A PRUEBA!</div><div id="tap"></div>
+</section>
+<section id="correct" class="scene">
+ <div class="kicker correct-kicker" data-enter=".05">¡SUMÁS UN ACIERTO!</div><h2 data-enter=".08">¡Correcto!</h2><div class="protein" data-enter=".2"><strong>6</strong><span>gramos</span></div><p data-enter=".35">de proteína<br>en un huevo.</p><div class="mascot correct-chick" data-art="chick" data-bounce="1"></div><div class="correct-eggs eggline" data-art="eggs"></div>
+</section>
+<section id="challenge" class="scene"><div class="kicker challenge-kicker">¡EL PRÓXIMO DESAFÍO ES TUYO!</div><div id="action-word">PENSÁ.</div><div class="abc"><span>A</span><span>B</span><span>C</span></div><div id="parade"></div></section>
+<section id="invitation" class="scene"><div class="invite-copy"><div class="kicker" data-enter="0">AHORA TE TOCA A VOS</div><h2><span data-enter=".08">Vení al</span><span data-enter=".2">stand de</span><span class="yellow" data-enter=".32">Feller.</span></h2><div class="big-pill" data-enter=".5">¡Jugá la trivia! <span class="arrow"></span></div><p data-enter=".65">Poné a prueba lo que sabés.</p></div><div class="invite-halo"></div><div class="mascot invite-chick" data-art="chick" data-bounce="1"></div><div class="invite-eggs eggline" data-art="eggs"></div></section>
+<div id="confetti" aria-hidden="true"></div>
+<footer><div class="footer-label"><span class="live-dot"></span>TE ESPERAMOS EN EL STAND</div><span class="footer-brand">FELLER <span class="arrow"></span></span></footer><div id="film-progress"></div>
+<div id="wipe" aria-hidden="true"><svg viewBox="0 0 100 132"><path d="M50 4C72 4 94 52 94 82C94 108 74 126 50 126C26 126 6 108 6 82C6 52 28 4 50 4Z" fill="#fff7e8"/></svg></div>
+</main><script src="assets/trivia-art.js"></script><script src="promo.js"></script></body></html>

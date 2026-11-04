@@ -1,3 +1,29 @@
+# Trivia — mapa y estado del proyecto
+
+**Feller: entrega audiovisual cerrada el 04/11/2026, confirmada por el usuario.**
+
+- [Cierre Feller, archivos finales en Drive y cómo retomar](docs/feller/CIERRE-2026-11-04.md).
+- [Arquitectura: qué es reutilizable y qué pertenece a Feller](docs/ARQUITECTURA-Y-REUTILIZACION.md).
+- [Manifiesto de entrega: formatos, enlaces y hashes](docs/feller/entrega-2026-11-04.json).
+
+El repo contiene el motor Next.js/Supabase, una implementación Next simple de Feller, el bundle compilado del juego de tablet y la promo LED con su exportador. La pieza final está en `public/feller-led/vertical/`; los borradores horizontales se conservan como referencia. Los videos pesados se archivan en Drive y `exports/` queda fuera de Git.
+
+## Promo final: comandos rápidos
+
+```sh
+npm ci
+npx playwright install chromium
+npm run feller:export:check
+npm run feller:export
+npm run feller:export:high
+```
+
+Se necesita FFmpeg. La validación y exportación de la promo no requieren Supabase. La vista con `npm run dev` está en `/feller-led/vertical/index.html`.
+
+## Configuración del motor Next.js / Supabase
+
+Las notas siguientes documentan el motor base y su configuración; no describen el estado de la entrega audiovisual ni garantizan equivalencia con la APK del evento.
+
 JAKPOT Trivia — Arranque Progresivo
 ===================================
 

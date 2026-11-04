@@ -1,0 +1,42 @@
+{
+  "project": "Feller - Promo trivia LED",
+  "status": "entregado - confirmado por el usuario",
+  "date": "2026-11-04",
+  "timezone": "America/Buenos_Aires",
+  "drive_folder": "https://drive.google.com/drive/folders/1ljWZs4eexa05FQP7a-nrBGBWiR7got1Z",
+  "artifacts": [
+    {
+      "profile": "alta",
+      "drive_url": "https://drive.google.com/file/d/17CTtCdExalox14WefvYfAKHyILVQ1qE_/view?usp=drivesdk",
+      "local_path": "exports/feller-led/alta-90s/feller-promo-3-preguntas-1088x1536-90s-alta.mp4",
+      "sha256": "841c7bcc7d0c600e9a3f21d1b9c8507c12a95d1ae807747250f27bee158acae3",
+      "bytes": 42150370,
+      "video": {
+        "codec_name": "h264",
+        "width": 1088,
+        "height": 1536,
+        "r_frame_rate": "30/1",
+        "nb_frames": "2700"
+      },
+      "duration_seconds": 90.0
+    },
+    {
+      "profile": "led",
+      "drive_url": "https://drive.google.com/file/d/1O549FRJm25LWfgwE-IpQsEcnMOdvNyIA/view?usp=drivesdk",
+      "local_path": "exports/feller-led/tres-preguntas-90s/feller-promo-3-preguntas-544x768-90s.mp4",
+      "sha256": "3704c15826b15b472d2324b1f4b7a7e6ff55b307ec3ed306eafa7f33b6e0086a",
+      "bytes": 20695802,
+      "video": {
+        "codec_name": "h264",
+        "width": 544,
+        "height": 768,
+        "r_frame_rate": "30/1",
+        "nb_frames": "2700",
+        "side_data_list": [
+          {}
+        ]
+      },
+      "duration_seconds": 90.0
+    }
+  ]
+}
