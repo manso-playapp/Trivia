@@ -43,6 +43,18 @@ function InstagramIcon() {
   );
 }
 
+/** Pide pantalla completa (Android / escritorio). En iPhone Safari no existe: se ignora. */
+function enterFullscreen() {
+  try {
+    const el = document.documentElement as HTMLElement & { webkitRequestFullscreen?: () => void };
+    if (document.fullscreenElement) return;
+    if (el.requestFullscreen) el.requestFullscreen({ navigationUI: 'hide' }).catch(() => undefined);
+    else el.webkitRequestFullscreen?.();
+  } catch {
+    /* sin soporte */
+  }
+}
+
 export default function LuciaRuleta() {
   const [phase, setPhase] = useState<Phase>('loading');
   const [segments, setSegments] = useState<PublicSegment[]>(PLACEHOLDER);
@@ -116,6 +128,7 @@ export default function LuciaRuleta() {
     if (!follow) return setError({ msg: `Para jugar, seguinos en Instagram ${INSTAGRAM_HANDLE} y marcá la casilla.` });
     if (!accept) return setError({ msg: 'Para jugar tenés que aceptar las bases y condiciones.' });
 
+    enterFullscreen();
     setSending(true);
     try {
       const res = await fetch('/api/lucia/check', {
@@ -252,7 +265,7 @@ export default function LuciaRuleta() {
             />
           </div>
 
-          <div className="lp-ig">
+          <div className="lp-checks">
             <a className="lp-ig-link" href={INSTAGRAM_URL} target="_blank" rel="noopener noreferrer" onClick={() => setFollow(true)}>
               <InstagramIcon />
               <span>Seguinos en {INSTAGRAM_HANDLE}</span>
@@ -261,12 +274,11 @@ export default function LuciaRuleta() {
               <input type="checkbox" checked={follow} onChange={(e) => setFollow(e.target.checked)} />
               <span>Ya sigo a Lucía en Instagram</span>
             </label>
+            <label className="lp-check">
+              <input type="checkbox" checked={accept} onChange={(e) => setAccept(e.target.checked)} />
+              <span>Acepto las bases y condiciones y recibir novedades de Lucía Indumentaria.</span>
+            </label>
           </div>
-
-          <label className="lp-check">
-            <input type="checkbox" checked={accept} onChange={(e) => setAccept(e.target.checked)} />
-            <span>Acepto las bases y condiciones y recibir novedades de Lucía Indumentaria.</span>
-          </label>
 
           {error && <p className="lp-error" role="alert">{error.msg}</p>}
           <button className="lp-btn" type="submit" disabled={sending}>
