@@ -24,12 +24,39 @@ const PLACEHOLDER: PublicSegment[] = Array.from({ length: 8 }, (_, i) => ({
   color: DEFAULT_SEGMENT_COLORS[i % DEFAULT_SEGMENT_COLORS.length],
 }));
 
-function readSaved(): SpinResult | null {
+type Saved = SpinResult & { _phone?: string; _email?: string };
+
+function readSaved(): Saved | null {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
-    return raw ? (JSON.parse(raw) as SpinResult) : null;
+    return raw ? (JSON.parse(raw) as Saved) : null;
   } catch {
     return null;
+  }
+}
+
+function clearSaved() {
+  try {
+    localStorage.removeItem(STORAGE_KEY);
+  } catch {
+    /* noop */
+  }
+}
+
+/** ¿La participación guardada sigue existiendo? (si se eliminó desde el panel, no) */
+async function savedStillExists(saved: Saved): Promise<boolean> {
+  try {
+    const res = await fetch('/api/lucia/verify', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ phone: saved._phone, email: saved._email, code: saved.code ?? undefined }),
+      cache: 'no-store',
+    });
+    if (!res.ok) return true; // ante la duda, se conserva
+    const d = await res.json();
+    return Boolean(d.exists);
+  } catch {
+    return true;
   }
 }
 
@@ -73,10 +100,14 @@ export default function LuciaRuleta() {
   const endTimer = useRef<number | null>(null);
 
   useEffect(() => {
-    const saved = readSaved();
-    fetch('/api/lucia/config', { cache: 'no-store' })
-      .then((r) => r.json())
-      .then((cfg) => {
+    let saved = readSaved();
+    const verified = saved ? savedStillExists(saved) : Promise.resolve(false);
+    Promise.all([fetch('/api/lucia/config', { cache: 'no-store' }).then((r) => r.json()), verified])
+      .then(([cfg, exists]) => {
+        if (saved && !exists) {
+          clearSaved();
+          saved = null;
+        }
         if (cfg.error) throw new Error(cfg.error);
         if (Array.isArray(cfg.segments) && cfg.segments.length) setSegments(cfg.segments);
         if (cfg.legal) setLegal(cfg.legal);
@@ -165,7 +196,7 @@ export default function LuciaRuleta() {
       const r = data as SpinResult;
       try {
         // Los mails de prueba no guardan el resultado: pueden volver a jugar.
-        if (!r.test) localStorage.setItem(STORAGE_KEY, JSON.stringify(r));
+        if (!r.test) localStorage.setItem(STORAGE_KEY, JSON.stringify({ ...r, _phone: phone, _email: email }));
       } catch {
         /* sin storage: igual sigue */
       }
