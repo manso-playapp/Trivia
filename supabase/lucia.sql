@@ -73,7 +73,7 @@ create or replace function lucia_spin(p_phone text, p_email text, p_user_agent t
 returns jsonb
 language plpgsql
 security definer
-set search_path = public
+set search_path = public, extensions
 as $$
 declare
   v_settings lucia_settings%rowtype;
