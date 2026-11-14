@@ -25,6 +25,8 @@ export interface LuciaSettings {
   voucher_phrase: string;
   valid_until: string; // YYYY-MM-DD
   legal_text: string;
+  /** Mails de prueba separados por coma */
+  test_emails: string;
 }
 
 export interface SpinResult {
@@ -35,6 +37,8 @@ export interface SpinResult {
   phrase: string;
   legal: string;
   valid_until: string;
+  /** true si la jugó un mail de prueba: no se guardó ni cuenta. */
+  test?: boolean;
 }
 
 /**
@@ -186,3 +190,29 @@ export const INSTAGRAM_HANDLE = '@luciaindumentaria.sfe';
 
 /** Dirección pública fija del juego (la que va en el QR impreso). */
 export const LUCIA_PUBLIC_URL = 'https://trivia-mansos-projects-7d8ae3d2.vercel.app/lucia';
+
+/** "a@x.com, b@y.com" -> ['a@x.com', 'b@y.com'] (normalizados, sin inválidos ni repetidos) */
+export function parseEmailList(raw: string | null | undefined): string[] {
+  const out = new Set<string>();
+  for (const part of (raw || '').split(/[,;\s]+/)) {
+    const e = normalizeEmail(part);
+    if (e) out.add(e);
+  }
+  return [...out];
+}
+
+/**
+ * Sorteo ponderado (misma regla que la función SQL lucia_spin): cada premio con stock
+ * tiene su % por tiro; si no sale ninguno, cae en un gajo "suerte la próxima" al azar.
+ * `r1` en [0,100), `r2` en [0,1).
+ */
+export function drawSegment(segments: LuciaSegment[], r1: number, r2: number): LuciaSegment | null {
+  let acc = 0;
+  for (const s of [...segments].sort((a, b) => a.position - b.position)) {
+    if (s.kind !== 'prize' || !(s.probability > 0) || (s.stock !== null && s.stock <= 0)) continue;
+    acc += s.probability;
+    if (r1 < acc) return s;
+  }
+  const lose = segments.filter((s) => s.kind === 'lose');
+  return lose.length ? lose[Math.floor(r2 * lose.length) % lose.length] : null;
+}

@@ -9,6 +9,8 @@ import {
   textColorFor,
   validateSegments,
   BRAND,
+  drawSegment,
+  parseEmailList,
   type LuciaSegment,
 } from '@/lib/lucia';
 
@@ -78,5 +80,21 @@ describe('lucia: ruleta', () => {
   it('elige texto legible', () => {
     expect(textColorFor('#76845F')).toBe(BRAND.cream);
     expect(textColorFor('#F6F4EC')).toBe(BRAND.deep);
+  });
+});
+
+describe('lucia: mails de prueba y sorteo', () => {
+  it('parsea la lista separada por coma', () => {
+    expect(parseEmailList(' Ana@Mail.com, b@x.com;; nada, ana@mail.com ')).toEqual(['ana@mail.com', 'b@x.com']);
+    expect(parseEmailList('')).toEqual([]);
+  });
+  it('sortea según el % y respeta el stock', () => {
+    const s = base(); // premios en 0,2,4,6 con 10% c/u
+    expect(drawSegment(s, 5, 0)?.position).toBe(0);
+    expect(drawSegment(s, 15, 0)?.position).toBe(2);
+    expect(drawSegment(s, 39.9, 0)?.position).toBe(6);
+    expect(drawSegment(s, 50, 0)?.kind).toBe('lose');
+    s[0].stock = 0;
+    expect(drawSegment(s, 5, 0)?.position).toBe(2);
   });
 });

@@ -164,7 +164,8 @@ export default function LuciaRuleta() {
       }
       const r = data as SpinResult;
       try {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(r));
+        // Los mails de prueba no guardan el resultado: pueden volver a jugar.
+        if (!r.test) localStorage.setItem(STORAGE_KEY, JSON.stringify(r));
       } catch {
         /* sin storage: igual sigue */
       }
@@ -300,6 +301,7 @@ export default function LuciaRuleta() {
 
       {phase === 'result' && result && (
         <section className="lp-card lp-result" aria-live="polite">
+          {result.test && <p className="lp-testtag">Modo prueba · no cuenta</p>}
           {result.won ? (
             <>
               <p className="lp-kicker">¡Ganaste!</p>
@@ -331,6 +333,11 @@ export default function LuciaRuleta() {
                 Ver novedades en Instagram
               </a>
             </>
+          )}
+          {result.test && (
+            <button className="lp-btn lp-btn--ghost" onClick={() => location.reload()}>
+              Jugar otra vez (prueba)
+            </button>
           )}
         </section>
       )}

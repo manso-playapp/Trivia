@@ -2,9 +2,10 @@ import { NextResponse } from 'next/server';
 import { z } from 'zod';
 import { getSupabaseAdmin } from '@/lib/supabaseAdmin';
 import { checkLuciaAdmin, serverError } from '@/lib/luciaServer';
-import { validateSegments, type LuciaSegment } from '@/lib/lucia';
+import { parseEmailList, validateSegments, type LuciaSegment } from '@/lib/lucia';
 
 export const dynamic = 'force-dynamic';
+export const fetchCache = 'force-no-store';
 
 export async function GET(req: Request) {
   const denied = checkLuciaAdmin(req);
@@ -13,12 +14,22 @@ export async function GET(req: Request) {
     const db = getSupabaseAdmin();
     const [segRes, setRes] = await Promise.all([
       db.from('lucia_segments').select('position,label,kind,probability,stock,color').order('position'),
-      db.from('lucia_settings').select('active,voucher_phrase,valid_until,legal_text').eq('id', 1).maybeSingle(),
+      db.from('lucia_settings').select('*').eq('id', 1).maybeSingle(),
     ]);
     if (segRes.error) throw segRes.error;
     if (setRes.error) throw setRes.error;
     const segments = (segRes.data ?? []).map((s) => ({ ...s, probability: Number(s.probability) })) as LuciaSegment[];
-    return NextResponse.json({ segments, settings: setRes.data });
+    const st = setRes.data ?? {};
+    return NextResponse.json({
+      segments,
+      settings: {
+        active: Boolean(st.active),
+        voucher_phrase: st.voucher_phrase ?? '',
+        valid_until: st.valid_until ?? '',
+        legal_text: st.legal_text ?? '',
+        test_emails: st.test_emails ?? '',
+      },
+    });
   } catch (err) {
     return serverError(err);
   }
@@ -40,6 +51,7 @@ const Body = z.object({
     voucher_phrase: z.string().trim().min(1).max(80),
     valid_until: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
     legal_text: z.string().trim().max(240),
+    test_emails: z.string().max(2000).optional().default(''),
   }),
 });
 
@@ -61,8 +73,17 @@ export async function PUT(req: Request) {
     const now = new Date().toISOString();
     const segRes = await db.from('lucia_segments').upsert(segments.map((s) => ({ ...s, updated_at: now })));
     if (segRes.error) throw segRes.error;
-    const setRes = await db.from('lucia_settings').upsert({ id: 1, ...body.settings, updated_at: now });
-    if (setRes.error) throw setRes.error;
+    const settings = { ...body.settings, test_emails: parseEmailList(body.settings.test_emails).join(', ') };
+    const setRes = await db.from('lucia_settings').upsert({ id: 1, ...settings, updated_at: now });
+    if (setRes.error) {
+      if (/test_emails/.test(setRes.error.message)) {
+        return NextResponse.json(
+          { error: 'Falta actualizar la base: ejecutá de nuevo supabase/lucia.sql en Supabase para habilitar los mails de prueba.' },
+          { status: 500 },
+        );
+      }
+      throw setRes.error;
+    }
     return NextResponse.json({ ok: true });
   } catch (err) {
     return serverError(err);

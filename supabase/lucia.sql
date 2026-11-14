@@ -16,6 +16,9 @@ create table if not exists lucia_settings (
   updated_at timestamptz not null default now()
 );
 
+-- Mails de prueba (separados por coma): juegan sin registrarse ni descontar stock
+alter table lucia_settings add column if not exists test_emails text not null default '';
+
 -- Los 8 gajos de la ruleta (position 0 = primer gajo arriba, sentido horario)
 create table if not exists lucia_segments (
   position smallint primary key check (position between 0 and 7),

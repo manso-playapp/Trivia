@@ -243,6 +243,9 @@
 .la-table th { font-size: 11px; font-weight: 500; letter-spacing: 0.14em; text-transform: uppercase; background: var(--mist); position: sticky; top: 0; }
 .la-tag { display: inline-block; padding: 2px 10px; font-size: 12px; border-radius: 999px; border: 1px solid var(--sage); }
 .la-tag--win { background: var(--sage-dark); border-color: var(--sage-dark); color: var(--cream); }
+.lucia .la-del { background: transparent; border: 1px solid rgba(142, 59, 46, 0.35); color: var(--danger); border-radius: 999px; padding: 4px 12px; font-size: 12px; cursor: pointer; }
+.lucia .la-del:hover { background: rgba(142, 59, 46, 0.08); }
+.lp-testtag { margin: 0; padding: 6px 14px; border-radius: 999px; background: rgba(246, 244, 236, 0.92); color: var(--danger); font-size: 12px; font-weight: 500; letter-spacing: 0.16em; text-transform: uppercase; }
 .la-code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: 0.06em; }
 
 .la-preview { display: grid; justify-items: center; }

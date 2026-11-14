@@ -4,6 +4,7 @@ import { serverError } from '@/lib/luciaServer';
 import type { PublicSegment } from '@/lib/lucia';
 
 export const dynamic = 'force-dynamic';
+export const fetchCache = 'force-no-store';
 
 /** Configuración pública: gajos (sin % ni stock) y textos. */
 export async function GET() {
