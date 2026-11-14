@@ -2,9 +2,10 @@ import { NextResponse } from 'next/server';
 import { z } from 'zod';
 import { getSupabaseAdmin } from '@/lib/supabaseAdmin';
 import { serverError } from '@/lib/luciaServer';
-import { normalizeEmail, normalizePhone } from '@/lib/lucia';
+import { normalizeEmail, normalizePhone, parseEmailList } from '@/lib/lucia';
 
 export const dynamic = 'force-dynamic';
+export const fetchCache = 'force-no-store';
 
 const Body = z.object({ phone: z.string().max(40), email: z.string().max(120) });
 
@@ -24,7 +25,7 @@ export async function POST(req: Request) {
   try {
     const db = getSupabaseAdmin();
     const [settings, byPhone, byEmail] = await Promise.all([
-      db.from('lucia_settings').select('active').eq('id', 1).maybeSingle(),
+      db.from('lucia_settings').select('*').eq('id', 1).maybeSingle(),
       db.from('lucia_players').select('id', { count: 'exact', head: true }).eq('phone', phone),
       db.from('lucia_players').select('id', { count: 'exact', head: true }).eq('email', email),
     ]);
@@ -32,6 +33,7 @@ export async function POST(req: Request) {
     if (!settings.data?.active) {
       return NextResponse.json({ error: 'La promo no está activa en este momento.' }, { status: 403 });
     }
+    if (parseEmailList(settings.data?.test_emails).includes(email)) return NextResponse.json({ ok: true, test: true });
     if (byPhone.count) return NextResponse.json({ error: 'Este teléfono ya participó. ¡Gracias por jugar!', field: 'phone' }, { status: 409 });
     if (byEmail.count) return NextResponse.json({ error: 'Este mail ya participó. ¡Gracias por jugar!', field: 'email' }, { status: 409 });
     return NextResponse.json({ ok: true });

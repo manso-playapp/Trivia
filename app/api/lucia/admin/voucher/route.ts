@@ -4,6 +4,7 @@ import { getSupabaseAdmin } from '@/lib/supabaseAdmin';
 import { checkLuciaAdmin, serverError } from '@/lib/luciaServer';
 
 export const dynamic = 'force-dynamic';
+export const fetchCache = 'force-no-store';
 
 const COLS = 'created_at,phone,email,prize_label,voucher_code,redeemed_at';
 const clean = (c: string) => c.trim().toUpperCase().replace(/\s+/g, '');

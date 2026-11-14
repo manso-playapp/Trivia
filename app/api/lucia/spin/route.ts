@@ -2,9 +2,11 @@ import { NextResponse } from 'next/server';
 import { z } from 'zod';
 import { getSupabaseAdmin } from '@/lib/supabaseAdmin';
 import { serverError } from '@/lib/luciaServer';
-import { normalizeEmail, normalizePhone, type SpinResult } from '@/lib/lucia';
+import { randomInt } from 'crypto';
+import { drawSegment, normalizeEmail, normalizePhone, parseEmailList, type LuciaSegment, type SpinResult } from '@/lib/lucia';
 
 export const dynamic = 'force-dynamic';
+export const fetchCache = 'force-no-store';
 
 const Body = z.object({
   phone: z.string().max(40),
@@ -26,6 +28,35 @@ export async function POST(req: Request) {
 
   try {
     const db = getSupabaseAdmin();
+
+    // Mails de prueba: se sortea igual, pero no se guarda nada ni se descuenta stock.
+    const { data: settings, error: setErr } = await db.from('lucia_settings').select('*').eq('id', 1).maybeSingle();
+    if (setErr) throw setErr;
+    if (parseEmailList(settings?.test_emails).includes(email)) {
+      const { data: segs, error: segErr } = await db
+        .from('lucia_segments')
+        .select('position,label,kind,probability,stock,color')
+        .order('position');
+      if (segErr) throw segErr;
+      const segments = (segs ?? []).map((s) => ({ ...s, probability: Number(s.probability) })) as LuciaSegment[];
+      const pick = drawSegment(segments, randomInt(0, 1_000_000) / 10_000, randomInt(0, 1_000_000) / 1_000_000);
+      if (!pick) return NextResponse.json({ error: 'La ruleta no está bien configurada.' }, { status: 500 });
+      const won = pick.kind === 'prize';
+      const alphabet = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+      const code = won ? 'PRUEBA-' + Array.from({ length: 4 }, () => alphabet[randomInt(0, alphabet.length)]).join('') : null;
+      const result: SpinResult = {
+        position: pick.position,
+        label: pick.label,
+        won,
+        code,
+        phrase: settings?.voucher_phrase ?? '',
+        legal: settings?.legal_text ?? '',
+        valid_until: settings?.valid_until ?? '',
+        test: true,
+      };
+      return NextResponse.json(result, { headers: { 'Cache-Control': 'no-store' } });
+    }
+
     const { data, error } = await db.rpc('lucia_spin', {
       p_phone: phone,
       p_email: email,

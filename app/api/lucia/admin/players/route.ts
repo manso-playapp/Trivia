@@ -3,10 +3,12 @@ import { getSupabaseAdmin } from '@/lib/supabaseAdmin';
 import { checkLuciaAdmin, serverError } from '@/lib/luciaServer';
 
 export const dynamic = 'force-dynamic';
+export const fetchCache = 'force-no-store';
 
-const COLS = 'created_at,phone,email,won,prize_label,voucher_code,redeemed_at';
+const COLS = 'id,created_at,phone,email,won,prize_label,voucher_code,redeemed_at';
 
 type Row = {
+  id: string;
   created_at: string;
   phone: string;
   email: string;
@@ -55,6 +57,23 @@ export async function GET(req: Request) {
       });
     }
     return NextResponse.json({ players: rows });
+  } catch (err) {
+    return serverError(err);
+  }
+}
+
+/** Eliminar un participante: DELETE ?id=<uuid> */
+export async function DELETE(req: Request) {
+  const denied = checkLuciaAdmin(req);
+  if (denied) return denied;
+  const id = new URL(req.url).searchParams.get('id') || '';
+  if (!/^[0-9a-f-]{36}$/i.test(id)) return NextResponse.json({ error: 'Participante inválido.' }, { status: 400 });
+  try {
+    const db = getSupabaseAdmin();
+    const { data, error } = await db.from('lucia_players').delete().eq('id', id).select('id').maybeSingle();
+    if (error) throw error;
+    if (!data) return NextResponse.json({ error: 'No existe ese participante.' }, { status: 404 });
+    return NextResponse.json({ ok: true });
   } catch (err) {
     return serverError(err);
   }

@@ -17,6 +17,7 @@ const KEY = 'lucia_admin_secret';
 type Tab = 'ruleta' | 'jugadores' | 'canje' | 'qr';
 
 interface Player {
+  id: string;
   created_at: string;
   phone: string;
   email: string;
@@ -26,7 +27,7 @@ interface Player {
   redeemed_at: string | null;
 }
 
-type Voucher = Omit<Player, 'won'>;
+type Voucher = Omit<Player, 'won' | 'id'>;
 
 const fmtDateTime = (iso: string | null) =>
   iso ? new Date(iso).toLocaleString('es-AR', { dateStyle: 'short', timeStyle: 'short' }) : '—';
@@ -270,6 +271,20 @@ function RuletaTab({ api }: { api: Api }) {
             <h3>Texto legal</h3>
             <textarea className="la-input" rows={2} maxLength={240} value={settings.legal_text} onChange={(e) => setSettings({ ...settings, legal_text: e.target.value })} />
           </label>
+          <label>
+            <h3>Mails de prueba</h3>
+            <textarea
+              className="la-input"
+              rows={2}
+              placeholder="prueba@mail.com, otra@mail.com"
+              value={settings.test_emails}
+              onChange={(e) => setSettings({ ...settings, test_emails: e.target.value })}
+            />
+            <span className="la-muted">
+              Separados por coma. Pueden jugar todas las veces que quieran: no se registran, no descuentan stock y el voucher sale con código
+              PRUEBA (no canjeable).
+            </span>
+          </label>
         </div>
 
         {errors.length > 0 && (
@@ -326,6 +341,16 @@ function PlayersTab({ api }: { api: Api }) {
     URL.revokeObjectURL(url);
   }
 
+  async function remove(p: Player) {
+    const who = `${p.email} / ${p.phone}${p.voucher_code ? ` (voucher ${p.voucher_code})` : ''}`;
+    if (!window.confirm(`¿Eliminar a ${who}?\nSe borra el registro y su voucher deja de ser válido. Podrá volver a jugar.`)) return;
+    setErr('');
+    const res = await api(`/api/lucia/admin/players?id=${encodeURIComponent(p.id)}`, { method: 'DELETE' });
+    const d = await res.json().catch(() => ({}));
+    if (!res.ok) return setErr(d.error || 'No se pudo eliminar.');
+    setPlayers((prev) => (prev ? prev.filter((x) => x.id !== p.id) : prev));
+  }
+
   if (!players) return <p className="la-muted">{err || 'Cargando…'}</p>;
 
   const winners = players.filter((p) => p.won);
@@ -366,22 +391,28 @@ function PlayersTab({ api }: { api: Api }) {
               <th>Resultado</th>
               <th>Código</th>
               <th>Canje</th>
+              <th></th>
             </tr>
           </thead>
           <tbody>
             {list.map((p) => (
-              <tr key={p.phone}>
+              <tr key={p.id}>
                 <td>{fmtDateTime(p.created_at)}</td>
                 <td>{p.phone}</td>
                 <td>{p.email}</td>
                 <td>{p.won ? <span className="la-tag la-tag--win">{p.prize_label}</span> : <span className="la-muted">Suerte la próxima</span>}</td>
                 <td className="la-code">{p.voucher_code || '—'}</td>
                 <td>{p.won ? (p.redeemed_at ? fmtDateTime(p.redeemed_at) : <span className="la-muted">Pendiente</span>) : ''}</td>
+                <td>
+                  <button className="la-del" onClick={() => remove(p)} aria-label={`Eliminar ${p.email}`} title="Eliminar">
+                    Eliminar
+                  </button>
+                </td>
               </tr>
             ))}
             {list.length === 0 && (
               <tr>
-                <td colSpan={6} className="la-muted">Sin resultados.</td>
+                <td colSpan={7} className="la-muted">Sin resultados.</td>
               </tr>
             )}
           </tbody>

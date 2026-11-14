@@ -8,6 +8,8 @@ export function getSupabaseAdmin() {
   }
   return createClient<Database>(url, serviceKey, {
     auth: { persistSession: false, autoRefreshToken: false },
+    // Next.js cachea los fetch de las rutas GET: forzamos datos frescos siempre.
+    global: { fetch: (input, init) => fetch(input, { ...init, cache: 'no-store' }) },
   });
 }
 
