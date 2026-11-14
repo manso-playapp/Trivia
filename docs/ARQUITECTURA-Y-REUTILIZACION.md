@@ -1,6 +1,6 @@
 # Mapa del repo y reutilización
 
-El repositorio conserva una base de trivia para varios clientes y las implementaciones específicas de Feller. Hoy no es una librería empaquetada ni una plantilla completamente parametrizada.
+El repositorio conserva dos tipos de juego: una base de **trivia** para varios clientes (con la implementación específica de Feller) y una **ruleta mobile por QR** (primer cliente: Lucía Indumentaria, ver [docs/lucia/README.md](lucia/README.md)). Hoy no es una librería empaquetada ni una plantilla completamente parametrizada.
 
 | Carpeta | Qué contiene | Qué conservamos para otros proyectos |
 | --- | --- | --- |
@@ -15,6 +15,8 @@ El repositorio conserva una base de trivia para varios clientes y las implementa
 | `tools/render-feller-vertical.cjs` | Captura del navegador y exportación MP4 en nativo/alta | Pipeline de render, validación de loop y exportación reproducible. Hoy contiene rutas, tamaños y verificaciones de Feller: adaptarlas al reutilizar. |
 | `public/feller-led/index.html`, `promo.*`, `preview/feller.html` | Prototipos anteriores | Referencia histórica. No son la pieza audiovisual final. |
 | `docs/feller/` | Cierre, enlaces, manifiesto y vistas finales | Archivo de este cliente; punto de entrada para retomar. |
+| `app/lucia/`, `app/api/lucia/`, `components/lucia/`, `lib/lucia*.ts`, `supabase/lucia.sql`, `public/lucia/` | **Ruleta mobile por QR** (tipo de juego propio, cliente Lucía): formulario, ruleta, voucher, panel, canje y QR | Mecánica completa de ruleta con sorteo en servidor, stock, mails de prueba y vouchers. Para otro cliente se copia y se cambia marca según `docs/lucia/README.md`. |
+| `docs/lucia/` | Guía del tipo de juego ruleta y estado de Lucía | Punto de entrada para retomar o replicar la ruleta. |
 | `tests/` | Pruebas existentes del repo | Conservar y ampliar según cambien las reglas del juego. |
 | `exports/` | Videos y capturas generados localmente | Fuera de Git; finales en Drive, registrados en el manifiesto. |
 

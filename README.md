@@ -1,5 +1,7 @@
 # Trivia — mapa y estado del proyecto
 
+**Tipos de juego en este repo:** trivia (motor Next/Supabase + Feller) y **ruleta mobile por QR** (Lucía Indumentaria, en producción: [guía y estado](docs/lucia/README.md)).
+
 **Feller: entrega audiovisual cerrada el 04/11/2026, confirmada por el usuario.**
 
 - [Cierre Feller, archivos finales en Drive y cómo retomar](docs/feller/CIERRE-2026-11-04.md).
