@@ -2,17 +2,26 @@
 
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import Wheel from '@/components/lucia/Wheel';
-import { formatDate, normalizeEmail, normalizePhone, targetRotation, type PublicSegment, type SpinResult } from '@/lib/lucia';
+import {
+  DEFAULT_SEGMENT_COLORS,
+  INSTAGRAM_HANDLE,
+  INSTAGRAM_URL,
+  normalizeEmail,
+  normalizePhone,
+  targetRotation,
+  type PublicSegment,
+  type SpinResult,
+} from '@/lib/lucia';
 import { canvasToBlob, renderVoucher } from '@/lib/luciaVoucher';
 
 const STORAGE_KEY = 'lucia_ruleta_resultado_v1';
 
-type Phase = 'loading' | 'form' | 'spinning' | 'result' | 'inactive' | 'error';
+type Phase = 'loading' | 'form' | 'game' | 'spinning' | 'result' | 'inactive' | 'error';
 
 const PLACEHOLDER: PublicSegment[] = Array.from({ length: 8 }, (_, i) => ({
   position: i,
   label: '',
-  color: ['#111111', '#B2AC82', '#F1EDE0', '#8C8762'][i % 4],
+  color: DEFAULT_SEGMENT_COLORS[i % DEFAULT_SEGMENT_COLORS.length],
 }));
 
 function readSaved(): SpinResult | null {
@@ -24,12 +33,23 @@ function readSaved(): SpinResult | null {
   }
 }
 
+function InstagramIcon() {
+  return (
+    <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden fill="none" stroke="currentColor" strokeWidth="1.6">
+      <rect x="3" y="3" width="18" height="18" rx="5" />
+      <circle cx="12" cy="12" r="4.2" />
+      <circle cx="17.4" cy="6.6" r="1" fill="currentColor" stroke="none" />
+    </svg>
+  );
+}
+
 export default function LuciaRuleta() {
   const [phase, setPhase] = useState<Phase>('loading');
   const [segments, setSegments] = useState<PublicSegment[]>(PLACEHOLDER);
   const [legal, setLegal] = useState('No acumulable con otras promociones. Válido hasta el 31/12/2026.');
   const [phone, setPhone] = useState('');
   const [email, setEmail] = useState('');
+  const [follow, setFollow] = useState(false);
   const [accept, setAccept] = useState(false);
   const [error, setError] = useState<{ msg: string; field?: 'phone' | 'email' } | null>(null);
   const [sending, setSending] = useState(false);
@@ -38,7 +58,6 @@ export default function LuciaRuleta() {
   const [result, setResult] = useState<SpinResult | null>(null);
   const [voucherUrl, setVoucherUrl] = useState<string | null>(null);
   const [voucherBlob, setVoucherBlob] = useState<Blob | null>(null);
-  const wheelRef = useRef<HTMLDivElement>(null);
   const endTimer = useRef<number | null>(null);
 
   useEffect(() => {
@@ -67,13 +86,7 @@ export default function LuciaRuleta() {
     if (phase !== 'result' || !result?.won || !result.code) return;
     let url: string | null = null;
     let cancelled = false;
-    renderVoucher({
-      prize: result.label,
-      code: result.code,
-      phrase: result.phrase,
-      legal: result.legal,
-      validUntil: result.valid_until,
-    })
+    renderVoucher({ prize: result.label, code: result.code, phrase: result.phrase, legal: result.legal, validUntil: result.valid_until })
       .then(canvasToBlob)
       .then((blob) => {
         if (cancelled) return;
@@ -94,23 +107,46 @@ export default function LuciaRuleta() {
     setPhase((p) => (p === 'spinning' ? 'result' : p));
   }, []);
 
-  async function onSubmit(e: React.FormEvent) {
+  /** Paso 1: validar datos y entrar al juego */
+  async function onEnter(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
     if (!normalizePhone(phone)) return setError({ msg: 'Revisá el teléfono (con código de área).', field: 'phone' });
     if (!normalizeEmail(email)) return setError({ msg: 'Revisá el mail.', field: 'email' });
+    if (!follow) return setError({ msg: `Para jugar, seguinos en Instagram ${INSTAGRAM_HANDLE} y marcá la casilla.` });
     if (!accept) return setError({ msg: 'Para jugar tenés que aceptar las bases y condiciones.' });
 
+    setSending(true);
+    try {
+      const res = await fetch('/api/lucia/check', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ phone, email }),
+      });
+      const data = await res.json();
+      if (!res.ok) return setError({ msg: data.error || 'No pudimos validar tus datos.', field: data.field });
+      setPhase('game');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } catch {
+      setError({ msg: 'Sin conexión. Revisá internet y probá de nuevo.' });
+    } finally {
+      setSending(false);
+    }
+  }
+
+  /** Paso 2: girar (el resultado lo decide el servidor) */
+  async function onSpin() {
+    setError(null);
     setSending(true);
     try {
       const res = await fetch('/api/lucia/spin', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ phone, email, accept }),
+        body: JSON.stringify({ phone, email, accept: true }),
       });
       const data = await res.json();
       if (!res.ok) {
-        setError({ msg: data.error || 'No pudimos procesar tu jugada. Probá de nuevo.', field: data.field });
+        setError({ msg: data.error || 'No pudimos procesar tu jugada. Probá de nuevo.' });
         return;
       }
       const r = data as SpinResult;
@@ -124,12 +160,8 @@ export default function LuciaRuleta() {
       setDuration(d);
       setResult(r);
       setPhase('spinning');
-      wheelRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      // Pequeña pausa para que el scroll arranque antes del giro
-      window.setTimeout(() => {
-        setRotation((cur) => targetRotation(cur, r.position, segments.length, Math.random()));
-        endTimer.current = window.setTimeout(finishSpin, d + 400);
-      }, 250);
+      setRotation((cur) => targetRotation(cur, r.position, segments.length, Math.random()));
+      endTimer.current = window.setTimeout(finishSpin, d + 400);
     } catch {
       setError({ msg: 'Sin conexión. Revisá internet y probá de nuevo.' });
     } finally {
@@ -137,7 +169,7 @@ export default function LuciaRuleta() {
     }
   }
 
-  async function download() {
+  function download() {
     if (!voucherUrl || !result?.code) return;
     const a = document.createElement('a');
     a.href = voucherUrl;
@@ -163,86 +195,99 @@ export default function LuciaRuleta() {
     typeof navigator.canShare === 'function' &&
     navigator.canShare({ files: [new File([voucherBlob], 'v.png', { type: 'image/png' })] });
 
-  return (
-    <main className="lp">
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img className={phase === 'result' ? 'lp-logo lp-logo--sm' : 'lp-logo'} src="/lucia/logo-negro.png" alt="Lucía Indumentaria" />
+  const inGame = phase === 'game' || phase === 'spinning';
 
-      {phase === 'loading' && <p className="lp-loading">Cargando…</p>}
+  return (
+    <main className={`lp ${inGame ? 'lp--game' : ''}`}>
+      <div className="lp-bg" aria-hidden />
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img className={inGame || phase === 'result' ? 'lp-logo lp-logo--sm' : 'lp-logo'} src="/lucia/logo-crema.png" alt="Lucía Indumentaria" />
+
+      {phase === 'loading' && <p className="lp-kicker">Cargando…</p>}
 
       {phase === 'error' && (
-        <>
-          <p className="lp-sub">No pudimos cargar el juego. Revisá tu conexión.</p>
+        <div className="lp-card">
+          <p className="lp-text">No pudimos cargar el juego. Revisá tu conexión.</p>
           <button className="lp-btn" onClick={() => location.reload()}>Reintentar</button>
-        </>
+        </div>
       )}
 
       {phase === 'inactive' && (
-        <>
-          <h1 className="lp-title">La ruleta <em>está en pausa</em></h1>
-          <p className="lp-sub">Volvé a escanear el QR más tarde. ¡Gracias!</p>
-        </>
+        <div className="lp-card">
+          <h1 className="lp-title">La ruleta está en pausa</h1>
+          <p className="lp-text">Volvé a escanear el QR más tarde. ¡Gracias!</p>
+        </div>
       )}
 
-      {(phase === 'form' || phase === 'spinning') && (
-        <>
+      {phase === 'form' && (
+        <form className="lp-card" onSubmit={onEnter} noValidate>
           <p className="lp-kicker">Girá y ganá</p>
-          <h1 className="lp-title">
-            Tu próxima compra <em>tiene premio</em>
-          </h1>
-          <div ref={wheelRef}>
-            <Wheel segments={segments} rotation={rotation} durationMs={duration} onSpinEnd={finishSpin} />
+          <p className="lp-text">Dejanos tus datos para participar.</p>
+          <div className="lp-field">
+            <label htmlFor="tel">Teléfono</label>
+            <input
+              id="tel"
+              className="lp-input"
+              type="tel"
+              inputMode="tel"
+              autoComplete="tel"
+              placeholder="Ej: 342 123 4567"
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
+              aria-invalid={error?.field === 'phone'}
+            />
+          </div>
+          <div className="lp-field">
+            <label htmlFor="mail">Mail</label>
+            <input
+              id="mail"
+              className="lp-input"
+              type="email"
+              inputMode="email"
+              autoComplete="email"
+              placeholder="tu@mail.com"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              aria-invalid={error?.field === 'email'}
+            />
           </div>
 
-          {phase === 'form' && (
-            <form className="lp-form" onSubmit={onSubmit} noValidate>
-              <div className="lp-field">
-                <label htmlFor="tel">Teléfono</label>
-                <input
-                  id="tel"
-                  className="lp-input"
-                  type="tel"
-                  inputMode="tel"
-                  autoComplete="tel"
-                  placeholder="Ej: 351 123 4567"
-                  value={phone}
-                  onChange={(e) => setPhone(e.target.value)}
-                  aria-invalid={error?.field === 'phone'}
-                  required
-                />
-              </div>
-              <div className="lp-field">
-                <label htmlFor="mail">Mail</label>
-                <input
-                  id="mail"
-                  className="lp-input"
-                  type="email"
-                  inputMode="email"
-                  autoComplete="email"
-                  placeholder="tu@mail.com"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  aria-invalid={error?.field === 'email'}
-                  required
-                />
-              </div>
-              <label className="lp-check">
-                <input type="checkbox" checked={accept} onChange={(e) => setAccept(e.target.checked)} />
-                <span>Acepto las bases y condiciones y que Lucía Indumentaria me contacte con novedades.</span>
-              </label>
-              {error && <p className="lp-error" role="alert">{error.msg}</p>}
-              <button className="lp-btn" type="submit" disabled={sending}>
-                {sending ? 'Un momento…' : 'Jugar'}
-              </button>
-              <p className="lp-legal">Una jugada por persona. {legal}</p>
-            </form>
-          )}
-          {phase === 'spinning' && <p className="lp-kicker">¡Suerte!</p>}
-        </>
+          <div className="lp-ig">
+            <a className="lp-ig-link" href={INSTAGRAM_URL} target="_blank" rel="noopener noreferrer" onClick={() => setFollow(true)}>
+              <InstagramIcon />
+              <span>Seguinos en {INSTAGRAM_HANDLE}</span>
+            </a>
+            <label className="lp-check">
+              <input type="checkbox" checked={follow} onChange={(e) => setFollow(e.target.checked)} />
+              <span>Ya sigo a Lucía en Instagram</span>
+            </label>
+          </div>
+
+          <label className="lp-check">
+            <input type="checkbox" checked={accept} onChange={(e) => setAccept(e.target.checked)} />
+            <span>Acepto las bases y condiciones y recibir novedades de Lucía Indumentaria.</span>
+          </label>
+
+          {error && <p className="lp-error" role="alert">{error.msg}</p>}
+          <button className="lp-btn" type="submit" disabled={sending}>
+            {sending ? 'Un momento…' : 'Ingresar al juego'}
+          </button>
+          <p className="lp-legal">Una jugada por persona. {legal}</p>
+        </form>
+      )}
+
+      {inGame && (
+        <section className="lp-game">
+          <Wheel segments={segments} rotation={rotation} durationMs={duration} onSpinEnd={finishSpin} />
+          {error && <p className="lp-error" role="alert">{error.msg}</p>}
+          <button className="lp-btn lp-btn--spin" onClick={onSpin} disabled={sending || phase === 'spinning'}>
+            {phase === 'spinning' ? 'Girando…' : sending ? 'Un momento…' : 'Girar'}
+          </button>
+        </section>
       )}
 
       {phase === 'result' && result && (
-        <section className="lp-result" aria-live="polite">
+        <section className="lp-card lp-result" aria-live="polite">
           {result.won ? (
             <>
               <p className="lp-kicker">¡Ganaste!</p>
@@ -251,30 +296,28 @@ export default function LuciaRuleta() {
                 // eslint-disable-next-line @next/next/no-img-element
                 <img className="lp-voucher" src={voucherUrl} alt={`Voucher ${result.label}, código ${result.code}`} />
               ) : (
-                <p className="lp-loading">Generando tu voucher…</p>
+                <p className="lp-text">Generando tu voucher…</p>
               )}
-              <div className="lp-actions">
-                <button className="lp-btn" onClick={download} disabled={!voucherUrl}>
-                  Descargar voucher
+              <button className="lp-btn" onClick={download} disabled={!voucherUrl}>
+                Descargar voucher
+              </button>
+              {canShare && (
+                <button className="lp-btn lp-btn--ghost" onClick={share}>
+                  Guardar / compartir
                 </button>
-                {canShare && (
-                  <button className="lp-btn lp-btn--ghost" onClick={share}>
-                    Guardar / compartir
-                  </button>
-                )}
-              </div>
-              <p className="lp-hint">
-                Si no se descarga, mantené presionada la imagen y elegí “Guardar imagen”. Código: <b>{result.code}</b>
+              )}
+              <p className="lp-legal">
+                Si no se descarga, mantené presionada la imagen y elegí “Guardar imagen”. Tu código: <b>{result.code}</b>
               </p>
-              <p className="lp-legal">{result.legal || `Válido hasta el ${formatDate(result.valid_until)}.`}</p>
             </>
           ) : (
             <>
               <p className="lp-kicker">Esta vez no fue</p>
-              <h1 className="lp-title">
-                Suerte <em>la próxima</em>
-              </h1>
-              <p className="lp-sub">Gracias por participar. Te esperamos en Lucía Indumentaria.</p>
+              <h1 className="lp-title">Suerte la próxima</h1>
+              <p className="lp-text">Gracias por participar. Te esperamos en Lucía Indumentaria.</p>
+              <a className="lp-btn lp-btn--ghost" href={INSTAGRAM_URL} target="_blank" rel="noopener noreferrer">
+                Ver novedades en Instagram
+              </a>
             </>
           )}
         </section>

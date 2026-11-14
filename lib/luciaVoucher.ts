@@ -11,7 +11,6 @@ export interface VoucherData {
 
 const W = 1080;
 const H = 1350;
-const SERIF = '"Bodoni Moda", "Didot", "Times New Roman", serif';
 const SANS = '"Jost", "Helvetica Neue", Arial, sans-serif';
 
 function loadImage(src: string): Promise<HTMLImageElement> {
@@ -25,12 +24,7 @@ function loadImage(src: string): Promise<HTMLImageElement> {
 
 async function ensureFonts() {
   if (typeof document === 'undefined' || !document.fonts) return;
-  await Promise.all([
-    document.fonts.load(`600 100px "Bodoni Moda"`),
-    document.fonts.load(`italic 400 40px "Bodoni Moda"`),
-    document.fonts.load(`400 30px "Jost"`),
-    document.fonts.load(`500 30px "Jost"`),
-  ]).catch(() => undefined);
+  await Promise.all(['300', '400', '500'].map((w) => document.fonts.load(`${w} 40px "Jost"`))).catch(() => undefined);
 }
 
 function wrap(ctx: CanvasRenderingContext2D, text: string, maxWidth: number): string[] {
@@ -63,7 +57,7 @@ function spaced(ctx: CanvasRenderingContext2D, text: string, x: number, y: numbe
 
 export async function renderVoucher(d: VoucherData): Promise<HTMLCanvasElement> {
   await ensureFonts();
-  const logo = await loadImage('/lucia/logo-negro.png');
+  const logo = await loadImage('/lucia/logo-verde.png');
   const c = document.createElement('canvas');
   c.width = W;
   c.height = H;
@@ -71,84 +65,91 @@ export async function renderVoucher(d: VoucherData): Promise<HTMLCanvasElement> 
   ctx.textAlign = 'center';
   ctx.textBaseline = 'alphabetic';
 
-  // Fondo
-  ctx.fillStyle = BRAND.olive;
+  // Fondo crema con degradé suave a salvia
+  const g = ctx.createLinearGradient(0, 0, 0, H);
+  g.addColorStop(0, BRAND.cream);
+  g.addColorStop(1, BRAND.mist);
+  ctx.fillStyle = g;
   ctx.fillRect(0, 0, W, H);
 
-  // Marco fino
-  ctx.strokeStyle = BRAND.ink;
+  // Marco fino champagne
+  ctx.strokeStyle = BRAND.champagne;
   ctx.lineWidth = 2;
-  ctx.strokeRect(44, 44, W - 88, H - 88);
+  ctx.strokeRect(48, 48, W - 96, H - 96);
 
   // Logo
-  const lw = 440;
+  const lw = 420;
   const lh = (logo.height / logo.width) * lw;
-  ctx.drawImage(logo, (W - lw) / 2, 110, lw, lh);
-  let y = 110 + lh + 90;
+  ctx.drawImage(logo, (W - lw) / 2, 120, lw, lh);
+  let y = 120 + lh + 92;
 
-  // Encabezado
-  ctx.fillStyle = BRAND.ink;
-  ctx.font = `500 28px ${SANS}`;
-  spaced(ctx, '¡FELICITACIONES!', W / 2, y, 9);
-  y += 68;
+  ctx.fillStyle = BRAND.sageDark;
+  ctx.font = `500 26px ${SANS}`;
+  spaced(ctx, '¡FELICITACIONES!', W / 2, y, 10);
+  y += 64;
 
-  // Frase
-  ctx.font = `italic 400 44px ${SERIF}`;
+  ctx.fillStyle = BRAND.deep;
+  ctx.font = `300 40px ${SANS}`;
   for (const l of wrap(ctx, d.phrase, 860)) {
     ctx.fillText(l, W / 2, y);
-    y += 54;
+    y += 52;
   }
 
-  // Premio (tamaño auto, máx. 2 líneas), centrado en el espacio libre
-  let size = 112;
+  // Premio en mayúsculas, liviano y espaciado (tamaño auto, máx. 2 líneas)
+  const prize = d.prize.toUpperCase();
+  let size = 104;
   let lines: string[] = [];
-  for (; size >= 52; size -= 4) {
-    ctx.font = `600 ${size}px ${SERIF}`;
-    lines = wrap(ctx, d.prize, 880);
-    if (lines.length <= 2 && lines.every((l) => ctx.measureText(l).width <= 880)) break;
+  for (; size >= 48; size -= 4) {
+    ctx.font = `400 ${size}px ${SANS}`;
+    lines = wrap(ctx, prize, 860);
+    if (lines.length <= 2 && lines.every((l) => ctx.measureText(l).width + l.length * size * 0.06 <= 880)) break;
   }
-  const cutY = 900; // línea de corte fija
-  const blockH = lines.length * size * 1.05;
-  let py = y + (cutY - y - blockH) / 2 + size * 0.78;
+  const cutY = 900;
+  const blockH = lines.length * size * 1.1;
+  let py = y + (cutY - y - blockH) / 2 + size * 0.8;
+  ctx.fillStyle = BRAND.deep;
   for (const l of lines) {
-    ctx.fillText(l, W / 2, py);
-    py += size * 1.05;
+    spaced(ctx, l, W / 2, py, size * 0.06);
+    py += size * 1.1;
   }
 
-  // Línea de corte punteada con muescas
+  // Línea de corte con muescas
   ctx.save();
-  ctx.setLineDash([14, 12]);
+  ctx.strokeStyle = BRAND.sage;
+  ctx.setLineDash([12, 12]);
   ctx.beginPath();
-  ctx.moveTo(90, cutY);
-  ctx.lineTo(W - 90, cutY);
+  ctx.moveTo(96, cutY);
+  ctx.lineTo(W - 96, cutY);
   ctx.stroke();
   ctx.restore();
-  ctx.fillStyle = BRAND.cream;
+  ctx.fillStyle = BRAND.sageLight;
   ctx.beginPath();
-  ctx.arc(44, cutY, 26, 0, Math.PI * 2);
-  ctx.arc(W - 44, cutY, 26, 0, Math.PI * 2);
+  ctx.arc(48, cutY, 24, 0, Math.PI * 2);
+  ctx.arc(W - 48, cutY, 24, 0, Math.PI * 2);
   ctx.fill();
 
   // Código
-  y = cutY + 70;
-  ctx.fillStyle = BRAND.ink;
-  ctx.font = `500 24px ${SANS}`;
+  y = cutY + 72;
+  ctx.fillStyle = BRAND.sageDark;
+  ctx.font = `500 22px ${SANS}`;
   spaced(ctx, 'TU CÓDIGO', W / 2, y, 8);
-  y += 26;
-  const boxW = 620;
-  const boxH = 120;
-  ctx.fillRect((W - boxW) / 2, y, boxW, boxH);
+  y += 28;
+  const boxW = 600;
+  const boxH = 116;
+  roundRect(ctx, (W - boxW) / 2, y, boxW, boxH, 58);
+  ctx.fillStyle = BRAND.sageDark;
+  ctx.fill();
   ctx.fillStyle = BRAND.cream;
-  ctx.font = `500 66px ${SANS}`;
-  spaced(ctx, d.code, W / 2, y + boxH / 2 + 23, 10);
-  y += boxH + 56;
+  ctx.font = `400 60px ${SANS}`;
+  spaced(ctx, d.code, W / 2, y + boxH / 2 + 21, 10);
+  y += boxH + 58;
 
-  // Instrucción + legales
-  ctx.fillStyle = BRAND.ink;
+  ctx.fillStyle = BRAND.deep;
   ctx.font = `400 28px ${SANS}`;
   ctx.fillText('Presentá este código en el local', W / 2, y);
-  y += 46;
-  ctx.font = `400 22px ${SANS}`;
+  y += 44;
+  ctx.fillStyle = BRAND.sageDark;
+  ctx.font = `300 22px ${SANS}`;
   const legal = d.legal || `No acumulable con otras promociones. Válido hasta el ${formatDate(d.validUntil)}.`;
   for (const l of wrap(ctx, legal, 820).slice(0, 3)) {
     ctx.fillText(l, W / 2, y);
@@ -156,6 +157,16 @@ export async function renderVoucher(d: VoucherData): Promise<HTMLCanvasElement> 
   }
 
   return c;
+}
+
+function roundRect(ctx: CanvasRenderingContext2D, x: number, y: number, w: number, h: number, r: number) {
+  ctx.beginPath();
+  ctx.moveTo(x + r, y);
+  ctx.arcTo(x + w, y, x + w, y + h, r);
+  ctx.arcTo(x + w, y + h, x, y + h, r);
+  ctx.arcTo(x, y + h, x, y, r);
+  ctx.arcTo(x, y, x + w, y, r);
+  ctx.closePath();
 }
 
 export function canvasToBlob(c: HTMLCanvasElement): Promise<Blob> {

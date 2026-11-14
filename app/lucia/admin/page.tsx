@@ -5,6 +5,7 @@ import QRCode from 'qrcode';
 import Wheel from '@/components/lucia/Wheel';
 import {
   formatDate,
+  LUCIA_PUBLIC_URL,
   prizeProbabilityTotal,
   round2,
   validateSegments,
@@ -85,7 +86,7 @@ export default function LuciaAdmin() {
     return (
       <form className="la-login" onSubmit={login}>
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src="/lucia/logo-negro.png" alt="Lucía Indumentaria" />
+        <img src="/lucia/logo-verde.png" alt="Lucía Indumentaria" />
         <h3>Panel de la ruleta</h3>
         <input className="la-input" type="password" placeholder="Clave" value={pwd} onChange={(e) => setPwd(e.target.value)} autoFocus />
         <button className="la-btn" type="submit">Entrar</button>
@@ -98,7 +99,7 @@ export default function LuciaAdmin() {
     <main className="la">
       <div className="la-head">
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src="/lucia/logo-negro.png" alt="Lucía Indumentaria" />
+        <img src="/lucia/logo-verde.png" alt="Lucía Indumentaria" />
         <div className="la-tabs" role="tablist">
           {(
             [
@@ -242,8 +243,8 @@ function RuletaTab({ api }: { api: Api }) {
         <div style={{ marginTop: 16 }}>
           <h3>Chance por tiro</h3>
           <div className="la-bar" aria-hidden>
-            <i style={{ width: `${Math.min(total, 100)}%`, background: '#111' }} />
-            <i style={{ width: `${lose}%`, background: '#B2AC82' }} />
+            <i style={{ width: `${Math.min(total, 100)}%`, background: '#76845F' }} />
+            <i style={{ width: `${lose}%`, background: '#E4E7D8' }} />
           </div>
           <p className="la-muted">
             Gana algún premio: <b>{total}%</b> · Suerte la próxima: <b>{lose}%</b>
@@ -459,31 +460,56 @@ function CanjeTab({ api }: { api: Api }) {
 
 /* ------------------------------- QR -------------------------------- */
 function QrTab() {
-  const [url, setUrl] = useState('');
+  const [url, setUrl] = useState(LUCIA_PUBLIC_URL);
   const [png, setPng] = useState('');
+  const [jpg, setJpg] = useState('');
 
   useEffect(() => {
-    setUrl(`${window.location.origin}/lucia`);
-  }, []);
-  useEffect(() => {
     if (!url) return;
-    QRCode.toDataURL(url, { width: 1200, margin: 2, errorCorrectionLevel: 'M', color: { dark: '#111111', light: '#FFFFFF' } })
-      .then(setPng)
-      .catch(() => setPng(''));
+    QRCode.toDataURL(url, { width: 1200, margin: 3, errorCorrectionLevel: 'M', color: { dark: '#3D4836', light: '#FFFFFF' } })
+      .then((dataUrl: string) => {
+        setPng(dataUrl);
+        // Versión JPG (fondo blanco)
+        const img = new Image();
+        img.onload = () => {
+          const c = document.createElement('canvas');
+          c.width = img.width;
+          c.height = img.height;
+          const ctx = c.getContext('2d')!;
+          ctx.fillStyle = '#FFFFFF';
+          ctx.fillRect(0, 0, c.width, c.height);
+          ctx.drawImage(img, 0, 0);
+          setJpg(c.toDataURL('image/jpeg', 0.95));
+        };
+        img.src = dataUrl;
+      })
+      .catch(() => {
+        setPng('');
+        setJpg('');
+      });
   }, [url]);
 
   return (
     <div className="la-card la-qr">
       <h2>QR para imprimir</h2>
-      <input className="la-input" value={url} onChange={(e) => setUrl(e.target.value)} style={{ maxWidth: 420 }} />
-      <p className="la-muted" style={{ margin: 0 }}>Si cambiás de dominio, editá la URL de arriba antes de descargar.</p>
+      <p className="la-muted" style={{ margin: 0, maxWidth: 460 }}>
+        El QR apunta siempre a esta dirección fija. No vence ni cambia: sólo dejaría de andar si se cambia el dominio.
+      </p>
+      <input className="la-input" value={url} onChange={(e) => setUrl(e.target.value)} style={{ maxWidth: 460 }} />
       {/* eslint-disable-next-line @next/next/no-img-element */}
       {png && <img src={png} alt={`QR a ${url}`} />}
-      {png && (
-        <a className="la-btn" href={png} download="lucia-ruleta-qr.png" style={{ textDecoration: 'none' }}>
-          Descargar QR (PNG)
-        </a>
-      )}
+      <div className="la-row" style={{ justifyContent: 'center' }}>
+        {jpg && (
+          <a className="la-btn" href={jpg} download="lucia-ruleta-qr.jpg">
+            Descargar JPG
+          </a>
+        )}
+        {png && (
+          <a className="la-btn la-btn--ghost" href={png} download="lucia-ruleta-qr.png">
+            Descargar PNG
+          </a>
+        )}
+      </div>
     </div>
   );
 }

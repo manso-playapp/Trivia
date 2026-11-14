@@ -8,6 +8,7 @@ import {
   targetRotation,
   textColorFor,
   validateSegments,
+  BRAND,
   type LuciaSegment,
 } from '@/lib/lucia';
 
@@ -75,7 +76,7 @@ describe('lucia: ruleta', () => {
     expect(splitLabel('Suerte la próxima')).toEqual(['Suerte la', 'próxima']);
   });
   it('elige texto legible', () => {
-    expect(textColorFor('#111111')).not.toBe('#111111');
-    expect(textColorFor('#F1EDE0')).toBe('#111111');
+    expect(textColorFor('#76845F')).toBe(BRAND.cream);
+    expect(textColorFor('#F6F4EC')).toBe(BRAND.deep);
   });
 });
