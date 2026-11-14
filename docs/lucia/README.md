@@ -1,36 +1,77 @@
-# Ruleta Lucía Indumentaria (mobile + QR)
+# Tipo de juego: Ruleta mobile por QR
 
-- Juego: `/lucia` (lo que abre el QR)
-- Panel: `/lucia/admin` (clave = `LUCIA_ADMIN_SECRET`)
+Primer cliente: **Lucía Indumentaria** (Santa Fe). Estado al 14/11/2026: **en producción**.
 
-## Puesta en marcha
+Es un tipo de juego distinto de la trivia del repo: no usa tótem, pantalla ni operador. La persona escanea un QR impreso, juega todo en su celular y, si gana, descarga un voucher.
 
-1. **Supabase** → SQL Editor → pegar y ejecutar todo `supabase/lucia.sql`.
-   Crea las tablas, los 8 gajos de ejemplo y la función `lucia_spin`. Se puede volver a correr sin perder datos.
-2. **Vercel** → importar el repo `Trivia` y cargar estas variables de entorno:
-   - `NEXT_PUBLIC_SUPABASE_URL` → `https://<id-del-proyecto>.supabase.co`
-   - `NEXT_PUBLIC_SUPABASE_ANON_KEY` → Supabase › Project Settings › API (la usan otras páginas del repo para compilar)
-   - `SUPABASE_SERVICE_ROLE_KEY` → Supabase › Project Settings › API (secreta, sólo en Vercel)
-   - `LUCIA_ADMIN_SECRET` → la clave que quieran para el panel
-3. Entrar a `/lucia/admin` → **Ruleta**: nombrar premios, % y stock → Guardar.
-4. **QR** → descargar el PNG para imprimir (apunta a `https://<dominio>/lucia`).
+## Enlaces
 
-## Cómo funciona
+| Qué | Dónde |
+| --- | --- |
+| Juego (lo que abre el QR) | https://trivia-mansos-projects-7d8ae3d2.vercel.app/lucia |
+| Panel | https://trivia-mansos-projects-7d8ae3d2.vercel.app/lucia/admin (clave = `LUCIA_ADMIN_SECRET`) |
+| QR para imprimir | `public/lucia/qr-lucia-ruleta.jpg` (también se descarga desde el panel → QR, en JPG o PNG) |
+| Base de datos | Supabase, proyecto `qsqhbzwtidqxxeaoepcl` |
+| Hosting | Vercel, proyecto `trivia` (equipo mansos-projects), rama `main` = producción |
 
-- El jugador deja teléfono y mail, acepta bases y toca **Jugar**. El resultado se decide en el servidor
-  (función `lucia_spin`), no en el celular.
-- Una jugada por teléfono y una por mail. Los teléfonos se normalizan (+54 9 / 0 inicial).
-- Cada premio real tiene su **% por tiro**; la suma no puede pasar de 100%. El resto es "Suerte la próxima".
-- **Stock** opcional por premio: al llegar a 0 deja de salir y su % pasa a "Suerte la próxima".
-- Si gana, se genera el voucher (PNG 1080×1350) con logo, frase, premio, código `LU-XXXXXX` y legales,
-  y lo descarga. Si recarga la página, vuelve a ver su resultado (guardado en el navegador).
-- Panel: editar gajos/textos, apagar la ruleta, ver jugadores, exportar CSV (Excel), canjear vouchers por código.
+El QR codifica la URL fija de producción: no vence ni cambia mientras no cambie el dominio.
+
+## Flujo del jugador
+
+1. **Formulario:** teléfono, mail, link a Instagram + tilde "Ya sigo a Lucía" (no se puede comprobar), aceptación de bases → **Ingresar al juego**. Se valida antes (`/api/lucia/check`): avisa si ese teléfono o mail ya jugó. En Android/escritorio pide pantalla completa (Safari de iPhone no lo permite).
+2. **Ruleta:** 8 gajos + botón **Girar**. El resultado lo decide el servidor (función SQL `lucia_spin`), nunca el celular.
+3. **Resultado:**
+   - Premio → voucher PNG (1080×1350) con logo, frase, premio, código `LU-XXXXXX` y legales; botón de descarga y de compartir.
+   - Sin premio → placa "Suerte la próxima".
+   - El resultado queda guardado en el celular; si el participante se elimina desde el panel, al reabrir se borra esa copia (`/api/lucia/verify`).
+
+## Panel (`/lucia/admin`)
+
+- **Ruleta:** por gajo, nombre, tipo (premio real / suerte la próxima), **% por tiro**, **stock** (vacío = ilimitado; en 0 deja de salir) y color. Frase del voucher, vencimiento, texto legal, pausa de la ruleta y **mails de prueba**.
+- **Mails de prueba** (separados por coma): juegan todas las veces que quieran, no se registran, no descuentan stock y el voucher sale con código `PRUEBA-XXXX` (no canjeable).
+- **Jugadores:** lista, búsqueda, totales por premio, exportar CSV (Excel en español), **eliminar participante**.
+- **Canjear:** buscar código y marcarlo como canjeado (o deshacer).
+- **QR:** descarga JPG/PNG apuntando a la URL de producción.
+
+## Reglas del sorteo
+
+- Cada premio real tiene su % por tiro; la suma no puede pasar de 100. El resto es "suerte la próxima".
+- Un premio sin stock deja de salir y su % pasa a "suerte la próxima".
+- Una jugada por teléfono y una por mail. Los teléfonos se normalizan (`+54 9 342…`, `0342…` y `342…` cuentan igual).
 
 ## Archivos
 
-- `app/lucia/` páginas (juego y panel) + estilos
-- `app/api/lucia/` endpoints
-- `components/lucia/Wheel.tsx` ruleta SVG
-- `lib/lucia.ts` lógica compartida · `lib/luciaVoucher.ts` voucher · `lib/luciaServer.ts` auth del panel
-- `supabase/lucia.sql` base de datos · `public/lucia/` logo sin fondo (negro y blanco)
-- `tests/lucia.test.ts`
+| Archivo | Qué es |
+| --- | --- |
+| `app/lucia/page.tsx`, `app/lucia/lucia.css`, `app/lucia/layout.tsx` | Juego (formulario → ruleta → resultado) y estilos |
+| `app/lucia/admin/page.tsx` | Panel |
+| `app/api/lucia/` | `config` (gajos públicos), `check`, `spin`, `verify`, `admin/config`, `admin/players` (lista, CSV, eliminar), `admin/voucher` (canje) |
+| `components/lucia/Wheel.tsx` | Ruleta SVG (aro perlado, puntero central fijo) |
+| `lib/lucia.ts` | Lógica compartida: validaciones, sorteo, rotación, paleta, URL pública |
+| `lib/luciaVoucher.ts` | Dibujo del voucher en canvas |
+| `lib/luciaServer.ts` | Auth del panel (`x-admin-secret`) |
+| `supabase/lucia.sql` | Tablas, RLS y `lucia_spin`. Idempotente: se puede volver a ejecutar |
+| `public/lucia/` | Logos sin fondo (crema, verde, negro, blanco), foto de fondo, QR |
+| `tests/lucia.test.ts` | Pruebas de la lógica |
+
+## Variables de entorno (Vercel)
+
+`NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`, `LUCIA_ADMIN_SECRET`. Después de cambiarlas hay que volver a publicar.
+
+## Cómo hacerlo para otro cliente
+
+Hoy el juego está armado para Lucía (nombres `lucia_*`, rutas `/lucia`). Para un cliente nuevo:
+
+1. Copiar `app/lucia`, `app/api/lucia`, `components/lucia`, `lib/lucia*.ts`, `supabase/lucia.sql` y `tests/lucia.test.ts` con el nombre del cliente, y renombrar tablas, función SQL, rutas y la clave de `localStorage`.
+2. Cambiar marca: logos en `public/<cliente>/`, foto de fondo, paleta (`BRAND` en `lib/<cliente>.ts` y variables en el CSS), tipografía, textos, Instagram y `*_PUBLIC_URL`.
+3. Ejecutar el SQL en Supabase, cargar la variable de clave del panel en Vercel, publicar y generar el QR desde el panel.
+4. Probar con un **mail de prueba** antes de imprimir el QR.
+
+Siguiente paso posible: parametrizarlo como juego multi-cliente (una tabla de campañas con marca y gajos) en lugar de copiar carpetas.
+
+## Lecciones
+
+- Next.js 14 cachea los `fetch` en rutas GET: el cliente de Supabase usa `cache: 'no-store'` y las rutas `fetchCache = 'force-no-store'`. Sin eso el panel y la ruleta muestran datos viejos.
+- Supabase instala `pgcrypto` en el schema `extensions`: la función SQL usa `search_path = public, extensions`.
+- La protección de Vercel (Deployment Protection) tiene que estar apagada o limitada a previews, si no el QR pide login.
+- No hacer pruebas que guarden configuración contra la base real: pisan lo que cargó el cliente. Usar mails de prueba.
