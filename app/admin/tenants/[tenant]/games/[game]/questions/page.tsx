@@ -17,7 +17,7 @@ type Question = {
 export default function QuestionsAdmin({ params }: { params: { tenant: string; game: string } }) {
   const { tenant, game } = params;
   const supabase = useMemo(() => getSupabaseClient(), []);
-  const [tenantId, setTenantId] = useState<string | null>(null);
+  const [_tenantId, setTenantId] = useState<string | null>(null);
   const [gameId, setGameId] = useState<string | null>(null);
   const [questions, setQuestions] = useState<Question[]>([]);
   const [loading, setLoading] = useState(true);
@@ -119,7 +119,7 @@ export default function QuestionsAdmin({ params }: { params: { tenant: string; g
     Papa.parse(file, {
       header: true,
       skipEmptyLines: true,
-      complete: async (res) => {
+      complete: async (res: { data: unknown[] }) => {
         try {
           const rows = res.data as any[];
           if (!Array.isArray(rows) || rows.length === 0) {
@@ -147,7 +147,7 @@ export default function QuestionsAdmin({ params }: { params: { tenant: string; g
           setErr(e.message);
         }
       },
-      error: (e) => setErr(e.message),
+      error: (e: Error) => setErr(e.message),
     });
   }
 
