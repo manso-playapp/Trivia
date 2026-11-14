@@ -59,9 +59,9 @@ export default function Wheel({ segments, rotation, durationMs = 5600, onSpinEnd
           {segments.map((s, i) => {
             const center = (i + 0.5) * seg;
             const fg = textColorFor(s.color);
-            const lines = splitLabel(s.label.toUpperCase(), 10);
+            const lines = splitLabel(s.label.toUpperCase(), 9);
             const longest = Math.max(...lines.map((l) => l.length));
-            const fs = Math.max(14, Math.min(26, 150 / Math.max(longest, 5)));
+            const fs = Math.max(17, Math.min(32, 190 / Math.max(longest, 5)));
             return (
               <g key={s.position}>
                 <path d={slicePath(i, n)} fill={s.color} stroke="#FFFFFF" strokeOpacity="0.7" strokeWidth={1.5} />
