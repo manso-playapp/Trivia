@@ -20,7 +20,7 @@ export default function PlaySlugPage({ params }: Props) {
   const supabase = useMemo(() => getSupabaseClient(), []);
   const [endsAt, setEndsAt] = useState<number | null>(null);
   const [remaining, setRemaining] = useState(0);
-  const [appliedTheme, setAppliedTheme] = useState(false);
+  const [_appliedTheme, setAppliedTheme] = useState(false);
   const [logoUrl, setLogoUrl] = useState<string | null>(null);
 
   const onSubmit = async (e: React.FormEvent) => {
