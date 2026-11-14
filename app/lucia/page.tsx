@@ -212,7 +212,7 @@ export default function LuciaRuleta() {
   const inGame = phase === 'game' || phase === 'spinning';
 
   return (
-    <main className={`lp ${inGame ? 'lp--game' : ''}`}>
+    <main className={`lp ${inGame ? 'lp--game' : ''} ${phase === 'result' ? 'lp--result' : ''}`}>
       <div className="lp-bg" aria-hidden />
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img className={inGame || phase === 'result' ? 'lp-logo lp-logo--sm' : 'lp-logo'} src="/lucia/logo-crema.png" alt="Lucía Indumentaria" />
@@ -325,14 +325,20 @@ export default function LuciaRuleta() {
               </p>
             </>
           ) : (
-            <>
+            <div className="lp-lose">
+              <svg className="lp-lose-mark" viewBox="0 0 64 64" aria-hidden>
+                <circle cx="32" cy="32" r="30" fill="none" stroke="currentColor" strokeWidth="1" />
+                <path d="M32 14c4 8 10 12 18 14-8 2-14 6-18 14-4-8-10-12-18-14 8-2 14-6 18-14Z" fill="currentColor" />
+              </svg>
               <p className="lp-kicker">Esta vez no fue</p>
-              <h1 className="lp-title">Suerte la próxima</h1>
-              <p className="lp-text">Gracias por participar. Te esperamos en Lucía Indumentaria.</p>
-              <a className="lp-btn lp-btn--ghost" href={INSTAGRAM_URL} target="_blank" rel="noopener noreferrer">
-                Ver novedades en Instagram
-              </a>
-            </>
+              <h1 className="lp-lose-title">
+                <span>Suerte</span>
+                <span>la próxima</span>
+              </h1>
+              <span className="lp-divider" aria-hidden />
+              <p className="lp-text">Gracias por participar.</p>
+              <p className="lp-lose-sign">Te esperamos en Lucía Indumentaria.</p>
+            </div>
           )}
           {result.test && (
             <button className="lp-btn lp-btn--ghost" onClick={() => location.reload()}>
