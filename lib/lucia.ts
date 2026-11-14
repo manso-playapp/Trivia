@@ -135,12 +135,12 @@ export function mod(n: number, m: number): number {
 
 /** Color de texto legible sobre un fondo dado. */
 export function textColorFor(hex: string): string {
-  if (!HEX.test(hex)) return '#111111';
+  if (!HEX.test(hex)) return BRAND.deep;
   const r = parseInt(hex.slice(1, 3), 16) / 255;
   const g = parseInt(hex.slice(3, 5), 16) / 255;
   const b = parseInt(hex.slice(5, 7), 16) / 255;
   const lum = 0.2126 * r + 0.7152 * g + 0.0722 * b;
-  return lum > 0.45 ? '#111111' : '#F4F0E4';
+  return lum > 0.55 ? BRAND.deep : BRAND.cream;
 }
 
 /** Parte un nombre en hasta 2 líneas para que entre en el gajo. */
@@ -169,8 +169,20 @@ export function formatDate(iso: string): string {
 }
 
 export const BRAND = {
-  olive: '#B2AC82',
-  oliveDark: '#8C8762',
-  cream: '#F1EDE0',
-  ink: '#111111',
+  cream: '#F6F4EC',
+  mist: '#E4E7D8',
+  sageLight: '#C3CBAE',
+  sage: '#98A584',
+  sageDark: '#76845F',
+  deep: '#3D4836',
+  champagne: '#CDBF98',
 };
+
+/** Colores por defecto de los gajos (alternan salvia y crema). */
+export const DEFAULT_SEGMENT_COLORS = ['#98A584', '#F6F4EC', '#76845F', '#E4E7D8'];
+
+export const INSTAGRAM_URL = 'https://www.instagram.com/luciaindumentaria.sfe/';
+export const INSTAGRAM_HANDLE = '@luciaindumentaria.sfe';
+
+/** Dirección pública fija del juego (la que va en el QR impreso). */
+export const LUCIA_PUBLIC_URL = 'https://trivia-mansos-projects-7d8ae3d2.vercel.app/lucia';

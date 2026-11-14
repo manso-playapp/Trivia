@@ -4,7 +4,8 @@ import React from 'react';
 import { splitLabel, textColorFor, type PublicSegment } from '@/lib/lucia';
 
 const R = 250; // radio de la cara
-const RIM = 22; // aro exterior
+const RIM = 26; // aro perlado
+const VB = R + RIM + 6;
 
 function polar(r: number, deg: number) {
   const a = ((deg - 90) * Math.PI) / 180; // 0° = arriba, sentido horario
@@ -28,16 +29,10 @@ interface Props {
 export default function Wheel({ segments, rotation, durationMs = 5600, onSpinEnd }: Props) {
   const n = segments.length || 8;
   const seg = 360 / n;
-  const bulbs = Array.from({ length: n * 2 }, (_, i) => polar(R + RIM / 2, (i * 360) / (n * 2)));
+  const studs = Array.from({ length: n }, (_, i) => polar(R + RIM / 2, i * seg));
 
   return (
     <div className="lw">
-      <div className="lw-pointer" aria-hidden>
-        <svg viewBox="0 0 40 52" width="40" height="52">
-          <path d="M20 50 L3 12 A18 18 0 1 1 37 12 Z" fill="#111" />
-          <circle cx="20" cy="17" r="6" fill="#B2AC82" />
-        </svg>
-      </div>
       <div
         className="lw-rotor"
         style={{
@@ -46,29 +41,34 @@ export default function Wheel({ segments, rotation, durationMs = 5600, onSpinEnd
         }}
         onTransitionEnd={onSpinEnd}
       >
-        <svg viewBox={`${-R - RIM} ${-R - RIM} ${(R + RIM) * 2} ${(R + RIM) * 2}`} role="img" aria-label="Ruleta de premios">
-          <circle r={R + RIM} fill="#111" />
+        <svg viewBox={`${-VB} ${-VB} ${VB * 2} ${VB * 2}`} role="img" aria-label="Ruleta de premios">
+          <defs>
+            <linearGradient id="lw-pearl" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0" stopColor="#FFFFFF" />
+              <stop offset="0.45" stopColor="#E9EAE2" />
+              <stop offset="0.7" stopColor="#D3D6C8" />
+              <stop offset="1" stopColor="#F7F7F2" />
+            </linearGradient>
+            <radialGradient id="lw-face-shade" r="0.5">
+              <stop offset="0.75" stopColor="#000" stopOpacity="0" />
+              <stop offset="1" stopColor="#3D4836" stopOpacity="0.18" />
+            </radialGradient>
+          </defs>
+          <circle r={R + RIM} fill="url(#lw-pearl)" />
+          <circle r={R + RIM - 1} fill="none" stroke="#FFFFFF" strokeOpacity="0.8" strokeWidth={2} />
           {segments.map((s, i) => {
             const center = (i + 0.5) * seg;
             const fg = textColorFor(s.color);
-            const lines = splitLabel(s.label);
+            const lines = splitLabel(s.label.toUpperCase(), 10);
             const longest = Math.max(...lines.map((l) => l.length));
-            const fs = Math.max(15, Math.min(30, 190 / Math.max(longest, 4)));
+            const fs = Math.max(14, Math.min(26, 150 / Math.max(longest, 5)));
             return (
               <g key={s.position}>
-                <path d={slicePath(i, n)} fill={s.color} stroke="#111" strokeWidth={1.5} />
+                <path d={slicePath(i, n)} fill={s.color} stroke="#FFFFFF" strokeOpacity="0.7" strokeWidth={1.5} />
                 <g transform={`rotate(${center - 90})`}>
-                  <text
-                    x={R * 0.6}
-                    y={0}
-                    fill={fg}
-                    fontSize={fs}
-                    textAnchor="middle"
-                    dominantBaseline="middle"
-                    className="lw-label"
-                  >
+                  <text x={R * 0.64} y={0} fill={fg} fontSize={fs} textAnchor="middle" dominantBaseline="middle" className="lw-label">
                     {lines.map((l, k) => (
-                      <tspan key={k} x={R * 0.6} dy={k === 0 ? (-(lines.length - 1) * fs * 0.55) : fs * 1.1}>
+                      <tspan key={k} x={R * 0.64} dy={k === 0 ? -(lines.length - 1) * fs * 0.55 : fs * 1.12}>
                         {l}
                       </tspan>
                     ))}
@@ -77,16 +77,31 @@ export default function Wheel({ segments, rotation, durationMs = 5600, onSpinEnd
               </g>
             );
           })}
-          {bulbs.map(([x, y], i) => (
-            <circle key={i} cx={x} cy={y} r={4.5} fill={i % 2 ? '#F1EDE0' : '#B2AC82'} />
+          <circle r={R} fill="url(#lw-face-shade)" pointerEvents="none" />
+          <circle r={R} fill="none" stroke="#CDBF98" strokeWidth={2} />
+          {studs.map(([x, y], i) => (
+            <circle key={i} cx={x} cy={y} r={4} fill="#CDBF98" />
           ))}
-          <circle r={46} fill="#111" />
-          <circle r={38} fill="none" stroke="#B2AC82" strokeWidth={2} />
-          <text y={2} textAnchor="middle" dominantBaseline="middle" fill="#F1EDE0" fontSize={34} className="lw-hub">
-            L
-          </text>
         </svg>
       </div>
+
+      {/* Puntero fijo en el centro (no gira) */}
+      <svg className="lw-hub" viewBox="-100 -130 200 230" aria-hidden>
+        <defs>
+          <linearGradient id="lw-knob" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stopColor="#FFFFFF" />
+            <stop offset="0.55" stopColor="#E4E6DC" />
+            <stop offset="1" stopColor="#B9BDAE" />
+          </linearGradient>
+          <filter id="lw-shadow" x="-50%" y="-50%" width="200%" height="200%">
+            <feDropShadow dx="0" dy="4" stdDeviation="5" floodColor="#3D4836" floodOpacity="0.35" />
+          </filter>
+        </defs>
+        <g filter="url(#lw-shadow)">
+          <path d="M0 -122 C 14 -80, 40 -52, 52 -28 A 56 56 0 1 1 -52 -28 C -40 -52, -14 -80, 0 -122 Z" fill="url(#lw-knob)" />
+          <circle r={34} fill="#F6F4EC" stroke="#CDBF98" strokeWidth={2} />
+        </g>
+      </svg>
     </div>
   );
 }

@@ -26,7 +26,7 @@ create table if not exists lucia_segments (
   probability numeric(5,2) not null default 0 check (probability >= 0 and probability <= 100),
   -- Stock disponible del premio. null = ilimitado. Al llegar a 0 deja de salir.
   stock integer check (stock is null or stock >= 0),
-  color text not null default '#B2AC82',
+  color text not null default '#98A584',
   updated_at timestamptz not null default now()
 );
 
@@ -55,14 +55,14 @@ alter table lucia_players enable row level security;
 insert into lucia_settings (id) values (1) on conflict (id) do nothing;
 
 insert into lucia_segments (position, label, kind, probability, stock, color) values
-  (0, 'Premio 1',          'prize', 10, null, '#111111'),
-  (1, 'Suerte la próxima', 'lose',   0, null, '#B2AC82'),
-  (2, 'Premio 2',          'prize', 10, null, '#F1EDE0'),
-  (3, 'Suerte la próxima', 'lose',   0, null, '#8C8762'),
-  (4, 'Premio 3',          'prize', 10, null, '#111111'),
-  (5, 'Suerte la próxima', 'lose',   0, null, '#B2AC82'),
-  (6, 'Premio 4',          'prize', 10, null, '#F1EDE0'),
-  (7, 'Suerte la próxima', 'lose',   0, null, '#8C8762')
+  (0, 'Premio 1',          'prize', 10, null, '#98A584'),
+  (1, 'Suerte la próxima', 'lose',   0, null, '#F6F4EC'),
+  (2, 'Premio 2',          'prize', 10, null, '#76845F'),
+  (3, 'Suerte la próxima', 'lose',   0, null, '#E4E7D8'),
+  (4, 'Premio 3',          'prize', 10, null, '#98A584'),
+  (5, 'Suerte la próxima', 'lose',   0, null, '#F6F4EC'),
+  (6, 'Premio 4',          'prize', 10, null, '#76845F'),
+  (7, 'Suerte la próxima', 'lose',   0, null, '#E4E7D8')
 on conflict (position) do nothing;
 
 -- ------------------------------------------------------------
