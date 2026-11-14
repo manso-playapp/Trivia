@@ -1,5 +1,7 @@
 # Tipo de juego: Ruleta mobile por QR
 
+> **14/11/2026: Lucía se migró a PlayApp** (`manso-playapp/Playapp`, comercio `lucia-indumentaria`). `/lucia` y `/lucia/admin` redirigen allá (ver `next.config.js`). Este código queda como referencia; las tablas `lucia_*` ya no reciben jugadas.
+
 Primer cliente: **Lucía Indumentaria** (Santa Fe). Estado al 14/11/2026: **en producción**.
 
 Es un tipo de juego distinto de la trivia del repo: no usa tótem, pantalla ni operador. La persona escanea un QR impreso, juega todo en su celular y, si gana, descarga un voucher.
