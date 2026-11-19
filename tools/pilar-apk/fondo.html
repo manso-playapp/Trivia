@@ -1,0 +1,49 @@
+<!doctype html><meta charset="utf-8">
+<style>html,body{margin:0;background:#000}</style>
+<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="1920" viewBox="0 0 1080 1920">
+<defs>
+<linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+<stop offset="0" stop-color="#0d0a22"/><stop offset=".3" stop-color="#2a1d4d"/><stop offset=".55" stop-color="#5b3672"/>
+<stop offset=".72" stop-color="#b05f86"/><stop offset=".8" stop-color="#ee9a78"/><stop offset=".815" stop-color="#ffd3a6"/>
+</linearGradient>
+<linearGradient id="sea" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#7a4a78"/><stop offset=".25" stop-color="#3a2552"/><stop offset="1" stop-color="#0e0a20"/></linearGradient>
+<radialGradient id="glow" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#fff3dc" stop-opacity=".95"/><stop offset=".25" stop-color="#ffc59a" stop-opacity=".55"/><stop offset="1" stop-color="#ff9a7a" stop-opacity="0"/></radialGradient>
+<linearGradient id="stone" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1b1026"/><stop offset=".6" stop-color="#3a1d30"/><stop offset="1" stop-color="#150c1e"/></linearGradient>
+<radialGradient id="vig" cx=".5" cy=".5" r=".75"><stop offset=".55" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".7"/></radialGradient>
+<filter id="b60" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="38"/></filter>
+<filter id="b20" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="16"/></filter>
+<filter id="b6"><feGaussianBlur stdDeviation="5"/></filter>
+<clipPath id="seaclip"><rect x="0" y="1565" width="1080" height="355"/></clipPath>
+</defs>
+<rect width="1080" height="1565" fill="url(#sky)"/>
+<g id="stars" fill="#fff"></g>
+<g filter="url(#b60)" opacity=".85">
+<ellipse cx="180" cy="330" rx="330" ry="80" fill="#6b4390"/><ellipse cx="860" cy="250" rx="300" ry="70" fill="#7a4a95"/>
+<ellipse cx="760" cy="520" rx="380" ry="90" fill="#8a4f92"/><ellipse cx="200" cy="700" rx="340" ry="85" fill="#9a5590"/>
+<ellipse cx="900" cy="900" rx="330" ry="80" fill="#b5628e"/><ellipse cx="160" cy="1090" rx="340" ry="80" fill="#c26d8c"/>
+<ellipse cx="820" cy="1230" rx="380" ry="75" fill="#d97f88"/><ellipse cx="260" cy="1380" rx="400" ry="70" fill="#e98f80"/>
+<ellipse cx="800" cy="1470" rx="380" ry="55" fill="#f4a57e"/>
+</g>
+<g filter="url(#b20)" opacity=".55">
+<ellipse cx="300" cy="300" rx="190" ry="26" fill="#e7a6c6"/><ellipse cx="800" cy="490" rx="220" ry="28" fill="#eaa2bf"/>
+<ellipse cx="230" cy="670" rx="200" ry="26" fill="#f0a6b6"/><ellipse cx="850" cy="870" rx="210" ry="26" fill="#f6b0ae"/>
+<ellipse cx="240" cy="1065" rx="220" ry="26" fill="#fbbba8"/><ellipse cx="780" cy="1210" rx="250" ry="24" fill="#ffc7a6"/>
+<ellipse cx="330" cy="1365" rx="260" ry="22" fill="#ffd2aa"/><ellipse cx="760" cy="1455" rx="250" ry="18" fill="#ffe0b8"/>
+</g>
+<circle cx="540" cy="1565" r="420" fill="url(#glow)"/>
+<circle cx="540" cy="1565" r="96" fill="#fff8ea" filter="url(#b6)"/>
+<rect y="1565" width="1080" height="355" fill="url(#sea)"/>
+<g clip-path="url(#seaclip)"><ellipse cx="540" cy="1575" rx="330" ry="40" fill="#ffd9b0" opacity=".75" filter="url(#b20)"/>
+<g id="refl" fill="#ffe6c4"></g></g>
+<path fill-rule="evenodd" fill="url(#stone)" d="M0 0H1080V1920H0Z M64 1920V520A476 476 0 0 1 1016 520V1920Z"/>
+<path fill="none" stroke="#f0a58a" stroke-opacity=".55" stroke-width="3" d="M64 1920V520A476 476 0 0 1 1016 520V1920"/>
+<path fill="none" stroke="#f0a58a" stroke-opacity=".18" stroke-width="2" d="M40 1920V520A500 500 0 0 1 1040 520V1920"/>
+<rect width="1080" height="1920" fill="url(#vig)"/>
+</svg>
+<script>
+var r=function(){var s=7;return function(){s=(s*16807)%2147483647;return s/2147483647}}();
+var st='',i;for(i=0;i<110;i++){st+='<circle cx="'+(r()*1080).toFixed(0)+'" cy="'+(r()*r()*900).toFixed(0)+'" r="'+(0.6+r()*1.6).toFixed(1)+'" opacity="'+(0.3+r()*0.7).toFixed(2)+'"/>'}
+document.getElementById('stars').innerHTML=st;
+var rf='';for(i=0;i<34;i++){var y=1580+i*10+r()*6,w=(260-i*5)*(0.4+r()*0.6);rf+='<rect x="'+(540-w/2+(r()-.5)*40).toFixed(0)+'" y="'+y.toFixed(0)+'" width="'+w.toFixed(0)+'" height="3" rx="1.5" opacity="'+(0.55-i*0.013).toFixed(2)+'"/>'}
+document.getElementById('refl').innerHTML=rf;
+</script>

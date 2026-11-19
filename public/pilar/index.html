@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>Ruleta Pilar XV</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div id="stage">
+  <img id="logo" src="assets/logo.svg" alt="Pilar XV" draggable="false">
+  <div id="rueda-caja">
+    <div id="rueda"></div>
+    <div id="puntero"></div>
+    <div id="centro"></div>
+  </div>
+  <div id="boton"><span id="boton-txt">Tocá para girar</span></div>
+
+  <div id="premio" class="capa oculto">
+    <div id="confeti"></div>
+    <div class="tarjeta">
+      <div class="chico">¡Ganaste!</div>
+      <div id="premio-art" class="art"></div>
+      <div id="premio-nombre" class="grande"></div>
+      <div id="premio-ok" class="btn">¡Listo!</div>
+    </div>
+  </div>
+
+  <div id="pin" class="capa oculto">
+    <div class="panel">
+      <div class="titulo">PIN de operador</div>
+      <div id="pin-puntos"></div>
+      <div id="pin-teclas"></div>
+      <div class="btn sec" data-a="cerrar-pin">Cancelar</div>
+    </div>
+  </div>
+
+  <div id="admin" class="capa oculto">
+    <div class="panel">
+      <div class="titulo">Panel de operador</div>
+      <div id="admin-tabla"></div>
+      <div id="admin-total"></div>
+      <div id="admin-log"></div>
+      <div class="fila">
+        <div class="btn sec" data-a="deshacer">Deshacer último giro</div>
+        <div class="btn sec" data-a="sonido" id="btn-sonido">Sonido</div>
+      </div>
+      <div class="fila">
+        <div class="btn sec" data-a="orientar">Reorientar pantalla</div>
+        <div class="btn sec peligro" data-a="reiniciar" id="btn-reiniciar">Reiniciar stock</div>
+      </div>
+      <div class="btn" data-a="cerrar-admin">Volver al juego</div>
+    </div>
+  </div>
+</div>
+
+<div id="orientar" class="oculto">
+  <div class="op" data-rot="0"><div class="op-in"><b>Tocá acá</b><span>si leés esto derecho</span></div></div>
+  <div class="op" data-rot="90"><div class="op-in"><b>Tocá acá</b><span>si leés esto derecho</span></div></div>
+  <div class="op" data-rot="270"><div class="op-in"><b>Tocá acá</b><span>si leés esto derecho</span></div></div>
+</div>
+<script src="config.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

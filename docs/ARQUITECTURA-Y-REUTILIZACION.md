@@ -16,6 +16,7 @@ El repositorio conserva dos tipos de juego: una base de **trivia** para varios c
 | `public/feller-led/index.html`, `promo.*`, `preview/feller.html` | Prototipos anteriores | Referencia histórica. No son la pieza audiovisual final. |
 | `docs/feller/` | Cierre, enlaces, manifiesto y vistas finales | Archivo de este cliente; punto de entrada para retomar. |
 | `app/lucia/`, `app/api/lucia/`, `components/lucia/`, `lib/lucia*.ts`, `supabase/lucia.sql`, `public/lucia/` | **Ruleta mobile por QR** (tipo de juego propio, cliente Lucía): formulario, ruleta, voucher, panel, canje y QR | Mecánica completa de ruleta con sorteo en servidor, stock, mails de prueba y vouchers. Para otro cliente se copia y se cambia marca según `docs/lucia/README.md`. |
+| `public/pilar/`, `tools/pilar-apk/`, `docs/pilar/` | **Ruleta táctil offline** (cliente Pilar XV): web estática empaquetada como APK para Fire TV, sin red ni backend | Juego completo y contenedor Android. Para otro evento se copia la carpeta y se cambian `config.js`, logo y fondo según [docs/pilar/README.md](pilar/README.md). |
 | `docs/lucia/` | Guía del tipo de juego ruleta y estado de Lucía | Punto de entrada para retomar o replicar la ruleta. |
 | `tests/` | Pruebas existentes del repo | Conservar y ampliar según cambien las reglas del juego. |
 | `exports/` | Videos y capturas generados localmente | Fuera de Git; finales en Drive, registrados en el manifiesto. |
