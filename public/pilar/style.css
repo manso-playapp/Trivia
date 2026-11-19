@@ -5,31 +5,32 @@ html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#0a0716;col
 .oculto{display:none!important}
 
 /* Lienzo fijo de 1080x1920: se escala y se rota desde app.js */
-#stage{position:absolute;left:50%;top:50%;width:1080px;height:1920px;margin:-960px 0 0 -540px;background:#0a0716 url(assets/fondo.jpg) center/cover no-repeat;overflow:hidden;transform-origin:50% 50%}
-#logo{position:absolute;left:290px;top:150px;width:500px;height:auto;-webkit-filter:drop-shadow(0 6px 18px rgba(10,5,30,.55));filter:drop-shadow(0 6px 18px rgba(10,5,30,.55))}
+#stage{position:absolute;left:50%;top:50%;width:1080px;height:1920px;margin:-960px 0 0 -540px;background:#12051f url(assets/fondo.jpg) center/cover no-repeat;overflow:hidden;transform-origin:50% 50%}
+#logo{position:absolute;left:130px;top:56px;width:820px;height:434px}
 
-#rueda-caja{position:absolute;left:80px;top:500px;width:920px;height:920px}
-#sombra{position:absolute;left:20px;top:44px;width:880px;height:880px;border-radius:50%;box-shadow:0 46px 70px 10px rgba(8,3,22,.72)}
+#rueda-caja{position:absolute;left:80px;top:520px;width:920px;height:920px}
+/* canto del disco: un círculo desplazado hacia abajo le da espesor */
+#sombra{position:absolute;left:2px;top:26px;width:916px;height:916px;border-radius:50%;background:linear-gradient(90deg,#1a0d33 0,#6a5c92 22%,#2a1b4d 50%,#7d6fa6 78%,#1a0d33 100%);box-shadow:0 60px 80px 6px rgba(4,0,12,.8),0 0 120px 30px rgba(255,90,200,.28)}
 #rueda,#aro{position:absolute;left:0;top:0;width:920px;height:920px}
 #rueda{will-change:transform;transform:rotate(0deg)}
 #aro{pointer-events:none}
 #rueda svg,#aro svg{display:block;width:920px;height:920px}
 #puntero{position:absolute;left:400px;top:-58px;width:120px;height:160px;transform-origin:50% 26%;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 160'%3E%3Cdefs%3E%3ClinearGradient id='m' x1='0' y1='0' x2='1' y2='0'%3E%3Cstop offset='0' stop-color='%23fff'/%3E%3Cstop offset='.5' stop-color='%23d5cfe2'/%3E%3Cstop offset='1' stop-color='%23756e8a'/%3E%3C/linearGradient%3E%3CradialGradient id='g' cx='.35' cy='.3' r='.8'%3E%3Cstop offset='0' stop-color='%23ffd0da'/%3E%3Cstop offset='.5' stop-color='%23e07f96'/%3E%3Cstop offset='1' stop-color='%23842c4a'/%3E%3C/radialGradient%3E%3C/defs%3E%3Cpath d='M64 158 22 58a44 44 0 1 1 84 0z' fill='%23120a24' fill-opacity='.45'/%3E%3Cpath d='M60 152 18 52a44 44 0 1 1 84 0z' fill='url(%23m)' stroke='%23120a24' stroke-width='4'/%3E%3Ccircle cx='60' cy='44' r='20' fill='%23120a24' fill-opacity='.5'/%3E%3Ccircle cx='60' cy='42' r='18' fill='url(%23g)'/%3E%3C/svg%3E") center/contain no-repeat}
-#centro{position:absolute;left:365px;top:365px;width:190px;height:190px;border-radius:50%;background:radial-gradient(circle at 35% 28%,#ffffff 0,#e4dff0 28%,#9a93b0 62%,#5f5878 100%);box-shadow:0 10px 22px rgba(8,3,22,.7),inset 0 -6px 10px rgba(20,10,40,.45),inset 0 4px 6px rgba(255,255,255,.9)}
-#centro:before{content:"";position:absolute;left:22px;top:22px;width:146px;height:146px;border-radius:50%;background:radial-gradient(circle at 38% 30%,#3d2760 0,#1d1640 70%);box-shadow:inset 0 5px 10px rgba(0,0,0,.7)}
-#centro:after{content:"XV";position:absolute;left:0;top:0;width:190px;line-height:186px;text-align:center;font-weight:800;font-size:66px;color:#f3e6da;letter-spacing:2px;text-shadow:0 3px 0 rgba(0,0,0,.5)}
+#centro{position:absolute;left:355px;top:355px;width:210px;height:210px;border-radius:50%;background:radial-gradient(circle at 34% 26%,#ffffff 0,#e4dff0 24%,#8d83ad 58%,#3f365c 100%);box-shadow:0 14px 26px rgba(4,0,12,.8),inset 0 -8px 12px rgba(20,10,40,.55),inset 0 5px 6px rgba(255,255,255,.95)}
+#centro:before{content:"";position:absolute;left:26px;top:26px;width:158px;height:158px;border-radius:50%;background:url(assets/brillo-rosa.jpg) center/300px;box-shadow:inset 0 8px 14px rgba(40,0,50,.75),inset 0 -5px 8px rgba(255,255,255,.45)}
+#centro:after{content:"XV";position:absolute;left:0;top:0;width:210px;line-height:206px;text-align:center;font-weight:800;font-size:70px;color:#fff;letter-spacing:2px;text-shadow:0 4px 0 #5a0f4a,0 0 14px rgba(60,0,60,.8)}
 
-#boton{position:absolute;left:190px;top:1556px;width:700px;height:150px;border-radius:75px;background:linear-gradient(#ffffff 0,#fbeee4 45%,#f1c9ae 100%);color:#2a1838;text-align:center;line-height:146px;font-weight:700;font-style:italic;font-size:64px;box-shadow:0 12px 0 #a9746a,0 26px 40px rgba(8,3,22,.6),0 0 60px rgba(255,190,150,.45),inset 0 4px 0 #fff;animation:latir 1.8s ease-in-out infinite}
-#boton.apagado{animation:none;opacity:.6;font-size:44px}
+#boton{position:absolute;left:170px;top:1590px;width:740px;height:160px;border-radius:80px;border:7px solid #efe9fb;background:linear-gradient(rgba(255,255,255,.55) 0,rgba(255,255,255,.08) 46%,rgba(60,0,70,.18) 54%,rgba(60,0,70,.5) 100%),url(assets/brillo-rosa.jpg) center/420px;color:#fff;text-align:center;line-height:142px;font-weight:800;font-size:62px;letter-spacing:1px;text-shadow:0 4px 0 #6a0f55,0 0 16px rgba(70,0,70,.9);box-shadow:0 14px 0 #4a3a6b,0 34px 44px rgba(4,0,12,.75),0 0 70px rgba(255,90,200,.55);animation:latir 1.8s ease-in-out infinite}
+#boton.apagado{animation:none;opacity:.7;font-size:40px}
 @keyframes latir{0%,100%{transform:scale(1)}50%{transform:scale(1.045)}}
 
 .capa{position:absolute;left:0;top:0;width:1080px;height:1920px;background:rgba(10,6,24,.82)}
-.tarjeta{position:absolute;left:90px;top:560px;width:900px;padding:80px 40px 70px;border-radius:60px;background:#fbeee4;color:#2a1838;text-align:center;box-shadow:0 30px 90px rgba(0,0,0,.6);animation:entrar .5s cubic-bezier(.2,1.4,.4,1) both}
+.tarjeta{position:absolute;left:80px;top:560px;width:920px;padding:80px 40px 70px;border-radius:60px;border:7px solid #efe9fb;background:radial-gradient(circle at 50% 20%,#5a1d94 0,#2a0d4a 60%,#170527 100%);color:#fff;text-align:center;box-shadow:0 14px 0 #4a3a6b,0 40px 90px rgba(0,0,0,.7),0 0 90px rgba(255,90,200,.5);animation:entrar .5s cubic-bezier(.2,1.4,.4,1) both}
 @keyframes entrar{from{transform:scale(.6);opacity:0}to{transform:scale(1);opacity:1}}
-.tarjeta .chico{font-weight:800;font-size:76px;letter-spacing:3px;text-transform:uppercase;color:#b0507a}
-.tarjeta .art{font-weight:700;font-style:italic;font-size:70px;margin-top:40px}
-.tarjeta .grande{font-weight:700;font-style:italic;font-size:170px;line-height:1.05;margin-bottom:60px}
-.btn{display:inline-block;min-width:360px;padding:0 50px;height:120px;line-height:120px;border-radius:60px;background:#2a1838;color:#fbeee4;font-weight:800;font-size:52px;text-align:center}
+.tarjeta .chico{font-weight:800;font-size:80px;letter-spacing:3px;text-transform:uppercase;color:#fff;text-shadow:0 5px 0 #6a0f55}
+.tarjeta .art{font-weight:700;font-style:italic;font-size:70px;margin-top:40px;color:#f3d6ff}
+.tarjeta .grande{font-weight:700;font-style:italic;font-size:170px;line-height:1.15;margin-bottom:60px;color:#ff7ac8;background:url(assets/brillo-rosa.jpg) center/420px;-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.btn{display:inline-block;min-width:360px;padding:0 50px;height:120px;line-height:120px;border-radius:60px;background:#efe9fb;color:#2a0d4a;font-weight:800;font-size:52px;text-align:center}
 .btn.sec{background:#fbeee4;color:#2a1838;font-size:38px;height:100px;line-height:100px;min-width:0}
 .btn.peligro{background:#b8324a;color:#fff}
 

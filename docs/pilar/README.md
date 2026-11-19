@@ -9,7 +9,7 @@ No usa Next ni Supabase: es una web estática en `public/pilar/` que se empaquet
 - El juego corre en un **Fire TV Stick 4K** conectado al HDMI; el televisor es solo la pantalla.
 - La persona toca y gira, sin cargar datos. Siempre gana un premio.
 - Premios: 35 bolsas, 20 botellas, 25 remeras, 25 pilusos (105 en total).
-- Estética: atardecer violeta y rosa con arco, logo "Pilar XV".
+- Estética tipo merch: fondo violeta con luces y destellos, logo "Pilar XV" en brillantina rosa con relieve, rueda con aro cromado y gajos de brillantina.
 
 ## Archivos
 
@@ -17,9 +17,9 @@ No usa Next ni Supabase: es una web estática en `public/pilar/` que se empaquet
 | --- | --- |
 | `public/pilar/config.js` | Valores de fábrica: premios, cantidades, paleta, PIN y tiempos. Cambiar también `id` para que el dispositivo descarte lo guardado. |
 | `public/pilar/index.html`, `style.css`, `app.js` | El juego. Lienzo fijo de 1080×1920 que se escala y rota solo. |
-| `public/pilar/assets/` | Logo vectorial, fondo y tipografía Playfair Display (licencia OFL incluida). |
+| `public/pilar/assets/` | Fondo, logo y texturas de brillantina (generados por código) y tipografía Playfair Display (licencia OFL incluida). |
 | `public/pilar/ruleta-pilar-xv.apk` | Instalador para Fire TV / Android, ya firmado. |
-| `tools/pilar-apk/` | Contenedor Android mínimo, `build.sh` para rearmar la APK y fuentes del fondo y del ícono. |
+| `tools/pilar-apk/` | Contenedor Android mínimo y `build.sh` para rearmar la APK. `arte.html` + `arte.cjs` regeneran fondo, logo y texturas; el logo vectorial original está en `arte/logo.svg`. |
 
 ## Cómo funciona
 

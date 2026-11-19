@@ -101,57 +101,64 @@
   }
   var rad = function (g) { return (g - 90) * Math.PI / 180; };
 
+  var XL = 'xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"';
   function dibujarRueda() {
     armarGajos();
-    var R = 424, N = gajos.length, s = [], i, p, c, a0, a1, am, tam, largo;
-    s.push('<svg xmlns="http://www.w3.org/2000/svg" viewBox="-460 -460 920 920"><defs>' +
-      '<radialGradient id="volumen" cx="0" cy="0" r="424" gradientUnits="userSpaceOnUse">' +
-      '<stop offset="0" stop-color="#fff" stop-opacity=".34"/><stop offset=".45" stop-color="#fff" stop-opacity=".05"/>' +
-      '<stop offset=".8" stop-color="#000" stop-opacity=".06"/><stop offset="1" stop-color="#000" stop-opacity=".42"/></radialGradient></defs>');
-    s.push('<circle r="' + R + '" fill="#1d1640"/>');
+    var R = 416, N = gajos.length, s = [], i, p, c, am, tam, nom;
+    var a1 = rad(PASO), x1 = (R * Math.cos(a1)).toFixed(2), y1 = (R * Math.sin(a1)).toFixed(2);
+    var cuna = 'M0 0L0 ' + (-R) + 'A' + R + ' ' + R + ' 0 0 1 ' + x1 + ' ' + y1 + 'Z';
+    s.push('<svg ' + XL + ' viewBox="-460 -460 920 920"><defs>');
+    ['rosa', 'violeta'].forEach(function (t) {
+      s.push('<pattern id="tx-' + t + '" patternUnits="userSpaceOnUse" width="420" height="420"><image xlink:href="assets/brillo-' + t + '.jpg" width="420" height="420"/></pattern>');
+    });
+    /* cada gajo es una faceta: un borde con luz y el otro en sombra */
+    s.push('<linearGradient id="faceta" gradientUnits="userSpaceOnUse" x1="0" y1="' + (-R * 0.7) + '" x2="' + (R * 0.7 * Math.sin(PASO * Math.PI / 180)).toFixed(1) + '" y2="' + (-R * 0.7 * Math.cos(PASO * Math.PI / 180)).toFixed(1) + '">' +
+      '<stop offset="0" stop-color="#fff" stop-opacity=".42"/><stop offset=".3" stop-color="#fff" stop-opacity=".06"/>' +
+      '<stop offset=".7" stop-color="#000" stop-opacity=".05"/><stop offset="1" stop-color="#12002a" stop-opacity=".5"/></linearGradient>' +
+      '<radialGradient id="volumen" cx="0" cy="0" r="' + R + '" gradientUnits="userSpaceOnUse">' +
+      '<stop offset="0" stop-color="#fff" stop-opacity=".38"/><stop offset=".4" stop-color="#fff" stop-opacity=".04"/>' +
+      '<stop offset=".78" stop-color="#000" stop-opacity=".05"/><stop offset=".93" stop-color="#0c0020" stop-opacity=".45"/><stop offset="1" stop-color="#0c0020" stop-opacity=".8"/></radialGradient></defs>');
+    s.push('<circle r="' + R + '" fill="#1b0633"/>');
     for (i = 0; i < N; i++) {
       p = premio(gajos[i]); c = CFG.paleta[p.color % CFG.paleta.length];
-      a0 = rad(i * PASO); a1 = rad((i + 1) * PASO);
-      s.push('<path d="M0 0L' + (R * Math.cos(a0)).toFixed(2) + ' ' + (R * Math.sin(a0)).toFixed(2) + 'A' + R + ' ' + R + ' 0 0 1 ' +
-        (R * Math.cos(a1)).toFixed(2) + ' ' + (R * Math.sin(a1)).toFixed(2) + 'Z" fill="' + c.fondo + '"/>');
+      s.push('<g transform="rotate(' + (i * PASO) + ')"><path d="' + cuna + '" fill="' + (c.tex ? 'url(#tx-' + c.tex + ')' : c.fondo) + '"/><path d="' + cuna + '" fill="url(#faceta)"/>' +
+        '<line x1="0" y1="-70" x2="0" y2="' + (-R) + '" stroke="#12002a" stroke-opacity=".8" stroke-width="6"/><line x1="3.5" y1="-70" x2="3.5" y2="' + (-R) + '" stroke="#fff" stroke-opacity=".55" stroke-width="2"/></g>');
     }
     s.push('<circle r="' + R + '" fill="url(#volumen)"/>');
-    /* divisores con relieve: una línea oscura y una clara al lado */
-    for (i = 0; i < N; i++) {
-      s.push('<g transform="rotate(' + (i * PASO - 90) + ')"><line x1="60" y1="0" x2="' + R + '" y2="0" stroke="#150d2a" stroke-opacity=".75" stroke-width="5"/>' +
-        '<line x1="60" y1="3" x2="' + R + '" y2="3" stroke="#fff" stroke-opacity=".35" stroke-width="2"/></g>');
-    }
     for (i = 0; i < N; i++) {
       p = premio(gajos[i]); c = CFG.paleta[p.color % CFG.paleta.length];
-      am = i * PASO + PASO / 2 - 90;
-      largo = p.nombre.length;
-      tam = Math.min(58, Math.floor(430 / Math.max(5, largo)), N > 8 ? 40 : 58);
-      s.push('<g transform="rotate(' + am + ') translate(268 0)" font-family="Playfair,Georgia,serif" font-weight="800" font-size="' + tam + '" letter-spacing="2" text-anchor="middle">' +
-        '<text dy="' + (tam * 0.34 + 4).toFixed(0) + '" fill="#000" fill-opacity=".35">' + esc(p.nombre.toUpperCase()) + '</text>' +
-        '<text dy="' + (tam * 0.34).toFixed(0) + '" fill="' + c.texto + '">' + esc(p.nombre.toUpperCase()) + '</text></g>');
+      am = i * PASO + PASO / 2 - 90; nom = esc(p.nombre.toUpperCase());
+      tam = Math.min(60, Math.floor(430 / Math.max(5, p.nombre.length)), N > 8 ? 42 : 60);
+      s.push('<g transform="rotate(' + am + ') translate(262 0)" font-family="Playfair,Georgia,serif" font-weight="800" font-size="' + tam + '" letter-spacing="2" text-anchor="middle">' +
+        '<text dy="' + (tam * 0.34 + 5).toFixed(0) + '" fill="#12002a" fill-opacity=".55">' + nom + '</text>' +
+        (c.tex ? '<text dy="' + (tam * 0.34).toFixed(0) + '" fill="none" stroke="#3a0a52" stroke-width="7" stroke-linejoin="round">' + nom + '</text>' : '') +
+        '<text dy="' + (tam * 0.34).toFixed(0) + '" fill="' + c.texto + '">' + nom + '</text></g>');
     }
     s.push('</svg>');
     $('rueda').innerHTML = s.join('');
   }
 
-  /* Aro metálico, bulones y brillo: fijos, no giran con la rueda. */
+  /* Aro cromado, bulones y reflejos: fijos, no giran con la rueda. */
   function dibujarAro() {
     var s = [], i, a, x, y;
-    s.push('<svg xmlns="http://www.w3.org/2000/svg" viewBox="-460 -460 920 920"><defs>' +
-      '<linearGradient id="metal" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset=".22" stop-color="#b9b3c9"/>' +
-      '<stop offset=".45" stop-color="#f3eff9"/><stop offset=".7" stop-color="#7d7691"/><stop offset="1" stop-color="#d9d3e6"/></linearGradient>' +
-      '<linearGradient id="metal2" x1="1" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#ffffff"/><stop offset=".5" stop-color="#8a839e"/><stop offset="1" stop-color="#efeaf7"/></linearGradient>' +
-      '<radialGradient id="bulon" cx=".35" cy=".3" r=".8"><stop offset="0" stop-color="#fff"/><stop offset=".45" stop-color="#c9c3d8"/><stop offset="1" stop-color="#5d5672"/></radialGradient>' +
-      '<linearGradient id="brillo" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".30"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient>' +
-      '<clipPath id="disco"><circle r="420"/></clipPath></defs>');
-    s.push('<g clip-path="url(#disco)"><ellipse cx="-70" cy="-330" rx="430" ry="250" fill="url(#brillo)"/></g>');
-    s.push('<circle r="441" fill="none" stroke="#120a24" stroke-width="38"/>');
-    s.push('<circle r="441" fill="none" stroke="url(#metal)" stroke-width="32"/>');
-    s.push('<circle r="441" fill="none" stroke="url(#metal2)" stroke-width="12"/>');
-    s.push('<circle r="424" fill="none" stroke="#120a24" stroke-opacity=".55" stroke-width="5"/>');
-    for (i = 0; i < 12; i++) {
-      a = rad(i * 30 + 15); x = (441 * Math.cos(a)).toFixed(1); y = (441 * Math.sin(a)).toFixed(1);
-      s.push('<circle cx="' + x + '" cy="' + (parseFloat(y) + 2) + '" r="10" fill="#120a24" fill-opacity=".5"/><circle cx="' + x + '" cy="' + y + '" r="9" fill="url(#bulon)"/>');
+    s.push('<svg ' + XL + ' viewBox="-460 -460 920 920"><defs>' +
+      '<linearGradient id="cromo" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset=".12" stop-color="#cfc6e6"/><stop offset=".26" stop-color="#6d6390"/>' +
+      '<stop offset=".4" stop-color="#ffffff"/><stop offset=".55" stop-color="#b9afd6"/><stop offset=".72" stop-color="#4f4672"/><stop offset=".86" stop-color="#e9e3f7"/><stop offset="1" stop-color="#8d83ad"/></linearGradient>' +
+      '<linearGradient id="cromo2" x1="1" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#ffffff"/><stop offset=".35" stop-color="#7a7099"/><stop offset=".6" stop-color="#f5f0ff"/><stop offset="1" stop-color="#5d5380"/></linearGradient>' +
+      '<radialGradient id="bulon" cx=".35" cy=".28" r=".85"><stop offset="0" stop-color="#fff"/><stop offset=".4" stop-color="#d6cfe8"/><stop offset="1" stop-color="#3f365c"/></radialGradient>' +
+      '<linearGradient id="reflejo" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".36"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient>' +
+      '<clipPath id="disco"><circle r="414"/></clipPath></defs>');
+    s.push('<g clip-path="url(#disco)"><ellipse cx="-90" cy="-360" rx="460" ry="270" fill="url(#reflejo)"/><ellipse cx="150" cy="470" rx="380" ry="130" fill="#fff" fill-opacity=".07"/></g>');
+    s.push('<circle r="436" fill="none" stroke="#0e0320" stroke-width="50"/>');
+    s.push('<circle r="436" fill="none" stroke="url(#cromo)" stroke-width="44"/>');
+    s.push('<circle r="436" fill="none" stroke="url(#cromo2)" stroke-width="18"/>');
+    s.push('<circle r="456" fill="none" stroke="#fff" stroke-opacity=".7" stroke-width="2"/>');
+    s.push('<circle r="415" fill="none" stroke="#0e0320" stroke-opacity=".7" stroke-width="6"/>');
+    s.push('<path d="M-392 -190A436 436 0 0 1 -150 -410" fill="none" stroke="#fff" stroke-opacity=".9" stroke-width="7" stroke-linecap="round"/>');
+    s.push('<path d="M380 215A436 436 0 0 1 240 364" fill="none" stroke="#fff" stroke-opacity=".6" stroke-width="5" stroke-linecap="round"/>');
+    for (i = 0; i < 16; i++) {
+      a = rad(i * 22.5 + 11.25); x = (436 * Math.cos(a)).toFixed(1); y = 436 * Math.sin(a);
+      s.push('<circle cx="' + x + '" cy="' + (y + 3).toFixed(1) + '" r="12" fill="#0e0320" fill-opacity=".6"/><circle cx="' + x + '" cy="' + y.toFixed(1) + '" r="11" fill="url(#bulon)"/>');
     }
     s.push('</svg>');
     $('aro').innerHTML = s.join('');
@@ -236,7 +243,7 @@
     $('confeti').innerHTML = h;
   }
   function refrescarBoton() {
-    if (totalResto() > 0) { $('boton').className = ''; $('boton-txt').innerHTML = 'Tocá para girar'; }
+    if (totalResto() > 0) { $('boton').className = ''; $('boton-txt').innerHTML = '¡Tocá para girar!'; }
     else { $('boton').className = 'apagado'; $('boton-txt').innerHTML = '¡Se entregaron todos los premios!'; }
   }
 

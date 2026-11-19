@@ -1,0 +1,118 @@
+<!doctype html><meta charset="utf-8">
+<style>html,body{margin:0;background:transparent}canvas{display:block}</style>
+<canvas id="c"></canvas>
+<script>
+/* Arte de la ruleta Pilar XV, generado por código (ver arte.cjs).
+   ?pieza=fondo | rosa | violeta | logo */
+var pieza = (location.search.match(/pieza=(\w+)/) || [0, 'fondo'])[1];
+var semilla = 11;
+function r() { semilla = (semilla * 16807) % 2147483647; return semilla / 2147483647; }
+var c = document.getElementById('c'), g;
+function lienzo(w, h) { c.width = w; c.height = h; g = c.getContext('2d'); }
+
+/* Brillantina: escamas de tono variable y destellos blancos. tono(x,y) devuelve [h,s,l]. */
+function brillantina(x, w, h, tono, densidad) {
+  var i, n = w * h / (densidad || 5), px, py, t, l, s;
+  for (i = 0; i < n; i++) {
+    px = r() * w; py = r() * h; t = tono(px, py); s = 1.5 + r() * 3.2;
+    l = t[2] + (r() - 0.5) * 62; if (r() < 0.08) l = 88 + r() * 12;
+    x.fillStyle = 'hsl(' + (t[0] + (r() - 0.5) * 34) + ',' + t[1] + '%,' + Math.max(8, Math.min(100, l)) + '%)';
+    x.fillRect(px, py, s, s);
+  }
+  n = w * h / 2600;
+  for (i = 0; i < n; i++) destello(x, r() * w, r() * h, 2 + r() * 5, r() < 0.3);
+}
+function destello(x, px, py, rad, estrella) {
+  var gr = x.createRadialGradient(px, py, 0, px, py, rad * 2.4);
+  gr.addColorStop(0, 'rgba(255,255,255,.95)'); gr.addColorStop(0.25, 'rgba(255,240,250,.6)'); gr.addColorStop(1, 'rgba(255,255,255,0)');
+  x.fillStyle = gr; x.beginPath(); x.arc(px, py, rad * 2.4, 0, 7); x.fill();
+  if (estrella) {
+    x.strokeStyle = 'rgba(255,255,255,.85)'; x.lineWidth = Math.max(1, rad / 4);
+    x.beginPath(); x.moveTo(px - rad * 4, py); x.lineTo(px + rad * 4, py); x.moveTo(px, py - rad * 4); x.lineTo(px, py + rad * 4); x.stroke();
+  }
+}
+function mosaico(tono) {
+  lienzo(420, 420);
+  g.fillStyle = 'hsl(' + tono[0] + ',' + tono[1] + '%,' + (tono[2] - 12) + '%)'; g.fillRect(0, 0, 420, 420);
+  brillantina(g, 420, 420, function () { return tono; }, 4);
+}
+
+function fondo() {
+  var W = 1080, H = 1920, i, gr, x, y, rad;
+  lienzo(W, H);
+  gr = g.createLinearGradient(0, 0, 0, H);
+  gr.addColorStop(0, '#1b0633'); gr.addColorStop(0.45, '#2c0b52'); gr.addColorStop(1, '#0c0318');
+  g.fillStyle = gr; g.fillRect(0, 0, W, H);
+  /* luces grandes */
+  [[540, 960, 900, 'rgba(190,70,220,.50)'], [140, 260, 620, 'rgba(255,80,170,.42)'], [960, 380, 560, 'rgba(120,80,255,.40)'],
+   [900, 1640, 640, 'rgba(255,90,180,.34)'], [120, 1500, 560, 'rgba(110,70,240,.36)']].forEach(function (l) {
+    gr = g.createRadialGradient(l[0], l[1], 0, l[0], l[1], l[2]);
+    gr.addColorStop(0, l[3]); gr.addColorStop(1, 'rgba(0,0,0,0)');
+    g.fillStyle = gr; g.fillRect(0, 0, W, H);
+  });
+  /* haces de luz */
+  g.save(); g.globalCompositeOperation = 'lighter';
+  for (i = 0; i < 9; i++) {
+    g.save(); g.translate(540, -260); g.rotate((i - 4) * 0.2 + (r() - 0.5) * 0.08);
+    gr = g.createLinearGradient(0, 0, 0, 2300);
+    gr.addColorStop(0, 'rgba(255,170,235,.16)'); gr.addColorStop(1, 'rgba(160,110,255,0)');
+    g.fillStyle = gr; g.beginPath(); g.moveTo(-14, 0); g.lineTo(14, 0); g.lineTo(120, 2300); g.lineTo(-120, 2300); g.fill(); g.restore();
+  }
+  /* bokeh */
+  for (i = 0; i < 70; i++) {
+    x = r() * W; y = r() * H; rad = 14 + r() * r() * 90;
+    g.fillStyle = 'hsla(' + (285 + r() * 55) + ',90%,72%,' + (0.04 + r() * 0.10) + ')';
+    g.beginPath(); g.arc(x, y, rad, 0, 7); g.fill();
+    g.strokeStyle = 'hsla(' + (290 + r() * 50) + ',95%,82%,' + (0.05 + r() * 0.10) + ')'; g.lineWidth = 2; g.stroke();
+  }
+  g.restore();
+  /* polvo de brillantina: más denso arriba y abajo */
+  for (i = 0; i < 9000; i++) {
+    x = r() * W; y = r() < 0.5 ? r() * r() * 900 : H - r() * r() * 900; rad = 0.8 + r() * 2.6;
+    g.fillStyle = 'hsla(' + (300 + r() * 50) + ',100%,' + (70 + r() * 30) + '%,' + (0.25 + r() * 0.7) + ')';
+    g.fillRect(x, y, rad, rad);
+  }
+  for (i = 0; i < 130; i++) { y = r() < 0.5 ? r() * r() * 1000 : H - r() * r() * 1000; destello(g, r() * W, y, 2 + r() * 7, r() < 0.45); }
+  /* viñeta */
+  gr = g.createRadialGradient(540, 960, 500, 540, 960, 1250);
+  gr.addColorStop(0, 'rgba(0,0,0,0)'); gr.addColorStop(1, 'rgba(6,0,14,.78)');
+  g.fillStyle = gr; g.fillRect(0, 0, W, H);
+}
+
+function logo(trazos) {
+  /* viewBox original 105 137 1091 526; se dibuja a 1,5x con margen para el relieve */
+  var K = 1.5, M = 50, W = Math.round(1091 * K) + M * 2, H = Math.round(526 * K) + M * 2 + 30, i;
+  lienzo(W, H);
+  var p = new Path2D(); trazos.forEach(function (d) { p.addPath(new Path2D(d)); });
+  function base(x) { x.setTransform(K, 0, 0, K, M - 105 * K, M - 137 * K); }
+  /* canto: copias desplazadas hacia abajo dan el espesor */
+  for (i = 26; i >= 1; i--) {
+    base(g); g.translate(i * 0.35 / K, i / K);
+    g.fillStyle = 'hsl(318,78%,' + (12 + (26 - i) * 0.75) + '%)'; g.fill(p);
+  }
+  /* cara con brillantina */
+  var o = document.createElement('canvas'); o.width = W; o.height = H; var x = o.getContext('2d');
+  x.fillStyle = '#c2409a'; x.fillRect(0, 0, W, H);
+  brillantina(x, W, H, function (px, py) { var t = py / H; return [332 - t * 52, 92, 70 - t * 22]; }, 3.2);
+  var gr = x.createLinearGradient(0, 0, W, H);
+  gr.addColorStop(0, 'rgba(255,255,255,0)'); gr.addColorStop(0.42, 'rgba(255,255,255,0)'); gr.addColorStop(0.5, 'rgba(255,255,255,.42)');
+  gr.addColorStop(0.58, 'rgba(255,255,255,0)'); gr.addColorStop(1, 'rgba(255,255,255,0)');
+  x.fillStyle = gr; x.fillRect(0, 0, W, H);
+  x.globalCompositeOperation = 'destination-in'; base(x); x.fillStyle = '#000'; x.fill(p);
+  g.setTransform(1, 0, 0, 1, 0, 0); g.drawImage(o, 0, 0);
+  /* bisel: borde claro arriba, sombra abajo */
+  base(g); g.save(); g.clip(p);
+  g.lineWidth = 9 / K; g.strokeStyle = 'rgba(70,0,60,.55)'; g.translate(0, -3 / K); g.stroke(p);
+  g.translate(0, 6 / K); g.lineWidth = 6 / K; g.strokeStyle = 'rgba(255,235,250,.9)'; g.stroke(p);
+  g.restore();
+  base(g); g.lineWidth = 1.6 / K; g.strokeStyle = 'rgba(255,225,245,.9)'; g.stroke(p);
+}
+
+if (pieza === 'rosa') mosaico([328, 92, 66]);
+else if (pieza === 'violeta') mosaico([272, 80, 56]);
+else if (pieza === 'logo') {
+  var q = new XMLHttpRequest(); q.open('GET', 'arte/logo.svg', false); q.send();
+  logo(q.responseText.match(/ d="[^"]+"/g).map(function (s) { return s.slice(4, -1); }));
+} else fondo();
+document.title = 'listo';
+</script>
