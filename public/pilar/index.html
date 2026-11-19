@@ -10,7 +10,9 @@
 <div id="stage">
   <img id="logo" src="assets/logo.svg" alt="Pilar XV" draggable="false">
   <div id="rueda-caja">
+    <div id="sombra"></div>
     <div id="rueda"></div>
+    <div id="aro"></div>
     <div id="puntero"></div>
     <div id="centro"></div>
   </div>
@@ -36,20 +38,10 @@
   </div>
 
   <div id="admin" class="capa oculto">
-    <div class="panel">
-      <div class="titulo">Panel de operador</div>
-      <div id="admin-tabla"></div>
-      <div id="admin-total"></div>
-      <div id="admin-log"></div>
-      <div class="fila">
-        <div class="btn sec" data-a="deshacer">Deshacer último giro</div>
-        <div class="btn sec" data-a="sonido" id="btn-sonido">Sonido</div>
-      </div>
-      <div class="fila">
-        <div class="btn sec" data-a="orientar">Reorientar pantalla</div>
-        <div class="btn sec peligro" data-a="reiniciar" id="btn-reiniciar">Reiniciar stock</div>
-      </div>
-      <div class="btn" data-a="cerrar-admin">Volver al juego</div>
+    <div class="opx">
+      <div class="opx-cab"><b>Operador</b><span class="opx-btn pri" data-a="cerrar">Volver al juego</span></div>
+      <div class="opx-tabs" id="opx-tabs"></div>
+      <div class="opx-cuerpo" id="opx-cuerpo"></div>
     </div>
   </div>
 </div>

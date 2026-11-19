@@ -5,7 +5,10 @@ import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.WindowManager;
+import android.webkit.JavascriptInterface;
 import android.webkit.WebSettings;
+import java.io.File;
+import java.io.FileOutputStream;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
@@ -28,6 +31,7 @@ public class MainActivity extends Activity {
         s.setSupportZoom(false);
         s.setTextZoom(100);
         web.setWebViewClient(new WebViewClient());
+        web.addJavascriptInterface(new Puente(), "Android");
         web.setOverScrollMode(View.OVER_SCROLL_NEVER);
         web.setVerticalScrollBarEnabled(false);
         web.setHorizontalScrollBarEnabled(false);
@@ -61,5 +65,20 @@ public class MainActivity extends Activity {
     public boolean onKeyDown(int code, KeyEvent ev) {
         if (code == KeyEvent.KEYCODE_BACK) return true;
         return super.onKeyDown(code, ev);
+    }
+
+    /** Lo usa "Exportar" del panel: guarda el CSV en la carpeta de archivos de la app y devuelve la ruta. */
+    public class Puente {
+        @JavascriptInterface
+        public String guardar(String nombre, String texto) throws Exception {
+            File dir = getExternalFilesDir(null);
+            if (dir == null) dir = getFilesDir();
+            File f = new File(dir, new File(nombre).getName());
+            FileOutputStream o = new FileOutputStream(f);
+            o.write(new byte[] { (byte) 0xEF, (byte) 0xBB, (byte) 0xBF });
+            o.write(texto.getBytes("UTF-8"));
+            o.close();
+            return f.getAbsolutePath();
+        }
     }
 }

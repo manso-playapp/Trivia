@@ -15,7 +15,7 @@ No usa Next ni Supabase: es una web estática en `public/pilar/` que se empaquet
 
 | Ruta | Qué es |
 | --- | --- |
-| `public/pilar/config.js` | Premios, cantidades, colores, orden de gajos y PIN. Es lo único que hace falta tocar para otro evento. |
+| `public/pilar/config.js` | Valores de fábrica: premios, cantidades, paleta, PIN y tiempos. Cambiar también `id` para que el dispositivo descarte lo guardado. |
 | `public/pilar/index.html`, `style.css`, `app.js` | El juego. Lienzo fijo de 1080×1920 que se escala y rota solo. |
 | `public/pilar/assets/` | Logo vectorial, fondo y tipografía Playfair Display (licencia OFL incluida). |
 | `public/pilar/ruleta-pilar-xv.apk` | Instalador para Fire TV / Android, ya firmado. |
@@ -26,7 +26,11 @@ No usa Next ni Supabase: es una web estática en `public/pilar/` que se empaquet
 - **Sorteo**: cada premio pesa según el stock que le queda, así se agotan de forma pareja. Cuando un premio llega a cero no vuelve a salir. Con todo en cero, el botón avisa que se entregaron todos los premios.
 - **Stock**: se guarda en el dispositivo y sobrevive a apagar y prender. Se descuenta al iniciar el giro.
 - **Orientación**: el Fire TV siempre emite en horizontal. En el primer arranque el juego muestra tres carteles; se toca el que se lee derecho y queda guardado.
-- **Panel de operador**: mantener apretado el logo 3 segundos, PIN `1234`. Muestra lo que queda y lo entregado, permite corregir cantidades, deshacer el último giro, apagar el sonido, reorientar y reiniciar el stock.
+- **Panel de operador**: mantener apretado el logo 3 segundos, PIN `1234`. Sigue el panel de la trivia de tablet (solapas, pasos − / +, confirmación en dos toques, exportar CSV):
+  - *Premios*: lo que queda de cada uno, agregar, editar nombre y cantidad, eliminar, mostrar u ocultar en la rueda. La rueda se redibuja sola.
+  - *Giros*: listado con hora, exportar CSV, deshacer el último, borrar todo y reponer stock.
+  - *Ajustes*: sonido, segundos de giro y del cartel, PIN, reorientar pantalla, valores de fábrica.
+  - Escribir nombres o cambiar el PIN necesita teclado; en el Fire TV conviene dejar eso cargado antes del evento. Las cantidades se cambian con − / +.
 - **Control remoto**: el botón central gira y cierra el cartel de premio. Arriba cinco veces abre el PIN. El botón Atrás no cierra el juego; se sale con Home.
 
 ## Montaje
@@ -51,6 +55,6 @@ La clave `pilar-test.keystore` (alias `pilar`, contraseña `android`, de prueba)
 
 ## Estado
 
-- Verificado en navegador: giro, coincidencia entre gajo y premio anunciado, reparto exacto de los 105 premios, panel, rotación a 90° con toques.
+- Verificado en navegador: giro, coincidencia entre gajo y premio anunciado, reparto exacto del stock, alta y edición de premios, exportación CSV, rotación a 90° con toques.
 - **No se probó en un Fire TV real.** Falta confirmar ahí: que el marco táctil responda por el cable OTG, la fluidez del giro y el sonido.
 - Plan B si el táctil no responde en el Fire TV: la misma APK en una TV box Android con puertos USB.

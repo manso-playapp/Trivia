@@ -1,14 +1,23 @@
-/* Ruleta Pilar XV — contenido editable.
-   Si cambiás premios o cantidades acá, cambiá también "id" para que el stock guardado se reinicie. */
+/* Ruleta Pilar XV — valores de fábrica. Durante el evento todo se edita desde el panel de operador.
+   Si cambiás algo acá, cambiá también "id" para que el dispositivo descarte lo que tenía guardado. */
 window.RULETA_CONFIG = {
-  id: 'pilar-xv-1',
+  id: 'pilar-xv-2',
   pin: '1234',
+  segundosGiro: 6,
+  segundosCartel: 12,
   premios: [
-    { id: 'bolsa',   nombre: 'Bolsa',   articulo: 'una', stock: 35, fondo: '#f6cfae', texto: '#2a1838' },
-    { id: 'remera',  nombre: 'Remera',  articulo: 'una', stock: 25, fondo: '#4b2d70', texto: '#fbeee4' },
-    { id: 'botella', nombre: 'Botella', articulo: 'una', stock: 20, fondo: '#dc7f92', texto: '#2a1838' },
-    { id: 'piluso',  nombre: 'Piluso',  articulo: 'un',  stock: 25, fondo: '#191335', texto: '#fbeee4' }
+    { nombre: 'Bolsa',   articulo: 'una', stock: 35 },
+    { nombre: 'Remera',  articulo: 'una', stock: 25 },
+    { nombre: 'Botella', articulo: 'una', stock: 20 },
+    { nombre: 'Piluso',  articulo: 'un',  stock: 25 }
   ],
-  /* orden de los gajos en la rueda, en sentido horario desde arriba */
-  gajos: ['bolsa', 'remera', 'botella', 'piluso', 'bolsa', 'remera', 'botella', 'piluso']
+  /* colores de los gajos, en orden; se repiten si hay más premios */
+  paleta: [
+    { fondo: '#f4c9a4', texto: '#2a1838' },
+    { fondo: '#5a3488', texto: '#fff3e6' },
+    { fondo: '#e07f96', texto: '#2a1838' },
+    { fondo: '#1d1640', texto: '#fff3e6' },
+    { fondo: '#f0a58a', texto: '#2a1838' },
+    { fondo: '#8a5bb5', texto: '#fff3e6' }
+  ]
 };
