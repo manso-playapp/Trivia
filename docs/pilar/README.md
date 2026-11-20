@@ -31,7 +31,8 @@ No usa Next ni Supabase: es una web estática en `public/pilar/` que se empaquet
   - *Giros*: listado con hora, exportar CSV, deshacer el último, borrar todo y reponer stock.
   - *Ajustes*: sonido, segundos de giro y del cartel, PIN, reorientar pantalla, valores de fábrica.
   - Escribir nombres o cambiar el PIN necesita teclado; en el Fire TV conviene dejar eso cargado antes del evento. Las cantidades se cambian con − / +.
-- **Marco táctil como mouse**: en el Fire TV el dedo solo mueve el puntero, sin hacer clic. La app trata cada salto del puntero como un toque. Como no hay "mantener apretado", el PIN también se abre tocando el logo 5 veces seguidas.
+- **Marco táctil como mouse**: en el Fire TV el dedo solo mueve el puntero del sistema, sin hacer clic. La app captura el puntero y trata cualquier movimiento como un toque (alcanza para jugar: cualquier toque gira o cierra el cartel). También reenvía a la web todo evento de puntero con posición, por si el equipo los entrega.
+- **Diagnóstico de entrada**: recuadro verde con los dispositivos conectados y un contador de eventos (T toque, G genérico, C capturado, K tecla, JS). Se ve los primeros 90 s y se fija o se oculta con el botón Menú (≡) del control.
 - **Control remoto**: el botón central gira y cierra el cartel de premio. Arriba cinco veces abre el PIN. El botón Atrás no cierra el juego; se sale con Home.
 
 ## Montaje

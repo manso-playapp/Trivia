@@ -105,34 +105,48 @@
     movT = ahora; movX = x; movY = y;
     if (nuevo) { clearTimeout(movTimer); movTimer = setTimeout(function () { toqueEn(movX, movY); }, 120); }
   }
-  /* Diagnóstico: durante los primeros 90 s muestra en pantalla qué eventos de entrada llegan. */
-  var diagLineas = [], diagFin = Date.now() + 90000, diagMov = 0;
-  function diag(t) {
-    var el = $('diag');
-    if (!el || Date.now() > diagFin) { if (el) el.style.display = 'none'; return; }
-    diagLineas.push(t); if (diagLineas.length > 9) diagLineas.shift();
-    el.style.display = 'block'; el.innerHTML = diagLineas.join('<br>');
+  /* Toque sin posición (puntero capturado): alcanza para jugar, porque cualquier toque gira. */
+  var genT = 0;
+  function toqueGeneral() {
+    var ahora = Date.now(), nuevo = ahora - genT > 250;
+    genT = ahora;
+    if (!nuevo || ahora - pulsoReal < 700 || ahora - ultSint < 450) return;
+    ultSint = ahora;
+    if (!oculto('premio')) cerrarPremio();
+    else if (oculto('admin') && oculto('pin') && oculto('orientar')) girar();
   }
-  window.__diag = diag;
-  /* Evento crudo que manda la app Android: o = T (touch) o G (genérico). */
+
+  /* Diagnóstico de entrada: visible los primeros 90 s y con el botón Menú (≡) del control. */
+  var diagInfo = '', diagLineas = [], diagFin = Date.now() + 90000, diagFijo = false, diagMov = 0, cuenta = { T: 0, G: 0, C: 0, K: 0, JS: 0 };
+  function diag(tipo, t) {
+    var el = $('diag');
+    if (!el) return;
+    if (tipo) cuenta[tipo] += 1;
+    if (t) { diagLineas.push(t); if (diagLineas.length > 6) diagLineas.shift(); }
+    if (!diagFijo && Date.now() > diagFin) { el.style.display = 'none'; return; }
+    el.style.display = 'block';
+    el.innerHTML = diagInfo + '<br>T' + cuenta.T + ' G' + cuenta.G + ' C' + cuenta.C + ' K' + cuenta.K + ' JS' + cuenta.JS + '<br>' + diagLineas.join('<br>');
+  }
+  /* Evento crudo que manda la app Android: T (touch), G (genérico) o C (puntero capturado). */
   window.__ev = function (o, accion, fuente, herramienta, botones, x, y) {
-    var mov = (accion === 2 || accion === 7);
-    if (!mov || Date.now() - diagMov > 400) {
-      if (mov) diagMov = Date.now();
-      diag(o + ' a' + accion + ' f' + fuente.toString(16) + ' h' + herramienta + ' b' + botones + ' ' + Math.round(x) + ',' + Math.round(y));
-    }
+    var mov = (accion === 2 || accion === 7), ver = !mov || Date.now() - diagMov > 400;
+    if (ver && mov) diagMov = Date.now();
+    diag(o, ver ? o + ' a' + accion + ' f' + fuente.toString(16) + ' h' + herramienta + ' b' + botones + ' ' + Math.round(x) + ',' + Math.round(y) : '');
     if (accion === 1 || accion === 3 || accion === 10 || accion === 12) return; /* soltar o salir: no es un toque */
-    saltoPuntero(x, y);
+    if (o === 'C') toqueGeneral(); else saltoPuntero(x, y);
+  };
+  window.__tecla = function (codigo, fuente) {
+    diag('K', 'K ' + codigo + ' f' + fuente.toString(16));
+    if (codigo === 82) { diagFijo = !diagFijo; diagFin = 0; diag('', ''); if (!diagFijo) $('diag').style.display = 'none'; }
   };
   ['mousedown', 'mouseup', 'click', 'touchstart', 'touchend'].forEach(function (e) {
     document.addEventListener(e, function (ev) {
       var t = ev.touches && ev.touches[0] ? ev.touches[0] : ev;
-      diag('JS ' + e + ' ' + Math.round(t.clientX || 0) + ',' + Math.round(t.clientY || 0));
+      diag('JS', 'JS ' + e + ' ' + Math.round(t.clientX || 0) + ',' + Math.round(t.clientY || 0));
     }, true);
   });
   if (window.Android) {
-    window.__puntero = saltoPuntero;
-    if (window.Android.info) { try { diag(window.Android.info()); } catch (x) {} }
+    if (window.Android.info) { try { diagInfo = window.Android.info(); diag('', ''); } catch (x) {} }
     document.addEventListener('mousemove', function (ev) { saltoPuntero(ev.clientX, ev.clientY); }, true);
     ['touchstart', 'mousedown'].forEach(function (e) {
       document.addEventListener(e, function () { pulsoReal = Date.now(); clearTimeout(movTimer); }, true);
@@ -415,6 +429,7 @@
       if (aviso) h += '<p class="opx-aviso">' + esc(aviso) + '</p>';
     }
     $('opx-cuerpo').innerHTML = h;
+    navMarcar();
   }
 
   function leerForm() { var el = $('f-nombre'); if (el && editando) editando.nombre = el.value; }
@@ -498,6 +513,25 @@
     if (a !== 'cerrar' && a !== 'orientar') pintarAdmin();
   });
 
+  /* Panel con el control remoto: flechas mueven el foco, OK activa. */
+  var navSel = 0;
+  function navLista() { return Array.prototype.slice.call(document.querySelectorAll('#admin [data-a], #admin input')); }
+  function navMarcar() {
+    var l = navLista();
+    if (!l.length) return;
+    navSel = Math.max(0, Math.min(l.length - 1, navSel));
+    l.forEach(function (el, i) { if (i === navSel) el.setAttribute('data-foco', '1'); else el.removeAttribute('data-foco'); });
+  }
+  function navTecla(k) {
+    var l = navLista(), el;
+    if (k === 13 || k === 32) {
+      el = l[navSel]; if (!el) return;
+      if (el.tagName === 'INPUT') { el.focus(); return; }
+      $('admin').__toque({ target: el, stopPropagation: function () {}, preventDefault: function () {} });
+    } else if (k === 37 || k === 38) navSel -= 1; else if (k === 39 || k === 40) navSel += 1;
+    navMarcar();
+  }
+
   /* ---------- arranque ---------- */
   dibujarRueda();
   dibujarAro();
@@ -531,13 +565,14 @@
       else if (k >= 37 && k <= 40) { opSel = (opSel + (k === 37 || k === 38 ? ops.length - 1 : 1)) % ops.length; marcarOp(); }
       return;
     }
+    if (!oculto('admin')) { if ((k >= 37 && k <= 40) || k === 13 || k === 32) { ev.preventDefault(); navTecla(k); } return; }
     if (k === 13 || k === 32) {
       ev.preventDefault();
       if (!oculto('premio')) cerrarPremio(); else girar();
     } else if (k === 38) {
       if (Date.now() - arribaT > 1500) arriba = 0;
       arribaT = Date.now(); arriba++;
-      if (arriba >= 5) { arriba = 0; abrirPin(); }
+      if (arriba >= 5) { arriba = 0; if (!girando && oculto('premio')) { navSel = 0; abrirAdmin(); navMarcar(); } } /* el control lo tiene el operador: sin PIN */
     } else if (k >= 48 && k <= 57 && !oculto('pin')) {
       tecla(String(k - 48));
     }

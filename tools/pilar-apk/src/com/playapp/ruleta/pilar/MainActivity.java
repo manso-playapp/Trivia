@@ -14,13 +14,13 @@ import android.webkit.WebViewClient;
 
 /** Contenedor mínimo: muestra la ruleta web empaquetada, a pantalla completa y sin red. */
 public class MainActivity extends Activity {
-    private WebView web;
+    private RuletaWeb web;
 
     @Override
     protected void onCreate(Bundle b) {
         super.onCreate(b);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-        web = new WebView(this);
+        web = new RuletaWeb(this);
         web.setBackgroundColor(0xFF0A0716);
         WebSettings s = web.getSettings();
         s.setJavaScriptEnabled(true);
@@ -51,7 +51,11 @@ public class MainActivity extends Activity {
     @Override
     public void onWindowFocusChanged(boolean foco) {
         super.onWindowFocusChanged(foco);
-        if (foco) inmersivo();
+        if (foco) {
+            inmersivo();
+            /* Con el puntero capturado el sistema deja de dibujar su cursor y entrega el movimiento a la app. */
+            if (Build.VERSION.SDK_INT >= 26) { web.requestFocus(); web.requestPointerCapture(); }
+        }
     }
 
     @Override
@@ -70,7 +74,7 @@ public class MainActivity extends Activity {
 
     /** Reenvía a la web todo evento de puntero, venga como toque o como mouse: hay marcos táctiles que el sistema
      *  toma como mouse y solo mueven el cursor. La web decide qué cuenta como toque. */
-    private void avisar(String origen, MotionEvent ev) {
+    void avisar(String origen, MotionEvent ev) {
         float d = getResources().getDisplayMetrics().density;
         web.evaluateJavascript("window.__ev&&__ev('" + origen + "'," + ev.getActionMasked() + "," + ev.getSource() + ","
             + ev.getToolType(0) + "," + ev.getButtonState() + "," + (ev.getX() / d) + "," + (ev.getY() / d) + ")", null);
@@ -91,7 +95,7 @@ public class MainActivity extends Activity {
     @Override
     public boolean dispatchKeyEvent(KeyEvent ev) {
         if (ev.getAction() == KeyEvent.ACTION_DOWN)
-            web.evaluateJavascript("window.__diag&&__diag('K " + ev.getKeyCode() + " f" + Integer.toHexString(ev.getSource()) + "')", null);
+            web.evaluateJavascript("window.__tecla&&__tecla(" + ev.getKeyCode() + "," + ev.getSource() + ")", null);
         return super.dispatchKeyEvent(ev);
     }
 }
