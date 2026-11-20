@@ -68,14 +68,30 @@ public class MainActivity extends Activity {
         return super.onKeyDown(code, ev);
     }
 
-    /** Marcos táctiles que el sistema toma como mouse: avisa a la web dónde quedó el puntero. */
+    /** Reenvía a la web todo evento de puntero, venga como toque o como mouse: hay marcos táctiles que el sistema
+     *  toma como mouse y solo mueven el cursor. La web decide qué cuenta como toque. */
+    private void avisar(String origen, MotionEvent ev) {
+        float d = getResources().getDisplayMetrics().density;
+        web.evaluateJavascript("window.__ev&&__ev('" + origen + "'," + ev.getActionMasked() + "," + ev.getSource() + ","
+            + ev.getToolType(0) + "," + ev.getButtonState() + "," + (ev.getX() / d) + "," + (ev.getY() / d) + ")", null);
+    }
+
     @Override
     public boolean dispatchGenericMotionEvent(MotionEvent ev) {
-        int a = ev.getActionMasked();
-        if (a == MotionEvent.ACTION_HOVER_MOVE || a == MotionEvent.ACTION_HOVER_ENTER) {
-            float d = getResources().getDisplayMetrics().density;
-            web.evaluateJavascript("window.__puntero&&__puntero(" + (ev.getX() / d) + "," + (ev.getY() / d) + ")", null);
-        }
+        avisar("G", ev);
         return super.dispatchGenericMotionEvent(ev);
+    }
+
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        avisar("T", ev);
+        return super.dispatchTouchEvent(ev);
+    }
+
+    @Override
+    public boolean dispatchKeyEvent(KeyEvent ev) {
+        if (ev.getAction() == KeyEvent.ACTION_DOWN)
+            web.evaluateJavascript("window.__diag&&__diag('K " + ev.getKeyCode() + " f" + Integer.toHexString(ev.getSource()) + "')", null);
+        return super.dispatchKeyEvent(ev);
     }
 }

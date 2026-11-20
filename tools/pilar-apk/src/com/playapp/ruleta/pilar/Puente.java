@@ -22,4 +22,16 @@ public class Puente {
         o.close();
         return f.getAbsolutePath();
     }
+
+    /** Para el diagnóstico en pantalla: versión de Android y dispositivos de entrada conectados. */
+    @JavascriptInterface
+    public String info() {
+        StringBuilder s = new StringBuilder("API " + android.os.Build.VERSION.SDK_INT);
+        for (int id : android.view.InputDevice.getDeviceIds()) {
+            android.view.InputDevice dev = android.view.InputDevice.getDevice(id);
+            if (dev != null && !dev.isVirtual())
+                s.append("<br>").append(dev.getName().replace("<", "")).append(" f").append(Integer.toHexString(dev.getSources()));
+        }
+        return s.toString();
+    }
 }

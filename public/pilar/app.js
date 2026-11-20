@@ -105,8 +105,34 @@
     movT = ahora; movX = x; movY = y;
     if (nuevo) { clearTimeout(movTimer); movTimer = setTimeout(function () { toqueEn(movX, movY); }, 120); }
   }
+  /* Diagnóstico: durante los primeros 90 s muestra en pantalla qué eventos de entrada llegan. */
+  var diagLineas = [], diagFin = Date.now() + 90000, diagMov = 0;
+  function diag(t) {
+    var el = $('diag');
+    if (!el || Date.now() > diagFin) { if (el) el.style.display = 'none'; return; }
+    diagLineas.push(t); if (diagLineas.length > 9) diagLineas.shift();
+    el.style.display = 'block'; el.innerHTML = diagLineas.join('<br>');
+  }
+  window.__diag = diag;
+  /* Evento crudo que manda la app Android: o = T (touch) o G (genérico). */
+  window.__ev = function (o, accion, fuente, herramienta, botones, x, y) {
+    var mov = (accion === 2 || accion === 7);
+    if (!mov || Date.now() - diagMov > 400) {
+      if (mov) diagMov = Date.now();
+      diag(o + ' a' + accion + ' f' + fuente.toString(16) + ' h' + herramienta + ' b' + botones + ' ' + Math.round(x) + ',' + Math.round(y));
+    }
+    if (accion === 1 || accion === 3 || accion === 10 || accion === 12) return; /* soltar o salir: no es un toque */
+    saltoPuntero(x, y);
+  };
+  ['mousedown', 'mouseup', 'click', 'touchstart', 'touchend'].forEach(function (e) {
+    document.addEventListener(e, function (ev) {
+      var t = ev.touches && ev.touches[0] ? ev.touches[0] : ev;
+      diag('JS ' + e + ' ' + Math.round(t.clientX || 0) + ',' + Math.round(t.clientY || 0));
+    }, true);
+  });
   if (window.Android) {
     window.__puntero = saltoPuntero;
+    if (window.Android.info) { try { diag(window.Android.info()); } catch (x) {} }
     document.addEventListener('mousemove', function (ev) { saltoPuntero(ev.clientX, ev.clientY); }, true);
     ['touchstart', 'mousedown'].forEach(function (e) {
       document.addEventListener(e, function () { pulsoReal = Date.now(); clearTimeout(movTimer); }, true);

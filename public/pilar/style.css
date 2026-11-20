@@ -94,3 +94,4 @@ html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#0a0716;col
 #orientar .op.sel{background:#3a1466;border:6px solid #ff7ac8}
 #orientar b{display:block;font-size:9vh;color:#fbeee4;margin-top:5vh}
 #orientar span{display:block;font-size:4.2vh;opacity:.8;margin-top:1.5vh}
+#diag{display:none;position:absolute;left:0;top:0;z-index:20;max-width:70%;padding:1vh 1.5vh;background:rgba(0,0,0,.8);color:#7dffb0;font:2.6vh/1.35 monospace;pointer-events:none;white-space:nowrap;overflow:hidden}
