@@ -32,7 +32,7 @@ No usa Next ni Supabase: es una web estática en `public/pilar/` que se empaquet
   - *Ajustes*: sonido, segundos de giro y del cartel, PIN, reorientar pantalla, valores de fábrica.
   - Escribir nombres o cambiar el PIN necesita teclado; en el Fire TV conviene dejar eso cargado antes del evento. Las cantidades se cambian con − / +.
 - **Marco táctil como mouse**: en el Fire TV el dedo solo mueve el puntero del sistema, sin hacer clic. La app captura el puntero y trata cualquier movimiento como un toque (alcanza para jugar: cualquier toque gira o cierra el cartel). También reenvía a la web todo evento de puntero con posición, por si el equipo los entrega.
-- **Diagnóstico de entrada**: recuadro verde con los dispositivos conectados y un contador de eventos (T toque, G genérico, C capturado, K tecla, JS). Se ve los primeros 90 s y se fija o se oculta con el botón Menú (≡) del control.
+- **Diagnóstico de entrada**: recuadro verde con los dispositivos conectados y un contador de eventos (T toque, G genérico, C capturado, K tecla, JS). Se activa desde Ajustes → Diagnóstico de entrada.
 - **Control remoto**: el botón central gira y cierra el cartel de premio. Arriba cinco veces abre el PIN. El botón Atrás no cierra el juego; se sale con Home.
 
 ## Montaje
@@ -57,6 +57,8 @@ La clave `pilar-test.keystore` (alias `pilar`, contraseña `android`, de prueba)
 
 ## Estado
 
-- Verificado en navegador: giro, coincidencia entre gajo y premio anunciado, reparto exacto del stock, alta y edición de premios, exportación CSV, rotación a 90° con toques.
-- Instalada en el Fire TV Stick 4K: arranca y el marco táctil mueve el puntero sin hacer clic. La versión 1.2 lo resuelve por software; falta confirmarlo en el equipo, junto con la fluidez del giro y el sonido.
-- Plan B si el táctil no responde en el Fire TV: la misma APK en una TV box Android con puertos USB.
+- **Decisión para el evento: se juega con el control remoto** (Ajustes → Se juega con: Control). El botón central gira y cierra el cartel. Home saca del juego: conviene tapar los demás botones.
+- En las pruebas el marco táctil estaba conectado al televisor, no al Fire TV, así que el Fire TV nunca recibió los toques. Para usar táctil falta probar el marco conectado al Fire TV con un cable OTG en "Y" micro-USB y pasar el ajuste a Táctil.
+- Verificado en navegador: giro, coincidencia entre gajo y premio anunciado, reparto exacto del stock, alta y edición de premios, exportación CSV, rotación y panel con teclado.
+- Verificado en el Fire TV Stick 4K (Fire OS 8, API 30): instalación, arranque, orientación con el control.
+- Plan B para táctil: la misma APK en una TV box Android genérica con puertos USB, o la carpeta `public/pilar/` en Chrome a pantalla completa en una PC.

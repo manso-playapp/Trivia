@@ -117,7 +117,7 @@
   }
 
   /* Diagnóstico de entrada: visible los primeros 90 s y con el botón Menú (≡) del control. */
-  var diagInfo = '', diagLineas = [], diagFin = Date.now() + 90000, diagFijo = false, diagMov = 0, cuenta = { T: 0, G: 0, C: 0, K: 0, JS: 0 };
+  var diagInfo = '', diagLineas = [], diagFin = 0, diagFijo = false, diagMov = 0, cuenta = { T: 0, G: 0, C: 0, K: 0, JS: 0 };
   function diag(tipo, t) {
     var el = $('diag');
     if (!el) return;
@@ -137,7 +137,6 @@
   };
   window.__tecla = function (codigo, fuente) {
     diag('K', 'K ' + codigo + ' f' + fuente.toString(16));
-    if (codigo === 82) { diagFijo = !diagFijo; diagFin = 0; diag('', ''); if (!diagFijo) $('diag').style.display = 'none'; }
   };
   ['mousedown', 'mouseup', 'click', 'touchstart', 'touchend'].forEach(function (e) {
     document.addEventListener(e, function (ev) {
@@ -318,7 +317,7 @@
     $('confeti').innerHTML = h;
   }
   function refrescarBoton() {
-    if (totalResto() > 0) { $('boton').className = ''; $('boton-txt').innerHTML = '¡Tocá para girar!'; }
+    if (totalResto() > 0) { $('boton').className = est.modo === 'tactil' ? '' : 'largo'; $('boton-txt').innerHTML = est.modo === 'tactil' ? '¡Tocá para girar!' : 'Apretá el botón del centro'; }
     else { $('boton').className = 'apagado'; $('boton-txt').innerHTML = '¡Se entregaron todos los premios!'; }
   }
 
@@ -421,7 +420,9 @@
       });
       h += '<div class="opx-acc">' + confirmable('borrar', 'Borrar todo y reponer stock', 'Sí, borrar todo') + '</div>';
     } else {
-      h += '<div class="opx-row"><span class="opx-etq">Sonido</span><span class="opx-pill ' + (est.sonido ? 'on' : '') + '" data-a="sonido">' + (est.sonido ? 'Sí' : 'No') + '</span></div>' +
+      h += '<div class="opx-row"><span class="opx-etq">Se juega con</span><span class="opx-seg"><i data-a="modo" data-p="control" class="' + (est.modo !== 'tactil' ? 'on' : '') + '">Control</i><i data-a="modo" data-p="tactil" class="' + (est.modo === 'tactil' ? 'on' : '') + '">Táctil</i></span></div>' +
+        '<div class="opx-row"><span class="opx-etq">Diagnóstico de entrada</span><span class="opx-pill ' + (diagFijo ? 'on' : '') + '" data-a="diag">' + (diagFijo ? 'Sí' : 'No') + '</span></div>' +
+        '<div class="opx-row"><span class="opx-etq">Sonido</span><span class="opx-pill ' + (est.sonido ? 'on' : '') + '" data-a="sonido">' + (est.sonido ? 'Sí' : 'No') + '</span></div>' +
         paso('Segundos de giro', est.giro, 'giro') + paso('Segundos del cartel de premio', est.cartel, 'cartel') +
         '<div class="opx-row"><span class="opx-etq">PIN</span><input id="f-pin" class="corto" maxlength="6" inputmode="numeric" value="' + esc(est.pin) + '"><span class="opx-btn chico" data-a="pin-guardar">Guardar</span></div>' +
         '<div class="opx-row"><span class="opx-etq">Pantalla</span><span class="opx-btn chico" data-a="orientar">Reorientar</span></div>' +
@@ -487,6 +488,8 @@
     },
     borrar: function () { est.log = []; est.premios.forEach(function (q) { q.resto = q.stock; }); },
     sonido: function () { est.sonido = !est.sonido; },
+    modo: function (p) { est.modo = p; },
+    diag: function () { diagFijo = !diagFijo; if (diagFijo) diag('', ''); else $('diag').style.display = 'none'; },
     giro: function (p, s) { est.giro = Math.max(3, Math.min(12, est.giro + s)); },
     cartel: function (p, s) { est.cartel = Math.max(4, Math.min(30, est.cartel + s)); },
     'pin-guardar': function () {
@@ -554,8 +557,8 @@
   /* cualquier toque en el resto de la pantalla gira */
   tocar(stage, girar);
 
-  /* control remoto / teclado: OK gira o cierra; arriba x5 abre el PIN */
-  var arriba = 0, arribaT = 0;
+  /* control remoto / teclado: OK gira o cierra; una secuencia de flechas abre el panel */
+  var arriba = 0, arribaT = 0, CLAVE = [38, 38, 40, 40, 37, 39];
   document.addEventListener('keydown', function (ev) {
     var k = ev.keyCode;
     if (ev.target && ev.target.tagName === 'INPUT') return;
@@ -569,10 +572,12 @@
     if (k === 13 || k === 32) {
       ev.preventDefault();
       if (!oculto('premio')) cerrarPremio(); else girar();
-    } else if (k === 38) {
-      if (Date.now() - arribaT > 1500) arriba = 0;
-      arribaT = Date.now(); arriba++;
-      if (arriba >= 5) { arriba = 0; if (!girando && oculto('premio')) { navSel = 0; abrirAdmin(); navMarcar(); } } /* el control lo tiene el operador: sin PIN */
+    } else if (k >= 37 && k <= 40) {
+      /* panel sin PIN con una secuencia que nadie hace por accidente: arriba, arriba, abajo, abajo, izquierda, derecha */
+      if (Date.now() - arribaT > 2500) arriba = 0;
+      arribaT = Date.now();
+      arriba = (k === CLAVE[arriba]) ? arriba + 1 : (k === CLAVE[0] ? 1 : 0);
+      if (arriba >= CLAVE.length) { arriba = 0; if (!girando && oculto('premio')) { navSel = 0; abrirAdmin(); navMarcar(); } }
     } else if (k >= 48 && k <= 57 && !oculto('pin')) {
       tecla(String(k - 48));
     }
