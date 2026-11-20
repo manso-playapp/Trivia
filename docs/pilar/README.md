@@ -31,6 +31,7 @@ No usa Next ni Supabase: es una web estática en `public/pilar/` que se empaquet
   - *Giros*: listado con hora, exportar CSV, deshacer el último, borrar todo y reponer stock.
   - *Ajustes*: sonido, segundos de giro y del cartel, PIN, reorientar pantalla, valores de fábrica.
   - Escribir nombres o cambiar el PIN necesita teclado; en el Fire TV conviene dejar eso cargado antes del evento. Las cantidades se cambian con − / +.
+- **Marco táctil como mouse**: en el Fire TV el dedo solo mueve el puntero, sin hacer clic. La app trata cada salto del puntero como un toque. Como no hay "mantener apretado", el PIN también se abre tocando el logo 5 veces seguidas.
 - **Control remoto**: el botón central gira y cierra el cartel de premio. Arriba cinco veces abre el PIN. El botón Atrás no cierra el juego; se sale con Home.
 
 ## Montaje
@@ -56,5 +57,5 @@ La clave `pilar-test.keystore` (alias `pilar`, contraseña `android`, de prueba)
 ## Estado
 
 - Verificado en navegador: giro, coincidencia entre gajo y premio anunciado, reparto exacto del stock, alta y edición de premios, exportación CSV, rotación a 90° con toques.
-- **No se probó en un Fire TV real.** Falta confirmar ahí: que el marco táctil responda por el cable OTG, la fluidez del giro y el sonido.
+- Instalada en el Fire TV Stick 4K: arranca y el marco táctil mueve el puntero sin hacer clic. La versión 1.2 lo resuelve por software; falta confirmarlo en el equipo, junto con la fluidez del giro y el sonido.
 - Plan B si el táctil no responde en el Fire TV: la misma APK en una TV box Android con puertos USB.

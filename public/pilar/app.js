@@ -80,15 +80,50 @@
     }
     el.addEventListener('touchstart', h, false);
     el.addEventListener('mousedown', h, false);
+    el.__toque = h;
   }
-  Array.prototype.forEach.call(document.querySelectorAll('#orientar .op'), function (el) {
-    tocar(el, function () {
-      est.rot = parseInt(el.getAttribute('data-rot'), 10);
-      guardar();
-      $('orientar').className = 'oculto';
-      ajustar();
+
+  /* Marcos táctiles que el Fire TV toma como mouse: el dedo solo mueve el puntero, sin clic.
+     Cada "salto" del puntero (movimiento tras una pausa) se trata como un toque en ese lugar. */
+  var pulsoReal = Date.now() + 800, movT = 0, movTimer = null, movX = 0, movY = 0, ultSint = 0, logoToques = [];
+  function toqueEn(x, y) {
+    var ahora = Date.now(), el = document.elementFromPoint(x, y), nodo = el;
+    if (!el || ahora - pulsoReal < 700 || ahora - ultSint < 450) return;
+    ultSint = ahora;
+    if (el.id === 'logo') {
+      logoToques.push(ahora);
+      logoToques = logoToques.filter(function (t) { return ahora - t < 4000; });
+      if (logoToques.length >= 5) { logoToques = []; abrirPin(); }
+      return;
+    }
+    if (el.tagName === 'INPUT') { el.focus(); return; }
+    while (nodo && !nodo.__toque) nodo = nodo.parentNode;
+    if (nodo) nodo.__toque({ target: el, stopPropagation: function () {}, preventDefault: function () {} });
+  }
+  function saltoPuntero(x, y) {
+    var ahora = Date.now(), nuevo = ahora - movT > 250;
+    movT = ahora; movX = x; movY = y;
+    if (nuevo) { clearTimeout(movTimer); movTimer = setTimeout(function () { toqueEn(movX, movY); }, 120); }
+  }
+  if (window.Android) {
+    window.__puntero = saltoPuntero;
+    document.addEventListener('mousemove', function (ev) { saltoPuntero(ev.clientX, ev.clientY); }, true);
+    ['touchstart', 'mousedown'].forEach(function (e) {
+      document.addEventListener(e, function () { pulsoReal = Date.now(); clearTimeout(movTimer); }, true);
     });
-  });
+  }
+  var ops = document.querySelectorAll('#orientar .op'), opSel = 0;
+  function marcarOp() {
+    Array.prototype.forEach.call(ops, function (el, i) { el.className = 'op' + (i === opSel ? ' sel' : ''); });
+  }
+  function elegirOp(el) {
+    est.rot = parseInt(el.getAttribute('data-rot'), 10);
+    guardar();
+    $('orientar').className = 'oculto';
+    ajustar();
+  }
+  Array.prototype.forEach.call(ops, function (el) { tocar(el, function () { elegirOp(el); }); });
+  marcarOp();
 
   /* ---------- rueda ---------- */
   var gajos = [], PASO = 60;
@@ -171,7 +206,7 @@
 
   function girar() {
     if (girando || Date.now() < bloqueo) return;
-    if (!oculto('premio') || !oculto('admin') || !oculto('pin')) return;
+    if (!oculto('premio') || !oculto('admin') || !oculto('pin') || !oculto('orientar')) return;
     var id = sortear(Math.random);
     if (!id) { refrescarBoton(); return; }
 
@@ -464,6 +499,12 @@
   document.addEventListener('keydown', function (ev) {
     var k = ev.keyCode;
     if (ev.target && ev.target.tagName === 'INPUT') return;
+    if (!oculto('orientar')) {
+      ev.preventDefault();
+      if (k === 13 || k === 32) elegirOp(ops[opSel]);
+      else if (k >= 37 && k <= 40) { opSel = (opSel + (k === 37 || k === 38 ? ops.length - 1 : 1)) % ops.length; marcarOp(); }
+      return;
+    }
     if (k === 13 || k === 32) {
       ev.preventDefault();
       if (!oculto('premio')) cerrarPremio(); else girar();

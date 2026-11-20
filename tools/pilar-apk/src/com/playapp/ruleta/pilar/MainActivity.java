@@ -2,7 +2,10 @@ package com.playapp.ruleta.pilar;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.os.Build;
 import android.view.KeyEvent;
+import android.view.MotionEvent;
+import android.view.PointerIcon;
 import android.view.View;
 import android.view.WindowManager;
 import android.webkit.WebSettings;
@@ -32,6 +35,7 @@ public class MainActivity extends Activity {
         web.setOverScrollMode(View.OVER_SCROLL_NEVER);
         web.setVerticalScrollBarEnabled(false);
         web.setHorizontalScrollBarEnabled(false);
+        if (Build.VERSION.SDK_INT >= 24) web.setPointerIcon(PointerIcon.getSystemIcon(this, PointerIcon.TYPE_NULL));
         setContentView(web);
         web.loadUrl("file:///android_asset/pilar/index.html");
         web.requestFocus();
@@ -62,5 +66,16 @@ public class MainActivity extends Activity {
     public boolean onKeyDown(int code, KeyEvent ev) {
         if (code == KeyEvent.KEYCODE_BACK) return true;
         return super.onKeyDown(code, ev);
+    }
+
+    /** Marcos táctiles que el sistema toma como mouse: avisa a la web dónde quedó el puntero. */
+    @Override
+    public boolean dispatchGenericMotionEvent(MotionEvent ev) {
+        int a = ev.getActionMasked();
+        if (a == MotionEvent.ACTION_HOVER_MOVE || a == MotionEvent.ACTION_HOVER_ENTER) {
+            float d = getResources().getDisplayMetrics().density;
+            web.evaluateJavascript("window.__puntero&&__puntero(" + (ev.getX() / d) + "," + (ev.getY() / d) + ")", null);
+        }
+        return super.dispatchGenericMotionEvent(ev);
     }
 }

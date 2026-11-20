@@ -91,5 +91,6 @@ html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#0a0716;col
 #orientar .op-in{position:absolute;left:50%;top:50%;width:46vh;height:30vh;margin:-15vh 0 0 -23vh;text-align:center;font-family:Roboto,Arial,sans-serif}
 #orientar .op[data-rot="90"] .op-in{transform:rotate(90deg)}
 #orientar .op[data-rot="270"] .op-in{transform:rotate(270deg)}
+#orientar .op.sel{background:#3a1466;border:6px solid #ff7ac8}
 #orientar b{display:block;font-size:9vh;color:#fbeee4;margin-top:5vh}
 #orientar span{display:block;font-size:4.2vh;opacity:.8;margin-top:1.5vh}
