@@ -1,7 +1,7 @@
 /* Ruleta Pilar XV — valores de fábrica. Durante el evento todo se edita desde el panel de operador.
    Si cambiás algo acá, cambiá también "id" para que el dispositivo descarte lo que tenía guardado. */
 window.RULETA_CONFIG = {
-  id: 'pilar-xv-3',
+  id: 'pilar-xv-4',
   pin: '1234',
   segundosGiro: 6,
   segundosCartel: 12,
@@ -9,7 +9,8 @@ window.RULETA_CONFIG = {
     { nombre: 'Bolsa',   articulo: 'una', stock: 35 },
     { nombre: 'Remera',  articulo: 'una', stock: 25 },
     { nombre: 'Botella', articulo: 'una', stock: 20 },
-    { nombre: 'Piluso',  articulo: 'un',  stock: 25 }
+    { nombre: 'Piluso',  articulo: 'un',  stock: 25 },
+    { nombre: 'Perfume', articulo: 'un',  stock: 15 }
   ],
   /* gajos, en orden; se repiten si hay más premios. "tex" usa una textura de brillantina de assets/ */
   paleta: [

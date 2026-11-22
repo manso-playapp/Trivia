@@ -65,12 +65,18 @@ public class MainActivity extends Activity {
         web.onResume();
     }
 
-    /** El botón "atrás" del control no cierra el juego (para salir: botón Home). */
+    /** El botón "atrás" del control no cierra el juego (para salir: botón Home); dentro del panel vuelve un paso. */
     @Override
     public boolean onKeyDown(int code, KeyEvent ev) {
-        if (code == KeyEvent.KEYCODE_BACK) return true;
+        if (code == KeyEvent.KEYCODE_BACK) {
+            web.evaluateJavascript("window.__atras&&__atras()", null);
+            return true;
+        }
         return super.onKeyDown(code, ev);
     }
+
+    /** Muestra el teclado en pantalla para el campo de texto enfocado. */
+    void teclado() { runOnUiThread(web); }
 
     /** Reenvía a la web todo evento de puntero, venga como toque o como mouse: hay marcos táctiles que el sistema
      *  toma como mouse y solo mueven el cursor. La web decide qué cuenta como toque. */

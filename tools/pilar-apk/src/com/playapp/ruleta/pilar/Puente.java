@@ -9,6 +9,9 @@ import java.io.FileOutputStream;
 public class Puente {
     private final Context ctx;
 
+    @JavascriptInterface
+    public void teclado() { if (ctx instanceof MainActivity) ((MainActivity) ctx).teclado(); }
+
     public Puente(Context c) { ctx = c; }
 
     @JavascriptInterface

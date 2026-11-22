@@ -8,7 +8,7 @@ No usa Next ni Supabase: es una web estática en `public/pilar/` que se empaquet
 - Televisor Samsung de 50" **en vertical**, con marco táctil USB. Sin internet ni señal de celular en el lugar.
 - El juego corre en un **Fire TV Stick 4K** conectado al HDMI; el televisor es solo la pantalla.
 - La persona toca y gira, sin cargar datos. Siempre gana un premio.
-- Premios: 35 bolsas, 20 botellas, 25 remeras, 25 pilusos (105 en total).
+- Premios: 35 bolsas, 20 botellas, 25 remeras, 25 pilusos, 15 perfumes (120 en total).
 - Estética tipo merch: fondo violeta con luces y destellos, logo "Pilar XV" en brillantina rosa con relieve, rueda con aro cromado y gajos de brillantina.
 
 ## Archivos
@@ -53,7 +53,7 @@ No usa Next ni Supabase: es una web estática en `public/pilar/` que se empaquet
 SDK=<carpeta con build-tools 34 y plataforma 34> KEYSTORE=<pilar-test.keystore> tools/pilar-apk/build.sh salida.apk
 ```
 
-La clave `pilar-test.keystore` (alias `pilar`, contraseña `android`, de prueba) no está en el repo: se entregó como archivo en la sesión. Con otra clave hay que desinstalar la app antes de instalar la nueva, y eso borra el stock guardado.
+Desde la versión 1.8 la APK se firma con `pilar-test-2.keystore` (alias `pilar`, contraseña `android`, de prueba), porque la clave anterior se perdió con el entorno de trabajo. No está en el repo: se entregó como archivo en la sesión. Con otra clave hay que desinstalar la app antes de instalar la nueva, y eso borra el stock guardado.
 
 ## Estado
 

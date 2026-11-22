@@ -21,7 +21,18 @@
   function leer() {
     var e = null;
     try { e = JSON.parse(window.localStorage.getItem(KEY)); } catch (x) { e = mem; }
-    return (e && e.premios) ? e : deFabrica();
+    if (e && e.premios) return e;
+    e = deFabrica();
+    /* al cambiar el id de fábrica se reinicia el stock, pero se conserva cómo estaba puesta la pantalla */
+    try {
+      for (var i = 0; i < window.localStorage.length; i++) {
+        var k = window.localStorage.key(i), v;
+        if (k.indexOf('ruleta:') !== 0 || k === KEY) continue;
+        v = JSON.parse(window.localStorage.getItem(k));
+        if (v && typeof v.rot === 'number') { e.rot = v.rot; if (v.modo) e.modo = v.modo; if (typeof v.sonido === 'boolean') e.sonido = v.sonido; }
+      }
+    } catch (x) {}
+    return e;
   }
   function guardar() {
     mem = est;
@@ -529,7 +540,7 @@
     var l = navLista(), el;
     if (k === 13 || k === 32) {
       el = l[navSel]; if (!el) return;
-      if (el.tagName === 'INPUT') { el.focus(); return; }
+      if (el.tagName === 'INPUT') { el.focus(); try { if (window.Android && window.Android.teclado) window.Android.teclado(); } catch (x) {} return; }
       $('admin').__toque({ target: el, stopPropagation: function () {}, preventDefault: function () {} });
     } else if (k === 37 || k === 38) navSel -= 1; else if (k === 39 || k === 40) navSel += 1;
     navMarcar();
@@ -558,10 +569,14 @@
   tocar(stage, girar);
 
   /* control remoto / teclado: OK gira o cierra; una secuencia de flechas abre el panel */
-  var arriba = 0, arribaT = 0, CLAVE = [38, 38, 40, 40, 37, 39];
+  var arriba = 0, arribaT = 0;
   document.addEventListener('keydown', function (ev) {
     var k = ev.keyCode;
-    if (ev.target && ev.target.tagName === 'INPUT') return;
+    if (ev.target && ev.target.tagName === 'INPUT') {
+      /* en un campo de texto: arriba/abajo u OK salen del campo; izquierda/derecha mueven el cursor */
+      if (k === 38 || k === 40 || k === 13) { ev.preventDefault(); leerForm(); ev.target.blur(); if (k !== 13) navTecla(k); }
+      return;
+    }
     if (!oculto('orientar')) {
       ev.preventDefault();
       if (k === 13 || k === 32) elegirOp(ops[opSel]);
@@ -573,15 +588,25 @@
       ev.preventDefault();
       if (!oculto('premio')) cerrarPremio(); else girar();
     } else if (k >= 37 && k <= 40) {
-      /* panel sin PIN con una secuencia que nadie hace por accidente: arriba, arriba, abajo, abajo, izquierda, derecha */
-      if (Date.now() - arribaT > 2500) arriba = 0;
+      /* panel sin PIN: arriba tres veces seguidas */
+      if (Date.now() - arribaT > 2000) arriba = 0;
       arribaT = Date.now();
-      arriba = (k === CLAVE[arriba]) ? arriba + 1 : (k === CLAVE[0] ? 1 : 0);
-      if (arriba >= CLAVE.length) { arriba = 0; if (!girando && oculto('premio')) { navSel = 0; abrirAdmin(); navMarcar(); } }
+      arriba = (k === 38) ? arriba + 1 : 0;
+      if (arriba >= 3) { arriba = 0; if (!girando && oculto('premio')) { navSel = 0; abrirAdmin(); navMarcar(); } }
     } else if (k >= 48 && k <= 57 && !oculto('pin')) {
       tecla(String(k - 48));
     }
   }, false);
+
+  /* botón Atrás del control: sale del campo, del formulario, del panel o del cartel */
+  window.__atras = function () {
+    var a = document.activeElement;
+    if (a && a.tagName === 'INPUT') { leerForm(); a.blur(); return; }
+    if (!oculto('admin')) {
+      if (editando) { editando = null; pintarAdmin(); }
+      else { $('admin').className = 'capa oculto'; bloqueo = Date.now() + 600; dibujarRueda(); refrescarBoton(); }
+    } else if (!oculto('premio')) cerrarPremio();
+  };
 
   /* para pruebas automáticas */
   window.__ruleta = { est: function () { return est; }, sortear: sortear, gajos: function () { return gajos; }, csv: csv };
