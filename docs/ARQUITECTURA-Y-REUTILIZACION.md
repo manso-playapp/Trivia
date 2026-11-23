@@ -1,6 +1,6 @@
 # Mapa del repo y reutilización
 
-El repositorio conserva dos tipos de juego: una base de **trivia** para varios clientes (con la implementación específica de Feller) y una **ruleta mobile por QR** (primer cliente: Lucía Indumentaria, ver [docs/lucia/README.md](lucia/README.md)). Hoy no es una librería empaquetada ni una plantilla completamente parametrizada.
+El repositorio conserva dos líneas de juego: **trivia** (motor Next/Supabase y la implementación de Feller, con su versión de tablet) y **juegos offline para pantallas** (ruleta de Pilar XV: web estática empaquetada como APK, táctil o con control remoto). Para arrancar un juego offline nuevo, ver la [guía de juegos offline](GUIA-JUEGOS-OFFLINE.md). Hoy no es una librería empaquetada ni una plantilla completamente parametrizada.
 
 | Carpeta | Qué contiene | Qué conservamos para otros proyectos |
 | --- | --- | --- |
@@ -15,9 +15,8 @@ El repositorio conserva dos tipos de juego: una base de **trivia** para varios c
 | `tools/render-feller-vertical.cjs` | Captura del navegador y exportación MP4 en nativo/alta | Pipeline de render, validación de loop y exportación reproducible. Hoy contiene rutas, tamaños y verificaciones de Feller: adaptarlas al reutilizar. |
 | `public/feller-led/index.html`, `promo.*`, `preview/feller.html` | Prototipos anteriores | Referencia histórica. No son la pieza audiovisual final. |
 | `docs/feller/` | Cierre, enlaces, manifiesto y vistas finales | Archivo de este cliente; punto de entrada para retomar. |
-| `app/lucia/`, `app/api/lucia/`, `components/lucia/`, `lib/lucia*.ts`, `supabase/lucia.sql`, `public/lucia/` | **Ruleta mobile por QR** (tipo de juego propio, cliente Lucía): formulario, ruleta, voucher, panel, canje y QR | Mecánica completa de ruleta con sorteo en servidor, stock, mails de prueba y vouchers. Para otro cliente se copia y se cambia marca según `docs/lucia/README.md`. |
-| `public/pilar/`, `tools/pilar-apk/`, `docs/pilar/` | **Ruleta táctil offline** (cliente Pilar XV): web estática empaquetada como APK para Fire TV, sin red ni backend | Juego completo y contenedor Android. Para otro evento se copia la carpeta y se cambian `config.js`, logo y fondo según [docs/pilar/README.md](pilar/README.md). |
-| `docs/lucia/` | Guía del tipo de juego ruleta y estado de Lucía | Punto de entrada para retomar o replicar la ruleta. |
+| `app/lucia/`, `app/api/lucia/`, `components/lucia/`, `lib/lucia*.ts`, `supabase/lucia.sql`, `public/lucia/`, `docs/lucia/` | Ruleta mobile por QR de Lucía Indumentaria. **Migrada a otro repo (PlayApp) el 14/11/2026.** | Nada: es código sin uso. Lo único vigente es la redirección de `/lucia` en `next.config.js`, que sostiene el QR impreso; no quitarla. |
+| `public/pilar/`, `tools/pilar-apk/`, `docs/pilar/` | **Ruleta offline para pantalla** (cliente Pilar XV): web estática empaquetada como APK para Fire TV o tablet, sin red ni backend, con modo control remoto y modo táctil | Juego completo, contenedor Android y arte generado por código. Base recomendada para juegos offline nuevos: ver [docs/pilar/README.md](pilar/README.md) y la [guía](GUIA-JUEGOS-OFFLINE.md). |
 | `tests/` | Pruebas existentes del repo | Conservar y ampliar según cambien las reglas del juego. |
 | `exports/` | Videos y capturas generados localmente | Fuera de Git; finales en Drive, registrados en el manifiesto. |
 

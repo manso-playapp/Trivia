@@ -1,15 +1,16 @@
-# Ruleta táctil offline — Pilar XV
+# Ruleta offline para pantalla — Pilar XV
 
-Tercer tipo de juego del repo: **ruleta para pantalla táctil, sin internet**. Primer cliente: fiesta de quince de Pilar.
-No usa Next ni Supabase: es una web estática en `public/pilar/` que se empaqueta como app Android.
+**Estado: evento realizado el 22/11/2026, confirmado por el usuario.** Se jugó con el control remoto del Fire TV, en un televisor vertical, sin internet.
+
+Web estática en `public/pilar/` empaquetada como app Android. No usa Next ni Supabase. Lo aprendido, pensado para juegos nuevos, está en la [guía de juegos offline](../GUIA-JUEGOS-OFFLINE.md).
 
 ## Brief
 
-- Televisor Samsung de 50" **en vertical**, con marco táctil USB. Sin internet ni señal de celular en el lugar.
-- El juego corre en un **Fire TV Stick 4K** conectado al HDMI; el televisor es solo la pantalla.
-- La persona toca y gira, sin cargar datos. Siempre gana un premio.
-- Premios: 35 bolsas, 20 botellas, 25 remeras, 25 pilusos, 15 perfumes (120 en total).
-- Estética tipo merch: fondo violeta con luces y destellos, logo "Pilar XV" en brillantina rosa con relieve, rueda con aro cromado y gajos de brillantina.
+- Fiesta de quince. Televisor Samsung de 50" en vertical. Sin internet ni señal de celular en el lugar.
+- El juego corre en un Fire TV Stick 4K (Fire OS 8, API 30) conectado por HDMI; el televisor es solo la pantalla.
+- La persona gira sin cargar datos y siempre gana un premio.
+- Premios finales: 35 bolsas, 25 remeras, 20 botellas, 25 pilusos, 15 perfumes (120 en total).
+- Estética tipo merch: fondo violeta con luces y destellos, logo en brillantina rosa con relieve, rueda con aro cromado y gajos de brillantina.
 
 ## Archivos
 
@@ -18,47 +19,39 @@ No usa Next ni Supabase: es una web estática en `public/pilar/` que se empaquet
 | `public/pilar/config.js` | Valores de fábrica: premios, cantidades, paleta, PIN y tiempos. Cambiar también `id` para que el dispositivo descarte lo guardado. |
 | `public/pilar/index.html`, `style.css`, `app.js` | El juego. Lienzo fijo de 1080×1920 que se escala y rota solo. |
 | `public/pilar/assets/` | Fondo, logo y texturas de brillantina (generados por código) y tipografía Playfair Display (licencia OFL incluida). |
-| `public/pilar/ruleta-pilar-xv.apk` | Instalador para Fire TV / Android, ya firmado. |
-| `tools/pilar-apk/` | Contenedor Android mínimo y `build.sh` para rearmar la APK. `arte.html` + `arte.cjs` regeneran fondo, logo y texturas; el logo vectorial original está en `arte/logo.svg`. |
+| `public/pilar/ruleta-pilar-xv.apk` | Instalador final, versión 1.8. |
+| `tools/pilar-apk/` | Contenedor Android mínimo y `build.sh`. `arte.html` + `arte.cjs` regeneran fondo, logo y texturas; el logo vectorial original está en `arte/logo.svg`. |
 
 ## Cómo funciona
 
-- **Sorteo**: cada premio pesa según el stock que le queda, así se agotan de forma pareja. Cuando un premio llega a cero no vuelve a salir. Con todo en cero, el botón avisa que se entregaron todos los premios.
-- **Stock**: se guarda en el dispositivo y sobrevive a apagar y prender. Se descuenta al iniciar el giro.
-- **Orientación**: el Fire TV siempre emite en horizontal. En el primer arranque el juego muestra tres carteles; se toca el que se lee derecho y queda guardado.
-- **Panel de operador**: mantener apretado el logo 3 segundos, PIN `1234`. Sigue el panel de la trivia de tablet (solapas, pasos − / +, confirmación en dos toques, exportar CSV):
-  - *Premios*: lo que queda de cada uno, agregar, editar nombre y cantidad, eliminar, mostrar u ocultar en la rueda. La rueda se redibuja sola.
+- **Sorteo**: cada premio pesa según el stock que le queda, así se agotan de forma pareja. Uno en cero no vuelve a salir. Con todo en cero, el botón avisa que se entregaron todos los premios.
+- **Stock**: se descuenta al iniciar el giro y se guarda en el dispositivo.
+- **Orientación**: en el primer arranque se elige entre tres carteles el que se lee derecho, con toque o con flechas y OK.
+- **Modo de juego** (Ajustes → Se juega con): *Control*, el botón central gira y cierra el cartel; *Táctil*, cualquier toque.
+- **Panel de operador**:
+  - Con control: arriba tres veces seguidas, sin PIN. Flechas mueven el foco, OK activa, Atrás vuelve un paso.
+  - Con táctil: mantener apretado el logo 3 segundos, o tocarlo 5 veces, y PIN `1234`.
+  - *Premios*: lo que queda, agregar, editar, eliminar, mostrar u ocultar. La rueda se redibuja sola.
   - *Giros*: listado con hora, exportar CSV, deshacer el último, borrar todo y reponer stock.
-  - *Ajustes*: sonido, segundos de giro y del cartel, PIN, reorientar pantalla, valores de fábrica.
-  - Escribir nombres o cambiar el PIN necesita teclado; en el Fire TV conviene dejar eso cargado antes del evento. Las cantidades se cambian con − / +.
-- **Marco táctil como mouse**: en el Fire TV el dedo solo mueve el puntero del sistema, sin hacer clic. La app captura el puntero y trata cualquier movimiento como un toque (alcanza para jugar: cualquier toque gira o cierra el cartel). También reenvía a la web todo evento de puntero con posición, por si el equipo los entrega.
-- **Diagnóstico de entrada**: recuadro verde con los dispositivos conectados y un contador de eventos (T toque, G genérico, C capturado, K tecla, JS). Se activa desde Ajustes → Diagnóstico de entrada.
-- **Control remoto**: el botón central gira y cierra el cartel de premio. Arriba cinco veces abre el PIN. El botón Atrás no cierra el juego; se sale con Home.
-
-## Montaje
-
-1. Fire TV al HDMI del televisor.
-2. Cable OTG en "Y" (micro-USB con entrada de corriente) en el Fire TV: la corriente a una pata, el marco táctil a la otra.
-3. Abrir "Ruleta Pilar XV" desde Configuración → Aplicaciones → Administrar aplicaciones instaladas → Iniciar aplicación (sin internet, el inicio del Fire TV puede no mostrarla).
-
-## Instalación en el Fire TV (hacerla antes, con wifi)
-
-1. Configuración → Mi Fire TV → Opciones para desarrolladores → activar "Apps de origen desconocido". Si no aparece el menú, entrar en Acerca de y apretar siete veces sobre el nombre del dispositivo.
-2. Instalar la app "Downloader" desde la tienda de Amazon, abrirla y escribir la dirección de la APK. Alternativa sin tipear: copiar la APK a un pen drive, conectarlo con el cable OTG y abrirla con un explorador de archivos instalado desde la tienda.
-3. Aceptar la instalación y abrir.
+  - *Ajustes*: modo de juego, diagnóstico de entrada, sonido, tiempos, PIN, reorientar, valores de fábrica.
 
 ## Rearmar la APK
 
 ```bash
-SDK=<carpeta con build-tools 34 y plataforma 34> KEYSTORE=<pilar-test.keystore> tools/pilar-apk/build.sh salida.apk
+SDK=<carpeta con build-tools 34 y plataforma 34> KEYSTORE=<pilar-test-2.keystore> tools/pilar-apk/build.sh salida.apk
 ```
 
-Desde la versión 1.8 la APK se firma con `pilar-test-2.keystore` (alias `pilar`, contraseña `android`, de prueba), porque la clave anterior se perdió con el entorno de trabajo. No está en el repo: se entregó como archivo en la sesión. Con otra clave hay que desinstalar la app antes de instalar la nueva, y eso borra el stock guardado.
+La versión 1.8 está firmada con `pilar-test-2.keystore` (alias `pilar`, contraseña `android`, clave de prueba). No está en el repo: se entregó como archivo en la sesión. La clave de las versiones 1.0 a 1.7 se perdió con el entorno de trabajo.
 
-## Estado
+## Qué quedó probado y qué no
 
-- **Decisión para el evento: se juega con el control remoto** (Ajustes → Se juega con: Control). El botón central gira y cierra el cartel. Home saca del juego: conviene tapar los demás botones.
-- En las pruebas el marco táctil estaba conectado al televisor, no al Fire TV, así que el Fire TV nunca recibió los toques. Para usar táctil falta probar el marco conectado al Fire TV con un cable OTG en "Y" micro-USB y pasar el ajuste a Táctil.
-- Verificado en navegador: giro, coincidencia entre gajo y premio anunciado, reparto exacto del stock, alta y edición de premios, exportación CSV, rotación y panel con teclado.
-- Verificado en el Fire TV Stick 4K (Fire OS 8, API 30): instalación, arranque, orientación con el control.
-- Plan B para táctil: la misma APK en una TV box Android genérica con puertos USB, o la carpeta `public/pilar/` en Chrome a pantalla completa en una PC.
+- **Probado en el Fire TV, en el evento**: instalación, orientación con el control, giro con el botón central, descuento de stock, panel con flechas.
+- **Probado solo en navegador**: coincidencia entre gajo y premio anunciado, reparto exacto del stock, exportación CSV, salida de los campos de texto y botón Atrás (agregados en la 1.8).
+- **Sin confirmar**: el sonido en el Fire TV, y el teclado en pantalla al editar un nombre con el control.
+- **Táctil, sin probar**: en las pruebas el marco estaba enchufado al televisor y no al Fire TV, así que el Fire TV nunca recibió los toques. Falta probarlo con un cable OTG en "Y" micro-USB.
+
+## Pendientes conocidos
+
+- El acceso al panel con "arriba tres veces" es fácil de acertar por accidente si el control lo tienen los invitados.
+- La miniatura en el inicio del Fire TV se ve con recuadro gris: es una limitación del Fire TV para apps instaladas por fuera de la tienda.
+- En el evento apareció el aviso de silencio del televisor sobre la pantalla; no viene de la app.
