@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>Ruleta Pilar XV</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div id="stage">
+  <img id="logo" src="assets/logo.webp" alt="Pilar XV" draggable="false">
+  <div id="rueda-caja">
+    <div id="sombra"></div>
+    <div id="rueda"></div>
+    <div id="aro"></div>
+    <div id="puntero"></div>
+    <div id="centro"></div>
+  </div>
+  <div id="boton"><span id="boton-txt"></span></div>
+
+  <div id="premio" class="capa oculto">
+    <div id="confeti"></div>
+    <div class="tarjeta">
+      <div class="chico">¡Ganaste!</div>
+      <div id="premio-art" class="art"></div>
+      <div id="premio-nombre" class="grande"></div>
+      <div id="premio-ok" class="btn">¡Listo!</div>
+    </div>
+  </div>
+
+  <div id="pin" class="capa oculto">
+    <div class="panel">
+      <div class="titulo">PIN de operador</div>
+      <div id="pin-puntos"></div>
+      <div id="pin-teclas"></div>
+      <div class="btn sec" data-a="cerrar-pin">Cancelar</div>
+    </div>
+  </div>
+
+  <div id="admin" class="capa oculto">
+    <div class="opx">
+      <div class="opx-cab"><b>Operador</b><span class="opx-btn pri" data-a="cerrar">Volver al juego</span></div>
+      <div class="opx-tabs" id="opx-tabs"></div>
+      <div class="opx-cuerpo" id="opx-cuerpo"></div>
+    </div>
+  </div>
+</div>
+
+<div id="orientar" class="oculto">
+  <div class="op" data-rot="0"><div class="op-in"><b>Tocá acá</b><span>si leés esto derecho</span><span class="ctl">o con el control: flechas y OK</span></div></div>
+  <div class="op" data-rot="90"><div class="op-in"><b>Tocá acá</b><span>si leés esto derecho</span><span class="ctl">o con el control: flechas y OK</span></div></div>
+  <div class="op" data-rot="270"><div class="op-in"><b>Tocá acá</b><span>si leés esto derecho</span><span class="ctl">o con el control: flechas y OK</span></div></div>
+</div>
+<div id="diag"></div>
+<script src="config.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
